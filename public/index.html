@@ -1,0 +1,30 @@
+<canvas id="game" width="200" height="500"></canvas>
+<div>Score: <span id="score">0</span></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+
+let leds = [];
+
+socket.on("state", (state) => {
+  leds = state.leds;
+  scoreEl.textContent = state.score;
+});
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const h = canvas.height / leds.length;
+
+  leds.forEach((c,i)=>{
+    ctx.fillStyle = c === "gray" ? "#333" : c;
+    ctx.fillRect(50, i*h+5, 100, h-10);
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
