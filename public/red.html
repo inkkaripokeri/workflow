@@ -3,6 +3,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
+
+socket.emit("join", "red");
+
 function shoot() {
   socket.emit("shoot", "red");
 }
