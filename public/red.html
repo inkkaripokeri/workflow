@@ -1,0 +1,9 @@
+<button onclick="shoot()">SHOOT RED</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+function shoot() {
+  socket.emit("shoot", "red");
+}
+</script>
