@@ -1,14 +1,60 @@
 <canvas id="game" width="200" height="500"></canvas>
-<div>Score: <span id="score">0</span></div>
+
+<div id="ui">
+  <h2 id="status">Waiting for players...</h2>
+  <div>Players: <span id="players">0</span></div>
+  <div>Score: <span id="score">0</span></div>
+
+  <button id="startBtn" style="display:none;">START GAME</button>
+
+  <h1 id="countdown"></h1>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
 const scoreEl = document.getElementById("score");
+const playersEl = document.getElementById("players");
+const statusEl = document.getElementById("status");
+const startBtn = document.getElementById("startBtn");
+const countdownEl = document.getElementById("countdown");
 
 let leds = [];
+
+socket.on("connect", () => {
+  socket.emit("join", "viewer");
+});
+
+socket.on("lobby", (data) => {
+  playersEl.textContent = data.playerCount;
+
+  if (data.playerCount >= 3) {
+    statusEl.textContent = "Ready!";
+    startBtn.style.display = "block";
+  } else {
+    statusEl.textContent = "Waiting for players...";
+    startBtn.style.display = "none";
+  }
+});
+
+startBtn.onclick = () => {
+  socket.emit("startGame");
+  startBtn.style.display = "none";
+};
+
+socket.on("countdown", (num) => {
+  countdownEl.textContent = num;
+  statusEl.textContent = "Starting...";
+});
+
+socket.on("gameStart", () => {
+  countdownEl.textContent = "";
+  statusEl.textContent = "GO!";
+});
 
 socket.on("state", (state) => {
   leds = state.leds;
@@ -16,12 +62,13 @@ socket.on("state", (state) => {
 });
 
 function draw() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   const h = canvas.height / leds.length;
 
-  leds.forEach((c,i)=>{
+  leds.forEach((c, i) => {
     ctx.fillStyle = c === "gray" ? "#333" : c;
-    ctx.fillRect(50, i*h+5, 100, h-10);
+    ctx.fillRect(50, i * h + 5, 100, h - 10);
   });
 
   requestAnimationFrame(draw);
