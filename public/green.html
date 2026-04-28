@@ -1,12 +1,12 @@
-<button onclick="shoot()">SHOOT GREEN</button>
+<button onclick="shoot()">SHOOT RED</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
 
-socket.emit("join", "green");
+socket.emit("join", "red");
 
 function shoot() {
-  socket.emit("shoot", "green");
+  socket.emit("shoot", "red");
 }
 </script>
