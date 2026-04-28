@@ -2,8 +2,10 @@
 
 <div id="ui">
   <h2 id="status">Waiting for players...</h2>
+
   <div>Players: <span id="players">0</span></div>
   <div>Score: <span id="score">0</span></div>
+  <div>Speed: <span id="speed">-</span> ms</div>
 
   <button id="startBtn" style="display:none;">START GAME</button>
 
@@ -22,6 +24,7 @@ const playersEl = document.getElementById("players");
 const statusEl = document.getElementById("status");
 const startBtn = document.getElementById("startBtn");
 const countdownEl = document.getElementById("countdown");
+const speedEl = document.getElementById("speed");
 
 let leds = [];
 
@@ -59,6 +62,10 @@ socket.on("gameStart", () => {
 socket.on("state", (state) => {
   leds = state.leds;
   scoreEl.textContent = state.score;
+
+  if (state.speed) {
+    speedEl.textContent = state.speed;
+  }
 });
 
 function draw() {
