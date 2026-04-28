@@ -13,15 +13,68 @@ let leds = Array(ledCount).fill("gray");
 let shots = [];
 let score = 0;
 
-const colors = ["red","green","blue"];
+let gameState = "lobby"; // lobby | countdown | playing
+let players = {}; // socket.id -> color
 
+const colors = ["red", "green", "blue"];
+
+// JOIN PLAYER
 io.on("connection", (socket) => {
+
+  socket.on("join", (color) => {
+    players[socket.id] = color;
+    io.emit("lobby", { playerCount: Object.keys(players).length });
+  });
+
+  socket.on("startGame", () => {
+    if (Object.keys(players).length < 3) return;
+    startCountdown();
+  });
+
   socket.on("shoot", (color) => {
+    if (gameState !== "playing") return;
     shots.push({ index: ledCount - 1, color });
   });
+
+  socket.on("disconnect", () => {
+    delete players[socket.id];
+    io.emit("lobby", { playerCount: Object.keys(players).length });
+  });
+
 });
 
+function startCountdown() {
+  gameState = "countdown";
+  let count = 3;
+
+  io.emit("countdown", count);
+
+  const interval = setInterval(() => {
+    count--;
+
+    if (count > 0) {
+      io.emit("countdown", count);
+    } else {
+      clearInterval(interval);
+      startGame();
+    }
+  }, 1000);
+}
+
+function startGame() {
+  gameState = "playing";
+  leds = Array(ledCount).fill("gray");
+  shots = [];
+  score = 0;
+  io.emit("gameStart");
+}
+
 setInterval(() => {
+
+  if (gameState !== "playing") {
+    io.emit("state", { leds, score, gameState });
+    return;
+  }
 
   if (leds[ledCount - 1] !== "gray") {
     leds = Array(ledCount).fill("gray");
@@ -33,7 +86,7 @@ setInterval(() => {
     leds[i] = leds[i - 1];
   }
 
-  leds[0] = colors[Math.floor(Math.random()*3)];
+  leds[0] = colors[Math.floor(Math.random() * 3)];
 
   shots.forEach(s => s.index--);
 
@@ -46,7 +99,7 @@ setInterval(() => {
     return s.index >= 0;
   });
 
-  io.emit("state", { leds, score });
+  io.emit("state", { leds, score, gameState });
 
 }, 200);
 
