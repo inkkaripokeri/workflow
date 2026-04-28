@@ -1,8 +1,11 @@
-<button onclick="shoot()">SHOOT Blue</button>
+<button onclick="shoot()">SHOOT BLUE</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
+
+socket.emit("join", "blue");
+
 function shoot() {
   socket.emit("shoot", "blue");
 }
