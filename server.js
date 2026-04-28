@@ -9,16 +9,28 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 const ledCount = 20;
+
 let leds = Array(ledCount).fill("gray");
 let shots = [];
 let score = 0;
 
-let gameState = "lobby"; // lobby | countdown | playing
-let players = {}; // socket.id -> color
+let gameState = "lobby";
+
+let players = {};
 
 const colors = ["red", "green", "blue"];
 
-// JOIN PLAYER
+// ⚡ SPEED SETTINGS
+let baseSpeed = 200;
+let minSpeed = 60;
+
+function getSpeed() {
+  const level = Math.floor(score / 10);
+  let speed = baseSpeed - level * 30;
+  if (speed < minSpeed) speed = minSpeed;
+  return speed;
+}
+
 io.on("connection", (socket) => {
 
   socket.on("join", (color) => {
@@ -66,13 +78,16 @@ function startGame() {
   leds = Array(ledCount).fill("gray");
   shots = [];
   score = 0;
+
   io.emit("gameStart");
+  gameLoop();
 }
 
-setInterval(() => {
+function gameLoop() {
 
   if (gameState !== "playing") {
     io.emit("state", { leds, score, gameState });
+    setTimeout(gameLoop, 200);
     return;
   }
 
@@ -99,9 +114,17 @@ setInterval(() => {
     return s.index >= 0;
   });
 
-  io.emit("state", { leds, score, gameState });
+  io.emit("state", {
+    leds,
+    score,
+    gameState,
+    speed: getSpeed()
+  });
 
-}, 200);
+  setTimeout(gameLoop, getSpeed());
+}
+
+gameLoop();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
