@@ -156,12 +156,13 @@ io.on("connection", (socket)=>{
     bullets.push({ y: LED_COUNT-1, color, letter });
   });
 
-  socket.on("disconnect", ()=>{
-    const c = socket.data.color;
-     if (c && lobby.players[c]?.id === socket.id)
-      lobby.players[c] = null;
-    }
-  });
+socket.on("disconnect", () => {
+  const c = socket.data.color;
+
+  if (c && lobby.players[c]?.id === socket.id) {
+    lobby.players[c] = null;
+  }
+});
 
 });
 
