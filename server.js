@@ -8,125 +8,125 @@ const io = new Server(server);
 
 app.use(express.static("public"));
 
-const ledCount = 20;
+const LED_COUNT = 50;
 
-let leds = Array(ledCount).fill("gray");
-let shots = [];
+let leds = Array(LED_COUNT).fill(null);
+let bullets = [];
 let score = 0;
+let running = false;
 
-let gameState = "lobby";
+let spawnGap = 0;
+let lastMove = Date.now();
+const moveInterval = 500;
 
-let players = {};
+const colors = ["red","green","blue"];
+const letters = ["A","B","C"];
 
-const colors = ["red", "green", "blue"];
-
-// ⚡ SPEED SETTINGS
-let baseSpeed = 200;
-let minSpeed = 60;
-
-function getSpeed() {
-  const level = Math.floor(score / 10);
-  let speed = baseSpeed - level * 30;
-  if (speed < minSpeed) speed = minSpeed;
-  return speed;
+function randomColor() {
+  return colors[Math.floor(Math.random()*colors.length)];
 }
 
+function randomLetter() {
+  return letters[Math.floor(Math.random()*letters.length)];
+}
+
+function spawnTop() {
+  if (spawnGap > 0) {
+    leds[0] = null;
+    spawnGap--;
+    return;
+  }
+
+  leds[0] = {
+    color: randomColor(),
+    letter: randomLetter()
+  };
+
+  spawnGap = Math.floor(Math.random()*3) + 1;
+}
+
+function getFirstBlockingIndex() {
+  for (let i = LED_COUNT - 1; i >= 0; i--) {
+    if (leds[i] !== null) return i;
+  }
+  return -1;
+}
+
+// 🎮 GAME LOOP (server)
+setInterval(() => {
+
+  if (!running) return;
+
+  const now = Date.now();
+
+  // LED move
+  if (now - lastMove > moveInterval) {
+
+    if (leds[LED_COUNT - 1] !== null) {
+      running = false;
+    }
+
+    for (let i = LED_COUNT - 1; i > 0; i--) {
+      leds[i] = leds[i - 1];
+    }
+
+    spawnTop();
+    lastMove = now;
+  }
+
+  // bullets move
+  bullets.forEach(b => b.y -= 0.5);
+
+  // collision
+  bullets = bullets.filter(b => {
+
+    const target = getFirstBlockingIndex();
+    if (target === -1) return false;
+
+    const led = leds[target];
+
+    if (Math.abs(b.y - target) < 0.5) {
+
+      if (led.color === b.color && led.letter === b.letter) {
+        leds[target] = null;
+        score++;
+      } else {
+        score = Math.max(0, score - 1);
+      }
+
+      return false;
+    }
+
+    return b.y >= 0;
+  });
+
+  io.emit("state", { leds, bullets, score, running });
+
+}, 1000/60);
+
+// 👇 SOCKET
 io.on("connection", (socket) => {
 
-  socket.on("join", (color) => {
-    players[socket.id] = color;
-    io.emit("lobby", { playerCount: Object.keys(players).length });
+  socket.on("start", () => {
+    leds = Array(LED_COUNT).fill(null);
+    bullets = [];
+    score = 0;
+    running = true;
+    lastMove = Date.now();
   });
 
-  socket.on("startGame", () => {
-    if (Object.keys(players).length < 3) return;
-    startCountdown();
-  });
+  socket.on("shoot", ({ color, letter }) => {
+    if (!running) return;
 
-  socket.on("shoot", (color) => {
-    if (gameState !== "playing") return;
-    shots.push({ index: ledCount - 1, color });
-  });
-
-  socket.on("disconnect", () => {
-    delete players[socket.id];
-    io.emit("lobby", { playerCount: Object.keys(players).length });
+    bullets.push({
+      y: LED_COUNT - 1,
+      color,
+      letter
+    });
   });
 
 });
 
-function startCountdown() {
-  gameState = "countdown";
-  let count = 3;
-
-  io.emit("countdown", count);
-
-  const interval = setInterval(() => {
-    count--;
-
-    if (count > 0) {
-      io.emit("countdown", count);
-    } else {
-      clearInterval(interval);
-      startGame();
-    }
-  }, 1000);
-}
-
-function startGame() {
-  gameState = "playing";
-  leds = Array(ledCount).fill("gray");
-  shots = [];
-  score = 0;
-
-  io.emit("gameStart");
-  gameLoop();
-}
-
-function gameLoop() {
-
-  if (gameState !== "playing") {
-    io.emit("state", { leds, score, gameState });
-    setTimeout(gameLoop, 200);
-    return;
-  }
-
-  if (leds[ledCount - 1] !== "gray") {
-    leds = Array(ledCount).fill("gray");
-    shots = [];
-    score = 0;
-  }
-
-  for (let i = ledCount - 1; i > 0; i--) {
-    leds[i] = leds[i - 1];
-  }
-
-  leds[0] = colors[Math.floor(Math.random() * 3)];
-
-  shots.forEach(s => s.index--);
-
-  shots = shots.filter(s => {
-    if (s.index >= 0 && leds[s.index] === s.color) {
-      leds[s.index] = "gray";
-      score++;
-      return false;
-    }
-    return s.index >= 0;
-  });
-
-  io.emit("state", {
-    leds,
-    score,
-    gameState,
-    speed: getSpeed()
-  });
-
-  setTimeout(gameLoop, getSpeed());
-}
-
-gameLoop();
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log("Running on port " + PORT);
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
