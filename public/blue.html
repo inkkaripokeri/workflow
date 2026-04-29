@@ -1,3 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blue Controller</title>
+
+<style>
+body {
+  background: blue;
+  margin: 0;
+  font-family: Arial;
+}
+
+button {
+  width: 100%;
+  padding: 20px;
+  margin: 10px 0;
+  font-size: 20px;
+}
+</style>
+</head>
+
+<body>
+
 <button onclick="shoot('A')">Blue A</button>
 <button onclick="shoot('B')">Blue B</button>
 <button onclick="shoot('C')">Blue C</button>
@@ -10,3 +34,6 @@ function shoot(letter) {
   socket.emit("shoot", { color: "blue", letter });
 }
 </script>
+
+</body>
+</html>
