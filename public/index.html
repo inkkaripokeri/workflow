@@ -36,9 +36,9 @@ socket.on("state", s => {
     "Waiting for players ("+count+"/3)";
 
   document.getElementById("players").innerHTML =
-    "RED: "+(p.red?"✅":"❌")+"<br>"+
-    "GREEN: "+(p.green?"✅":"❌")+"<br>"+
-    "BLUE: "+(p.blue?"✅":"❌");
+    "RED: "+(p.red ? p.red.name : "❌")+"<br>"+
+    "GREEN: "+(p.green ? p.green.name : "❌")+"<br>"+
+    "BLUE: "+(p.blue ? p.blue.name : "❌");
 
   document.getElementById("startBtn").disabled = count !== 3;
 
