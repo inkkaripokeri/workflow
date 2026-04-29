@@ -21,9 +21,13 @@ let lobby = {};
 
 function newLobby() {
   lobby = {
-    code: Math.floor(1000 + Math.random()*9000).toString(),
-    players: { red:null, green:null, blue:null }
-  };
+  code: Math.floor(1000 + Math.random()*9000).toString(),
+  players: {
+    red: null,
+    green: null,
+    blue: null
+  }
+};
 }
 newLobby();
 
@@ -116,22 +120,26 @@ io.on("connection", (socket)=>{
     resetGame();
   });
 
-  socket.on("join", ({ code, color }) => {
-
+  socket.on("join", ({ code, color, name }) => {
+  
     if (code !== lobby.code) {
       socket.emit("joinResult", { ok:false, msg:"Wrong code" });
       return;
     }
-
+  
     if (lobby.players[color]) {
       socket.emit("joinResult", { ok:false, msg:"Taken" });
       return;
     }
-
-    lobby.players[color] = socket.id;
+  
+    lobby.players[color] = {
+      id: socket.id,
+      name
+    };
+  
     socket.data.color = color;
-
-    socket.emit("joinResult", { ok:true });
+  
+    socket.emit("joinResult", { ok:true, name });
   });
 
   socket.on("start", ()=>{
@@ -150,7 +158,7 @@ io.on("connection", (socket)=>{
 
   socket.on("disconnect", ()=>{
     const c = socket.data.color;
-    if (c && lobby.players[c] === socket.id) {
+     if (c && lobby.players[c]?.id === socket.id)
       lobby.players[c] = null;
     }
   });
