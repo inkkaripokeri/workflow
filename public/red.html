@@ -1,12 +1,18 @@
-<body style="background:red">
+<!DOCTYPE html>
+<body style="background:red; color:white; font-family:Arial">
 
-<input id="code" placeholder="Enter code">
-<button onclick="join()">JOIN</button>
+<div id="joinUI">
+  <input id="name" placeholder="Your name"><br>
+  <input id="code" placeholder="Code"><br>
+  <button onclick="join()">JOIN</button>
+</div>
 
-<div id="controls" style="display:none">
-<button onclick="shoot('A')">Red A</button>
-<button onclick="shoot('B')">Red B</button>
-<button onclick="shoot('C')">Red C</button>
+<div id="gameUI" style="display:none">
+  <h2 id="playerName"></h2>
+
+  <button onclick="shoot('A')">Red A</button>
+  <button onclick="shoot('B')">Red B</button>
+  <button onclick="shoot('C')">Red C</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -14,13 +20,21 @@
 const socket = io();
 
 function join(){
-  socket.emit("join", { code: code.value, color:"red" });
+  socket.emit("join", {
+    code: code.value,
+    color:"red",
+    name: name.value || "Player"
+  });
 }
 
 socket.on("joinResult", r=>{
   if(r.ok){
-    controls.style.display="block";
-  } else alert(r.msg);
+    joinUI.style.display="none";
+    gameUI.style.display="block";
+    playerName.textContent = r.name;
+  } else {
+    alert(r.msg);
+  }
 });
 
 function shoot(letter){
