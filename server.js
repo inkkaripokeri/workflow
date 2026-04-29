@@ -10,24 +10,37 @@ app.use(express.static("public"));
 
 const LED_COUNT = 50;
 
-let leds = Array(LED_COUNT).fill(null);
-let bullets = [];
-let score = 0;
-let running = false;
+let leds, bullets, score, running;
+let lastMove, spawnGap;
 
-let spawnGap = 0;
-let lastMove = Date.now();
 const moveInterval = 500;
-
 const colors = ["red","green","blue"];
 const letters = ["A","B","C"];
 
-function randomColor() {
-  return colors[Math.floor(Math.random()*colors.length)];
-}
+let lobby = {};
 
+function newLobby() {
+  lobby = {
+    code: Math.floor(1000 + Math.random()*9000).toString(),
+    players: { red:null, green:null, blue:null }
+  };
+}
+newLobby();
+
+function resetGame() {
+  leds = Array(LED_COUNT).fill(null);
+  bullets = [];
+  score = 0;
+  running = false;
+  spawnGap = 0;
+}
+resetGame();
+
+function randomColor() {
+  return colors[Math.floor(Math.random()*3)];
+}
 function randomLetter() {
-  return letters[Math.floor(Math.random()*letters.length)];
+  return letters[Math.floor(Math.random()*3)];
 }
 
 function spawnTop() {
@@ -36,97 +49,112 @@ function spawnTop() {
     spawnGap--;
     return;
   }
-
-  leds[0] = {
-    color: randomColor(),
-    letter: randomLetter()
-  };
-
-  spawnGap = Math.floor(Math.random()*3) + 1;
+  leds[0] = { color: randomColor(), letter: randomLetter() };
+  spawnGap = Math.floor(Math.random()*3)+1;
 }
 
 function getFirstBlockingIndex() {
-  for (let i = LED_COUNT - 1; i >= 0; i--) {
-    if (leds[i] !== null) return i;
+  for (let i=LED_COUNT-1;i>=0;i--) {
+    if (leds[i]) return i;
   }
   return -1;
 }
 
-// 🎮 GAME LOOP (server)
-setInterval(() => {
+// 🎮 GAME LOOP
+setInterval(()=>{
 
-  if (!running) return;
+  if (!running) {
+    io.emit("state", { leds, bullets, score, running, lobby });
+    return;
+  }
 
   const now = Date.now();
 
-  // LED move
   if (now - lastMove > moveInterval) {
 
-    if (leds[LED_COUNT - 1] !== null) {
+    if (leds[LED_COUNT-1]) {
       running = false;
     }
 
-    for (let i = LED_COUNT - 1; i > 0; i--) {
-      leds[i] = leds[i - 1];
+    for (let i=LED_COUNT-1;i>0;i--) {
+      leds[i] = leds[i-1];
     }
 
     spawnTop();
     lastMove = now;
   }
 
-  // bullets move
   bullets.forEach(b => b.y -= 0.5);
 
-  // collision
   bullets = bullets.filter(b => {
-
     const target = getFirstBlockingIndex();
     if (target === -1) return false;
 
     const led = leds[target];
 
     if (Math.abs(b.y - target) < 0.5) {
-
       if (led.color === b.color && led.letter === b.letter) {
         leds[target] = null;
         score++;
       } else {
         score = Math.max(0, score - 1);
       }
-
       return false;
     }
-
     return b.y >= 0;
   });
 
-  io.emit("state", { leds, bullets, score, running });
+  io.emit("state", { leds, bullets, score, running, lobby });
 
 }, 1000/60);
 
-// 👇 SOCKET
-io.on("connection", (socket) => {
+// 🔌 SOCKET
+io.on("connection", (socket)=>{
 
-  socket.on("start", () => {
-    leds = Array(LED_COUNT).fill(null);
-    bullets = [];
-    score = 0;
-    running = true;
-    lastMove = Date.now();
+  socket.on("resetLobby", ()=>{
+    newLobby();
+    resetGame();
   });
 
-  socket.on("shoot", ({ color, letter }) => {
+  socket.on("join", ({ code, color }) => {
+
+    if (code !== lobby.code) {
+      socket.emit("joinResult", { ok:false, msg:"Wrong code" });
+      return;
+    }
+
+    if (lobby.players[color]) {
+      socket.emit("joinResult", { ok:false, msg:"Taken" });
+      return;
+    }
+
+    lobby.players[color] = socket.id;
+    socket.data.color = color;
+
+    socket.emit("joinResult", { ok:true });
+  });
+
+  socket.on("start", ()=>{
+    const count = Object.values(lobby.players).filter(Boolean).length;
+    if (count === 3) {
+      running = true;
+      lastMove = Date.now();
+    }
+  });
+
+  socket.on("shoot", ({ color, letter })=>{
     if (!running) return;
 
-    bullets.push({
-      y: LED_COUNT - 1,
-      color,
-      letter
-    });
+    bullets.push({ y: LED_COUNT-1, color, letter });
+  });
+
+  socket.on("disconnect", ()=>{
+    const c = socket.data.color;
+    if (c && lobby.players[c] === socket.id) {
+      lobby.players[c] = null;
+    }
   });
 
 });
 
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+server.listen(3000, ()=>console.log("Server running"));
