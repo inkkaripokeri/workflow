@@ -1,84 +1,70 @@
-<canvas id="game" width="200" height="500"></canvas>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LED Game</title>
+</head>
 
-<div id="ui">
-  <h2 id="status">Waiting for players...</h2>
+<body>
 
-  <div>Players: <span id="players">0</span></div>
-  <div>Score: <span id="score">0</span></div>
-  <div>Speed: <span id="speed">-</span> ms</div>
-
-  <button id="startBtn" style="display:none;">START GAME</button>
-
-  <h1 id="countdown"></h1>
-</div>
+<canvas id="game"></canvas>
+<h2>Score: <span id="score">0</span></h2>
+<button onclick="start()">START</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-const socket = io();
 
+const socket = io();
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const scoreEl = document.getElementById("score");
-const playersEl = document.getElementById("players");
-const statusEl = document.getElementById("status");
-const startBtn = document.getElementById("startBtn");
-const countdownEl = document.getElementById("countdown");
-const speedEl = document.getElementById("speed");
+canvas.width = 140;
+canvas.height = window.innerHeight * 0.9;
 
 let leds = [];
-
-socket.on("connect", () => {
-  socket.emit("join", "viewer");
-});
-
-socket.on("lobby", (data) => {
-  playersEl.textContent = data.playerCount;
-
-  if (data.playerCount >= 3) {
-    statusEl.textContent = "Ready!";
-    startBtn.style.display = "block";
-  } else {
-    statusEl.textContent = "Waiting for players...";
-    startBtn.style.display = "none";
-  }
-});
-
-startBtn.onclick = () => {
-  socket.emit("startGame");
-  startBtn.style.display = "none";
-};
-
-socket.on("countdown", (num) => {
-  countdownEl.textContent = num;
-  statusEl.textContent = "Starting...";
-});
-
-socket.on("gameStart", () => {
-  countdownEl.textContent = "";
-  statusEl.textContent = "GO!";
-});
+let bullets = [];
 
 socket.on("state", (state) => {
   leds = state.leds;
-  scoreEl.textContent = state.score;
-
-  if (state.speed) {
-    speedEl.textContent = state.speed;
-  }
+  bullets = state.bullets;
+  document.getElementById("score").textContent = state.score;
 });
 
+function start() {
+  socket.emit("start");
+}
+
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
   const h = canvas.height / leds.length;
 
-  leds.forEach((c, i) => {
-    ctx.fillStyle = c === "gray" ? "#333" : c;
-    ctx.fillRect(50, i * h + 5, 100, h - 10);
+  leds.forEach((c,i)=>{
+    if (!c) {
+      ctx.fillStyle = "#333";
+    } else {
+      ctx.fillStyle = c.color;
+    }
+
+    ctx.fillRect(10, i*h, 100, h-2);
+
+    if (c) {
+      ctx.fillStyle = "white";
+      ctx.fillText(c.letter, 60, i*h+12);
+    }
+  });
+
+  bullets.forEach(b=>{
+    ctx.fillStyle = b.color;
+    ctx.fillRect(50, b.y*h, 40, h/2);
   });
 
   requestAnimationFrame(draw);
 }
+
 draw();
+
 </script>
+
+</body>
+</html>
