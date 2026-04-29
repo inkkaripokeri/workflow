@@ -1,9 +1,18 @@
 <!DOCTYPE html>
-<body style="background:blue; color:white; font-family:Arial">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blue Controller</title>
+</head>
+
+<body style="background:blue; color:white; font-family:Arial; margin:0; padding:20px;">
 
 <div id="joinUI">
-  <input id="name" placeholder="Your name"><br>
-  <input id="code" placeholder="Code"><br>
+  <h2>BLUE PLAYER</h2>
+
+  <input id="name" placeholder="Your name"><br><br>
+  <input id="code" placeholder="Game code"><br><br>
+
   <button onclick="join()">JOIN</button>
 </div>
 
@@ -19,18 +28,22 @@
 <script>
 const socket = io();
 
+const joinUI = document.getElementById("joinUI");
+const gameUI = document.getElementById("gameUI");
+const playerName = document.getElementById("playerName");
+
 function join(){
   socket.emit("join", {
-    code: code.value,
-    color:"blue",
-    name: name.value || "Player"
+    code: document.getElementById("code").value,
+    name: document.getElementById("name").value || "Player",
+    color: "blue"
   });
 }
 
-socket.on("joinResult", r=>{
+socket.on("joinResult", (r)=>{
   if(r.ok){
-    joinUI.style.display="none";
-    gameUI.style.display="block";
+    joinUI.style.display = "none";
+    gameUI.style.display = "block";
     playerName.textContent = r.name;
   } else {
     alert(r.msg);
@@ -38,7 +51,9 @@ socket.on("joinResult", r=>{
 });
 
 function shoot(letter){
-  socket.emit("shoot",{ color:"blue", letter });
+  socket.emit("shoot", { color:"blue", letter });
 }
 </script>
+
 </body>
+</html>
