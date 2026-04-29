@@ -1,69 +1,77 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>LED Game</title>
-</head>
-
 <body>
+
+<h2>CODE: <span id="code"></span></h2>
+<h3 id="status">Waiting for players (0/3)</h3>
+
+<div id="players"></div>
+
+<button id="startBtn" onclick="start()" disabled>START</button>
 
 <canvas id="game"></canvas>
 <h2>Score: <span id="score">0</span></h2>
-<button onclick="start()">START</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-
 const socket = io();
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 canvas.width = 140;
-canvas.height = window.innerHeight * 0.9;
+canvas.height = window.innerHeight*0.8;
 
-let leds = [];
-let bullets = [];
+let leds=[], bullets=[];
 
-socket.on("state", (state) => {
-  leds = state.leds;
-  bullets = state.bullets;
-  document.getElementById("score").textContent = state.score;
+socket.emit("resetLobby");
+
+socket.on("state", s => {
+
+  document.getElementById("code").textContent = s.lobby.code;
+
+  const p = s.lobby.players;
+  const count = Object.values(p).filter(Boolean).length;
+
+  document.getElementById("status").textContent =
+    "Waiting for players ("+count+"/3)";
+
+  document.getElementById("players").innerHTML =
+    "RED: "+(p.red?"✅":"❌")+"<br>"+
+    "GREEN: "+(p.green?"✅":"❌")+"<br>"+
+    "BLUE: "+(p.blue?"✅":"❌");
+
+  document.getElementById("startBtn").disabled = count !== 3;
+
+  leds = s.leds;
+  bullets = s.bullets;
+  document.getElementById("score").textContent = s.score;
 });
 
 function start() {
   socket.emit("start");
 }
 
-function draw() {
+function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  const h = canvas.height / leds.length;
+  const h = canvas.height/leds.length;
 
   leds.forEach((c,i)=>{
-    if (!c) {
-      ctx.fillStyle = "#333";
-    } else {
-      ctx.fillStyle = c.color;
-    }
-
-    ctx.fillRect(10, i*h, 100, h-2);
-
-    if (c) {
-      ctx.fillStyle = "white";
-      ctx.fillText(c.letter, 60, i*h+12);
+    ctx.fillStyle = c?c.color:"#333";
+    ctx.fillRect(10,i*h,100,h-2);
+    if(c){
+      ctx.fillStyle="white";
+      ctx.fillText(c.letter,60,i*h+12);
     }
   });
 
   bullets.forEach(b=>{
-    ctx.fillStyle = b.color;
-    ctx.fillRect(50, b.y*h, 40, h/2);
+    ctx.fillStyle=b.color;
+    ctx.fillRect(50,b.y*h,40,h/2);
   });
 
   requestAnimationFrame(draw);
 }
-
 draw();
-
 </script>
 
 </body>
