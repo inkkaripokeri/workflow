@@ -74,7 +74,7 @@ body {
   max-width: 1200px;
   margin: 40px auto;
 
-  gap: 0; /* 🔥 tärkeä */
+  gap: 0; /* tärkeä */
   padding: 0 20px;
 }
 
@@ -87,31 +87,32 @@ body {
   padding: 0 20px;
 }
 
-/* 🔥 UUSI KESKITETTY VIIVA */
+/* 🔥 OIKEAT PYSTYVIIVAT */
 .step:not(:last-child)::after {
   content: "";
   position: absolute;
 
-  top: 50%;
-  right: -50%;
-  transform: translateY(-50%);
+  top: 10%;
+  height: 80%;
 
-  width: 100%;
-  border-top: 2px dashed rgba(255,255,255,0.4);
+  right: -50%;                 /* 🔥 keskelle väliä */
+  transform: translateX(50%);  /* 🔥 tarkka keskitys */
+
+  border-right: 2px dashed rgba(255,255,255,0.4);
 }
 
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 72px; /* 🔥 oikeasti iso */
-  font-weight: 700;
+  font-size: 48px; /* 🔥 oikeasti iso */
+  font-weight: 500;
   line-height: 1;
 }
 
 /* otsikko */
 .step-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 500;
   margin-top: 10px;
 }
 
