@@ -1,8 +1,113 @@
+body {
+  margin: 0;
+  background: #05060c;
+  color: #fff;
+  font-family: "Roboto Condensed", Arial, sans-serif;
+}
+
+/* ================= SCREEN ================= */
+.screen {
+  display: none;
+}
+.screen.active {
+  display: block;
+}
+
+/* ================= START ================= */
+#start-screen.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 40px;
+}
+
+#start-screen img {
+  width: 420px;
+  max-width: 90%;
+}
+
+/* ================= BUTTON ================= */
+.button {
+  padding: 18px 70px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  border: 3px solid #ff8c00;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(255,140,0,0.15);
+}
+
+.button:disabled {
+  opacity: 0.4;
+}
+
+/* ================= LOBBY ================= */
+.header {
+  text-align: center;
+  margin-top: 20px;
+}
+.header img {
+  width: 260px;
+}
+
+/* steps */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  padding: 40px;
+}
+
+.step {
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -15px;
+  top: 10px;
+  height: 90%;
+  border-right: 2px dashed rgba(255,255,255,0.4);
+}
+
+.step-number {
+  color: #ff8c00;
+  font-weight: 700;
+}
+
+.qr {
+  width: 120px;
+}
+
+/* game id */
+.game-id {
+  border: 2px solid white;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 28px;
+  letter-spacing: 10px;
+  display: inline-block;
+}
+
 /* ================= PLAYERS ================= */
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  text-align: center;
+}
 
 .player {
   position: relative;
-  text-align: center;
 }
 
 .player img {
@@ -56,4 +161,10 @@
 }
 .waiting {
   opacity: 0.6;
+}
+
+/* continue button */
+.continue-wrapper {
+  text-align: center;
+  margin-top: 40px;
 }
