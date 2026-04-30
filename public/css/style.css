@@ -70,7 +70,6 @@ body {
 .steps {
   display: grid;
 
-  /* 🔥 7 column layout: STEP | LINE | STEP | LINE | STEP | LINE | STEP */
   grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
 
   max-width: 1200px;
@@ -78,11 +77,21 @@ body {
   align-items: center;
 }
 
-/* step */
 .step {
-  text-align: center;
+  text-align: left;
   max-width: 300px;
   margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 🔥 HEADER RIVI (NUMERO + TITLE) */
+.step-header {
+  display: flex;
+  align-items: flex-start; /* tasaa yläreunaan */
+  gap: 12px;
 }
 
 /* 🔥 VIIVA ELEMENTTINÄ */
@@ -95,16 +104,16 @@ body {
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 48px; /* 🔥 oikeasti iso */
-  font-weight: 500;
+  font-size: 64px;   /* 🔥 selvästi isompi */
+  font-weight: 700;
   line-height: 1;
 }
 
 /* otsikko */
 .step-title {
-  font-size: 24px;
-  font-weight: 500;
-  margin-top: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 /* lisäteksti */
