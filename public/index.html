@@ -1,77 +1,314 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Taskflow</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
+
+<style>
+body {
+  margin: 0;
+  background: #05060c;
+  color: #fff;
+  font-family: "Roboto Condensed", Arial, sans-serif;
+}
+
+/* ===== SCREENS ===== */
+.screen {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+/* ===== START ===== */
+#start-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#start-screen img {
+  width: 420px;
+  max-width: 90%;
+}
+
+.button {
+  margin-top: 40px;
+  padding: 18px 72px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  background: transparent;
+  color: #fff;
+  border: 3px solid #ff8c00;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(255,140,0,0.15);
+}
+
+.button:disabled {
+  opacity: 0.35;
+}
+
+/* ===== LOBBY ===== */
+#lobby-screen {
+  padding: 40px 60px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header img {
+  max-width: 420px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.step {
+  position: relative;
+  padding-right: 24px;
+}
+
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  height: 90%;
+  border-right: 2px dashed rgba(255,255,255,0.6);
+}
+
+.step-number {
+  color: #ff8c00;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.step-body {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.player {
+  text-align: center;
+}
+
+.player img {
+  width: 140px;
+  border-radius: 16px;
+}
+
+.player-name {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.continue-wrapper {
+  align-self: center;
+}
+
+/* ===== GAME ===== */
+#game-screen {
+  text-align: center;
+}
+
+#game-screen img {
+  width: 300px;
+  margin-top: 20px;
+}
+
+canvas {
+  display: block;
+  margin-top: 20px;
+}
+</style>
+</head>
+
 <body>
 
-<h2>CODE: <span id="code"></span></h2>
-<h3 id="status">Waiting for players (0/3)</h3>
+<!-- ===== START ===== -->
+<div id="start-screen" class="screen active">
+  <img src="logo_taskflow.png">
+  <button class="button" id="startContinue">Continue</button>
+</div>
 
-<div id="players"></div>
+<!-- ===== LOBBY ===== -->
+<div id="lobby-screen" class="screen">
 
-<button id="startBtn" onclick="start()" disabled>START</button>
+  <div class="header">
+    <img src="logo_taskflow.png">
+  </div>
 
-<canvas id="game"></canvas>
-<h2>Score: <span id="score">0</span></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1.</div>
+      <div class="step-title">Scan QR</div>
+    </div>
 
-<script src="/socket.io/socket.io.js"></script>
+    <div class="step">
+      <div class="step-number">2.</div>
+      <div class="step-title">Choose Role</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3.</div>
+      <div class="step-title">Enter Game ID</div>
+      <div id="gameId">0000</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4.</div>
+      <div class="step-title">Join</div>
+    </div>
+  </div>
+
+  <div class="players">
+    <div class="player" data-connected="true">
+      <img src="designer.png">
+      <div class="player-name">Designer</div>
+    </div>
+
+    <div class="player" data-connected="true">
+      <img src="developer.png">
+      <div class="player-name">Developer</div>
+    </div>
+
+    <div class="player" data-connected="true">
+      <img src="testengineer.png">
+      <div class="player-name">Tester</div>
+    </div>
+
+    <div class="continue-wrapper">
+      <button class="button" id="lobbyContinue">Start Game</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== GAME ===== -->
+<div id="game-screen" class="screen">
+  <img src="logo_taskflow.png">
+  <canvas id="game"></canvas>
+</div>
+
 <script>
-const socket = io();
+/* ===== SCREEN SYSTEM ===== */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ===== START → LOBBY ===== */
+document.getElementById("startContinue").onclick = () => {
+  showScreen("lobby-screen");
+};
+
+/* ===== LOBBY → GAME ===== */
+document.getElementById("lobbyContinue").onclick = () => {
+  showScreen("game-screen");
+  startGame();
+};
+
+/* ===== GAME ID ===== */
+document.getElementById("gameId").textContent =
+  Math.floor(1000 + Math.random() * 9000);
+
+/* ===== CANVAS GAME ===== */
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 140;
-canvas.height = window.innerHeight*0.8;
+const COUNT = 14;
 
-let leds=[], bullets=[];
+const labels = new Array(COUNT).fill(null);
+const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-socket.emit("resetLobby");
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight * 0.6;
+}
+window.addEventListener("resize", resize);
 
-socket.on("state", s => {
-
-  document.getElementById("code").textContent = s.lobby.code;
-
-  const p = s.lobby.players;
-  const count = Object.values(p).filter(Boolean).length;
-
-  document.getElementById("status").textContent =
-    "Waiting for players ("+count+"/3)";
-
-  document.getElementById("players").innerHTML =
-    "RED: "+(p.red ? p.red.name : "❌")+"<br>"+
-    "GREEN: "+(p.green ? p.green.name : "❌")+"<br>"+
-    "BLUE: "+(p.blue ? p.blue.name : "❌");
-
-  document.getElementById("startBtn").disabled = count !== 3;
-
-  leds = s.leds;
-  bullets = s.bullets;
-  document.getElementById("score").textContent = s.score;
-});
-
-function start() {
-  socket.emit("start");
+function drawRoundedRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
 }
 
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  const h = canvas.height/leds.length;
 
-  leds.forEach((c,i)=>{
-    ctx.fillStyle = c?c.color:"#333";
-    ctx.fillRect(10,i*h,100,h-2);
-    if(c){
-      ctx.fillStyle="white";
-      ctx.fillText(c.letter,60,i*h+12);
-    }
-  });
+  const margin = canvas.width * 0.02;
+  const usableWidth = canvas.width * 0.96;
 
-  bullets.forEach(b=>{
-    ctx.fillStyle=b.color;
-    ctx.fillRect(50,b.y*h,40,h/2);
-  });
+  const gapRatio = 0.10;
+  const boxWidth = usableWidth / (COUNT + gapRatio * (COUNT - 1));
+  const gap = boxWidth * gapRatio;
+  const boxHeight = boxWidth * 0.5;
+
+  const startY = canvas.height * 0.3;
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  for(let i=0;i<COUNT;i++){
+    const x = margin + i*(boxWidth+gap);
+    const y = startY;
+    const cx = x + boxWidth/2;
+
+    ctx.fillStyle="#fff";
+    ctx.fillText(weekdays[i%7],cx,y-20);
+
+    drawRoundedRect(x,y,boxWidth,boxHeight,8);
+    ctx.fillStyle="#66ff88";
+    ctx.fill();
+  }
 
   requestAnimationFrame(draw);
 }
-draw();
+
+function startGame(){
+  resize();
+  draw();
+}
 </script>
 
 </body>
