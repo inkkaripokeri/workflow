@@ -1,73 +1,30 @@
-// socket.js
-
 import { UI } from "./ui.js";
+
+const socket = io();
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const socket = io();
-
-  let lobby = null;
-
-  console.log("socket.js loaded");
-
-  // =========================
-  // START SCREEN
-  // =========================
-  UI.setStartHandlers(() => {
-    console.log("START CLICKED");
+  document.getElementById("startBtn").onclick = () => {
+    UI.animateToLobby();
     socket.emit("resetLobby");
-  });
+  };
 
-  // =========================
-  // LOBBY FLOW
-  // =========================
-  UI.setLobbyHandlers({
-    onContinue: () => {
-      console.log("CONTINUE CLICKED");
-      // siirtyminen hoidetaan UI:ssa
-    },
-    onStartGame: () => {
-      console.log("START GAME CLICKED");
-      socket.emit("start");
-    }
-  });
+  document.getElementById("lobbyBtn").onclick = () => {
+    console.log("continue...");
+  };
 
-  // =========================
-  // RECEIVE STATE
-  // =========================
-  socket.on("state", (state) => {
+  socket.on("state", (s) => {
 
-    if (!state || !state.lobby) return;
+    if (!s || !s.lobby) return;
 
-    lobby = state.lobby;
+    UI.renderGameId(s.lobby.code);
+    UI.renderPlayers(s.lobby.players);
 
-    // render players
-    UI.renderPlayers(lobby.players);
+    const p = s.lobby.players;
 
-    const count = Object.values(lobby.players || {}).filter(Boolean).length;
+    const ready = p.designer && p.developer && p.tester;
 
-    const btn = document.getElementById("lobbyContinue");
-
-    if (btn) {
-      if (count === 3 && state.gameState === "ready") {
-        btn.disabled = false;
-        btn.textContent = "CONTINUE";
-      } else {
-        btn.disabled = true;
-        btn.textContent = "WAITING...";
-      }
-    }
-
-    // =========================
-    // AUTO STATE TRANSITIONS
-    // =========================
-    if (state.gameState === "running") {
-      UI.show("game");
-    } 
-    else if (state.gameState === "ready") {
-      UI.show("pregame");
-    }
-
+    document.getElementById("lobbyBtn").disabled = !ready;
   });
 
 });
