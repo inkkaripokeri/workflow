@@ -2,16 +2,30 @@ import { UI } from "./ui.js";
 
 const socket = io();
 
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
 
-  document.getElementById("startBtn").onclick = () => {
+  console.log("DOM READY");
+
+  const startBtn = document.getElementById("startBtn");
+  const lobbyBtn = document.getElementById("lobbyBtn");
+
+  if (!startBtn) {
+    console.error("startBtn NOT FOUND");
+    return;
+  }
+
+  startBtn.addEventListener("click", () => {
+    console.log("START CLICKED");
+
     UI.animateToLobby();
     socket.emit("resetLobby");
-  };
+  });
 
-  document.getElementById("lobbyBtn").onclick = () => {
-    console.log("continue...");
-  };
+  if (lobbyBtn) {
+    lobbyBtn.addEventListener("click", () => {
+      console.log("CONTINUE CLICKED");
+    });
+  }
 
   socket.on("state", (s) => {
 
@@ -24,7 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ready = p.designer && p.developer && p.tester;
 
-    document.getElementById("lobbyBtn").disabled = !ready;
+    const btn = document.getElementById("lobbyBtn");
+    if (btn) btn.disabled = !ready;
   });
 
 });
