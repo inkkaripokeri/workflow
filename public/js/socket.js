@@ -2,51 +2,72 @@
 
 import { UI } from "./ui.js";
 
-const socket = io();
+document.addEventListener("DOMContentLoaded", () => {
 
-let lobby = null;
+  const socket = io();
 
-// START SCREEN
-UI.setStartHandlers(() => {
-  socket.emit("resetLobby");
-});
+  let lobby = null;
 
-// LOBBY FLOW
-UI.setLobbyHandlers({
-  onContinue: () => {
-    // siirry pregameen (server state voi myös ohjata)
-  },
-  onStartGame: () => {
-    socket.emit("start");
-  }
-});
+  console.log("socket.js loaded");
 
-// RECEIVE STATE
-socket.on("state", (state) => {
+  // =========================
+  // START SCREEN
+  // =========================
+  UI.setStartHandlers(() => {
+    console.log("START CLICKED");
+    socket.emit("resetLobby");
+  });
 
-  lobby = state.lobby;
+  // =========================
+  // LOBBY FLOW
+  // =========================
+  UI.setLobbyHandlers({
+    onContinue: () => {
+      console.log("CONTINUE CLICKED");
+      // siirtyminen hoidetaan UI:ssa
+    },
+    onStartGame: () => {
+      console.log("START GAME CLICKED");
+      socket.emit("start");
+    }
+  });
 
-  // render players always
-  UI.renderPlayers(lobby.players);
+  // =========================
+  // RECEIVE STATE
+  // =========================
+  socket.on("state", (state) => {
 
-  const count = Object.values(lobby.players).filter(Boolean).length;
+    if (!state || !state.lobby) return;
 
-  const btn = document.getElementById("lobbyContinue");
+    lobby = state.lobby;
 
-  if (count === 3 && state.gameState === "ready") {
-    btn.disabled = false;
-    btn.textContent = "CONTINUE";
-  } else {
-    btn.disabled = true;
-    btn.textContent = "WAITING...";
-  }
+    // render players
+    UI.renderPlayers(lobby.players);
 
-  // AUTO STATE TRANSITIONS
-  if (state.gameState === "running") {
-    UI.show("game");
-  }
+    const count = Object.values(lobby.players || {}).filter(Boolean).length;
 
-  if (state.gameState === "ready") {
-    UI.show("pregame");
-  }
+    const btn = document.getElementById("lobbyContinue");
+
+    if (btn) {
+      if (count === 3 && state.gameState === "ready") {
+        btn.disabled = false;
+        btn.textContent = "CONTINUE";
+      } else {
+        btn.disabled = true;
+        btn.textContent = "WAITING...";
+      }
+    }
+
+    // =========================
+    // AUTO STATE TRANSITIONS
+    // =========================
+    if (state.gameState === "running") {
+      UI.show("game");
+    } 
+    else if (state.gameState === "ready") {
+      UI.show("pregame");
+    }
+
+  });
+
 });
