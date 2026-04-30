@@ -29,11 +29,26 @@ body {
 
 h1 {
   font-size: 36px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   letter-spacing: 2px;
 }
 
-/* ===== ROLE ===== */
+/* ===== ROLE CARD ===== */
+.role-card {
+  width: 260px;
+  max-width: 90%;
+  margin: 10px auto 20px auto;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.role-card img {
+  width: 100%;
+  display: block;
+  border-radius: 24px;
+}
+
+/* ===== ROLE SELECT ===== */
 .role {
   margin-bottom: 40px;
   cursor: pointer;
@@ -49,19 +64,14 @@ h1 {
   width: 260px;
   max-width: 90%;
   border-radius: 24px;
-  border: 6px solid transparent;
   transition: 0.2s;
 }
-
-.role.dev img { border-color: #6c5ce7; }
-.role.test img { border-color: #00b894; }
-.role.design img { border-color: #f39c12; }
 
 .role:hover img {
   transform: scale(1.05);
 }
 
-/* ===== JOIN ===== */
+/* ===== INPUT ===== */
 .input {
   width: 80%;
   max-width: 300px;
@@ -73,6 +83,7 @@ h1 {
   text-align: center;
 }
 
+/* ===== BUTTON ===== */
 .button {
   margin-top: 20px;
   padding: 16px 50px;
@@ -89,11 +100,6 @@ h1 {
 .button:hover {
   background: rgba(255,140,0,0.2);
 }
-
-.status {
-  margin-top: 20px;
-  opacity: 0.7;
-}
 </style>
 </head>
 
@@ -104,17 +110,17 @@ h1 {
 
   <h1>SELECT ROLE</h1>
 
-  <div class="role dev" onclick="selectRole('developer')">
+  <div class="role" onclick="selectRole('developer')">
     <div class="role-title">DEVELOPER</div>
     <img src="developer.png">
   </div>
 
-  <div class="role test" onclick="selectRole('tester')">
+  <div class="role" onclick="selectRole('tester')">
     <div class="role-title">TEST ENGINEER</div>
     <img src="testengineer.png">
   </div>
 
-  <div class="role design" onclick="selectRole('designer')">
+  <div class="role" onclick="selectRole('designer')">
     <div class="role-title">DESIGNER</div>
     <img src="designer.png">
   </div>
@@ -126,14 +132,15 @@ h1 {
 
   <h1 id="roleTitle">JOIN GAME</h1>
 
+  <!-- ROLE CARD (uusi) -->
+  <div class="role-card" id="roleCard"></div>
+
   <input class="input" id="gameIdInput" placeholder="GAME ID" maxlength="4">
   <br>
   <input class="input" id="nameInput" placeholder="YOUR NAME">
   <br>
 
   <button class="button" onclick="joinGame()">JOIN</button>
-
-  <div class="status" id="status"></div>
 
 </div>
 
@@ -143,7 +150,6 @@ h1 {
 const socket = io();
 
 let role = null;
-let joined = false;
 
 /* ===== SCREEN SWITCH ===== */
 function showScreen(id) {
@@ -155,25 +161,30 @@ function showScreen(id) {
 function selectRole(selectedRole) {
   role = selectedRole;
 
+  const roleTitleMap = {
+    designer: "DESIGNER",
+    developer: "DEVELOPER",
+    tester: "TEST ENGINEER"
+  };
+
   document.getElementById("roleTitle").textContent =
-    "JOIN AS " + role.toUpperCase();
+    "JOIN AS " + roleTitleMap[role];
+
+  document.getElementById("roleCard").innerHTML = `
+    <img src="${role}.png">
+  `;
 
   showScreen("join-screen");
 }
 
-/* ===== JOIN GAME ===== */
+/* ===== JOIN ===== */
 function joinGame() {
 
   const gameId = document.getElementById("gameIdInput").value;
   const name = document.getElementById("nameInput").value;
 
-  if (!role) {
-    alert("Select role first");
-    return;
-  }
-
-  if (!gameId || !name) {
-    alert("Enter Game ID and Name");
+  if (!role || !gameId || !name) {
+    alert("Fill all fields");
     return;
   }
 
@@ -183,29 +194,8 @@ function joinGame() {
     name
   });
 
-  document.getElementById("status").textContent =
-    "Joining...";
+  alert("Joining...");
 }
-
-/* ===== SERVER RESPONSE ===== */
-socket.on("joinResult", (res) => {
-
-  if (!res.ok) {
-    document.getElementById("status").textContent =
-      "❌ " + res.msg;
-    return;
-  }
-
-  joined = true;
-
-  document.getElementById("status").textContent =
-    "✅ Joined as " + res.role + ". Waiting for players...";
-});
-
-/* ===== OPTIONAL: RESET ON CONNECT ===== */
-socket.on("connect", () => {
-  joined = false;
-});
 
 </script>
 
