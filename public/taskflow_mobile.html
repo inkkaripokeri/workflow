@@ -89,6 +89,11 @@ h1 {
 .button:hover {
   background: rgba(255,140,0,0.2);
 }
+
+.status {
+  margin-top: 20px;
+  opacity: 0.7;
+}
 </style>
 </head>
 
@@ -128,10 +133,17 @@ h1 {
 
   <button class="button" onclick="joinGame()">JOIN</button>
 
+  <div class="status" id="status"></div>
+
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+
+const socket = io();
+
 let role = null;
+let joined = false;
 
 /* ===== SCREEN SWITCH ===== */
 function showScreen(id) {
@@ -149,21 +161,52 @@ function selectRole(selectedRole) {
   showScreen("join-screen");
 }
 
-/* ===== JOIN ===== */
+/* ===== JOIN GAME ===== */
 function joinGame() {
+
   const gameId = document.getElementById("gameIdInput").value;
   const name = document.getElementById("nameInput").value;
+
+  if (!role) {
+    alert("Select role first");
+    return;
+  }
 
   if (!gameId || !name) {
     alert("Enter Game ID and Name");
     return;
   }
 
-  console.log("JOIN:", { role, gameId, name });
+  socket.emit("join", {
+    code: gameId,
+    role,
+    name
+  });
 
-  // 👉 tähän myöhemmin server connection
-  alert(`Joined as ${role}\nGame: ${gameId}\nName: ${name}`);
+  document.getElementById("status").textContent =
+    "Joining...";
 }
+
+/* ===== SERVER RESPONSE ===== */
+socket.on("joinResult", (res) => {
+
+  if (!res.ok) {
+    document.getElementById("status").textContent =
+      "❌ " + res.msg;
+    return;
+  }
+
+  joined = true;
+
+  document.getElementById("status").textContent =
+    "✅ Joined as " + res.role + ". Waiting for players...";
+});
+
+/* ===== OPTIONAL: RESET ON CONNECT ===== */
+socket.on("connect", () => {
+  joined = false;
+});
+
 </script>
 
 </body>
