@@ -17,7 +17,6 @@ body {
   text-align: center;
 }
 
-/* ===== COMMON ===== */
 .screen {
   display: none;
   padding: 40px 20px;
@@ -33,7 +32,7 @@ h1 {
   letter-spacing: 2px;
 }
 
-/* ===== ROLE CARD ===== */
+/* ROLE CARD */
 .role-card {
   width: 260px;
   max-width: 90%;
@@ -48,7 +47,7 @@ h1 {
   border-radius: 24px;
 }
 
-/* ===== ROLE SELECT ===== */
+/* ROLE SELECT */
 .role {
   margin-bottom: 40px;
   cursor: pointer;
@@ -71,7 +70,7 @@ h1 {
   transform: scale(1.05);
 }
 
-/* ===== INPUT ===== */
+/* INPUT */
 .input {
   width: 80%;
   max-width: 300px;
@@ -83,7 +82,7 @@ h1 {
   text-align: center;
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 .button {
   margin-top: 20px;
   padding: 16px 50px;
@@ -100,18 +99,12 @@ h1 {
 .button:hover {
   background: rgba(255,140,0,0.2);
 }
-
-/* ===== WAITING ===== */
-#waiting {
-  font-size: 22px;
-  opacity: 0.8;
-}
 </style>
 </head>
 
 <body>
 
-<!-- ===== ROLE SELECT ===== -->
+<!-- ROLE SELECT -->
 <div id="role-screen" class="screen active">
 
   <h1>SELECT ROLE</h1>
@@ -133,7 +126,7 @@ h1 {
 
 </div>
 
-<!-- ===== JOIN ===== -->
+<!-- JOIN -->
 <div id="join-screen" class="screen">
 
   <h1 id="roleTitle">JOIN GAME</h1>
@@ -149,7 +142,7 @@ h1 {
 
 </div>
 
-<!-- ===== WAITING ===== -->
+<!-- WAITING / READY -->
 <div id="waiting-screen" class="screen">
   <h1 id="waitingTitle">WAITING...</h1>
 
@@ -167,13 +160,13 @@ const socket = io();
 let role = null;
 let playerName = null;
 
-/* ===== SCREEN SWITCH ===== */
+/* SCREEN SWITCH */
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* ===== ROLE SELECT ===== */
+/* ROLE SELECT */
 function selectRole(selectedRole) {
   role = selectedRole;
 
@@ -192,7 +185,7 @@ function selectRole(selectedRole) {
   showScreen("join-screen");
 }
 
-/* ===== JOIN ===== */
+/* JOIN */
 function joinGame() {
 
   const gameId = document.getElementById("gameIdInput").value;
@@ -212,7 +205,7 @@ function joinGame() {
   });
 }
 
-/* ===== JOIN RESULT ===== */
+/* JOIN RESULT */
 socket.on("joinResult", (res) => {
 
   if (!res.ok) {
@@ -231,10 +224,30 @@ socket.on("joinResult", (res) => {
   showScreen("waiting-screen");
 });
 
-/* ===== STATE (future game sync) ===== */
+/* STATE FROM SERVER */
 socket.on("state", (s) => {
+
+  if (!s.gameState) return;
+
+  if (s.gameState === "waiting") {
+    document.getElementById("waitingText").textContent =
+      "Waiting for players...";
+  }
+
+  if (s.gameState === "ready") {
+    document.getElementById("waitingText").textContent =
+      "Waiting for the game to start...";
+  }
+
   if (s.gameState === "running") {
     // myöhemmin game screen
+    document.getElementById("waitingText").textContent =
+      "Game starting...";
+  }
+
+  if (s.gameState === "gameover") {
+    document.getElementById("waitingText").textContent =
+      "GAME OVER";
   }
 });
 
