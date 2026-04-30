@@ -104,21 +104,21 @@ body {
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 64px;   /* 🔥 selvästi isompi */
-  font-weight: 700;
+  font-size: 38px;   /* 🔥 selvästi isompi */
+  font-weight: 500;
   line-height: 1;
 }
 
 /* otsikko */
 .step-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 500;
   line-height: 1.2;
 }
 
 /* lisäteksti */
 .step-text {
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 6px;
 }
 
