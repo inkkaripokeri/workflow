@@ -17,6 +17,15 @@ body {
   font-family: "Roboto Condensed", Arial, sans-serif;
 }
 
+/* ===== SCREENS ===== */
+.screen {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
 /* ===== START ===== */
 #start-screen {
   min-height: 100vh;
@@ -33,7 +42,6 @@ body {
 
 /* ===== LOBBY ===== */
 #lobby-screen {
-  display: none;
   padding: 40px 60px;
 }
 
@@ -46,11 +54,19 @@ body {
   max-width: 420px;
 }
 
+/* titles */
+.section-title {
+  font-size: 22px;
+  margin: 20px 0 10px;
+  opacity: 0.9;
+}
+
 /* steps */
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
+  margin-bottom: 30px;
 }
 
 .step {
@@ -83,7 +99,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr) auto;
   gap: 40px;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .player {
@@ -98,21 +114,6 @@ body {
 .player-name {
   margin-top: 10px;
   font-weight: 700;
-}
-
-.continue-wrapper {
-  align-self: center;
-}
-
-/* ===== GAME ===== */
-#game-screen {
-  display: none;
-  text-align: center;
-}
-
-canvas {
-  display: block;
-  margin-top: 20px;
 }
 
 /* ===== BUTTON ===== */
@@ -131,19 +132,51 @@ canvas {
   cursor: pointer;
 }
 
-.button:hover:not(:disabled) {
-  background: rgba(255,140,0,0.15);
-}
-
 .button:disabled {
   opacity: 0.35;
 }
 
-/* GAME OVER */
-#gameover {
+.button:hover:not(:disabled) {
+  background: rgba(255,140,0,0.15);
+}
+
+/* ===== PRE GAME ===== */
+#pre-game {
+  padding: 30px;
+  text-align: center;
   display: none;
-  font-size: 48px;
-  margin-top: 40px;
+}
+
+#instructions {
+  margin-top: 20px;
+  opacity: 0.9;
+}
+
+/* role buttons */
+.role-buttons {
+  display: none;
+  margin-top: 30px;
+}
+
+.role-buttons button {
+  margin: 10px;
+  padding: 14px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 2px solid #ff8c00;
+  background: transparent;
+  color: white;
+}
+
+/* ===== GAME ===== */
+#game-screen {
+  display: none;
+  text-align: center;
+}
+
+canvas {
+  margin-top: 20px;
+  display: block;
 }
 </style>
 </head>
@@ -151,138 +184,141 @@ canvas {
 <body>
 
 <!-- ===== START ===== -->
-<div id="start-screen">
+<div id="start-screen" class="screen active">
   <img src="logo_taskflow.png">
   <button class="button" id="startContinue">Continue</button>
 </div>
 
 <!-- ===== LOBBY ===== -->
-<div id="lobby-screen">
+<div id="lobby-screen" class="screen">
 
   <div class="header">
     <img src="logo_taskflow.png">
   </div>
+
+  <div class="section-title">How to Join</div>
 
   <div class="steps">
     <div class="step">
       <div class="step-number">1.</div>
       <div class="step-title">Scan QR</div>
     </div>
-
     <div class="step">
       <div class="step-number">2.</div>
       <div class="step-title">Choose Role</div>
     </div>
-
     <div class="step">
       <div class="step-number">3.</div>
       <div class="step-title">Enter Game ID</div>
-      <div id="gameId">----</div>
     </div>
-
     <div class="step">
       <div class="step-number">4.</div>
       <div class="step-title">Join</div>
     </div>
   </div>
 
+  <div class="section-title">Players</div>
+
   <div class="players" id="players"></div>
 
-  <div class="continue-wrapper">
-    <button class="button" id="lobbyContinue" disabled>Start Game</button>
+  <button class="button" id="lobbyContinue" disabled>
+    CONTINUE
+  </button>
+
+</div>
+
+<!-- ===== PRE GAME ===== -->
+<div id="pre-game" class="screen">
+
+  <h2>GAME READY</h2>
+
+  <div id="instructions">
+    <p>Press START to begin the match</p>
+  </div>
+
+  <button class="button" id="startGameBtn">
+    START
+  </button>
+
+  <div class="role-buttons" id="roleButtons">
+    <button>WIREFRAME</button>
+    <button>PROTOTYPE</button>
+    <button>VISUALIZE</button>
   </div>
 
 </div>
 
 <!-- ===== GAME ===== -->
-<div id="game-screen">
-  <img src="logo_taskflow.png">
+<div id="game-screen" class="screen">
+  <h2>GAME RUNNING</h2>
   <canvas id="game"></canvas>
-  <div id="gameover">GAME OVER</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
 
-let state = null;
+let lobby = null;
 
-/* ===== SCREEN SWITCH ===== */
-function showScreen(screen) {
-  document.getElementById("start-screen").style.display = "none";
-  document.getElementById("lobby-screen").style.display = "none";
-  document.getElementById("game-screen").style.display = "none";
-
-  document.getElementById(screen).style.display =
-    screen === "start-screen" ? "flex" : "block";
+/* ===== NAV ===== */
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* ===== START ===== */
+/* ===== START FLOW ===== */
 document.getElementById("startContinue").onclick = () => {
-  showScreen("lobby-screen");
+  show("lobby-screen");
   socket.emit("resetLobby");
 };
 
-/* ===== START GAME ===== */
+/* ===== CONTINUE FROM LOBBY ===== */
 document.getElementById("lobbyContinue").onclick = () => {
-  socket.emit("start");
+  show("pre-game");
 };
 
-/* ===== STATE FROM SERVER ===== */
+/* ===== START GAME ===== */
+document.getElementById("startGameBtn").onclick = () => {
+  document.getElementById("instructions").style.display = "none";
+  document.getElementById("roleButtons").style.display = "block";
+
+  show("game-screen");
+  startGame();
+};
+
+/* ===== STATE ===== */
 socket.on("state", (s) => {
-  state = s;
 
-  document.getElementById("gameId").textContent = s.lobby.code;
+  lobby = s.lobby;
 
-  updatePlayers(s.lobby.players);
+  const count = Object.values(lobby.players).filter(Boolean).length;
 
-  const count = Object.values(s.lobby.players).filter(Boolean).length;
   document.getElementById("lobbyContinue").disabled = count !== 3;
 
-  // 👉 GAME STATE HANDLING
-  if (s.gameState === "running") {
-    showScreen("game-screen");
-    startGame();
-  }
-
-  if (s.gameState === "gameover") {
-    showScreen("game-screen");
-    document.getElementById("gameover").style.display = "block";
-  }
+  updatePlayers(lobby.players);
 });
 
-/* ===== PLAYERS UI ===== */
-function updatePlayers(players) {
+/* ===== PLAYERS ===== */
+function updatePlayers(p) {
   document.getElementById("players").innerHTML = `
     <div class="player">
       <img src="designer.png">
-      <div class="player-name">
-        Designer<br>${players.designer ? players.designer.name : "❌"}
-      </div>
+      <div class="player-name">Designer<br>${p.designer?.name || "❌"}</div>
     </div>
-
     <div class="player">
       <img src="developer.png">
-      <div class="player-name">
-        Developer<br>${players.developer ? players.developer.name : "❌"}
-      </div>
+      <div class="player-name">Developer<br>${p.developer?.name || "❌"}</div>
     </div>
-
     <div class="player">
       <img src="testengineer.png">
-      <div class="player-name">
-        Test Engineer<br>${players.tester ? players.tester.name : "❌"}
-      </div>
+      <div class="player-name">Test Engineer<br>${p.tester?.name || "❌"}</div>
     </div>
   `;
 }
 
-/* ===== GAME CANVAS ===== */
+/* ===== GAME ===== */
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-
-const COUNT = 14;
-const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
 function resize() {
   canvas.width = window.innerWidth;
@@ -290,53 +326,12 @@ function resize() {
 }
 window.addEventListener("resize", resize);
 
-function drawRoundedRect(x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);
-  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);
-  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);
-  ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath();
-}
-
-function draw(){
+function draw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  const margin = canvas.width * 0.02;
-  const usableWidth = canvas.width * 0.96;
-
-  const gapRatio = 0.10;
-  const boxWidth = usableWidth / (COUNT + gapRatio * (COUNT - 1));
-  const gap = boxWidth * gapRatio;
-  const boxHeight = boxWidth * 0.5;
-
-  const startY = canvas.height * 0.3;
-
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  for(let i=0;i<COUNT;i++){
-    const x = margin + i*(boxWidth+gap);
-    const y = startY;
-    const cx = x + boxWidth/2;
-
-    ctx.fillStyle="#fff";
-    ctx.fillText(weekdays[i%7],cx,y-20);
-
-    drawRoundedRect(x,y,boxWidth,boxHeight,8);
-    ctx.fillStyle="#66ff88";
-    ctx.fill();
-  }
-
   requestAnimationFrame(draw);
 }
 
-function startGame(){
+function startGame() {
   resize();
   draw();
 }
