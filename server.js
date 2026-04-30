@@ -88,12 +88,26 @@ function getFirstBlockingIndex() {
 }
 
 // =========================
+// BROADCAST STATE
+// =========================
+function emitState() {
+  io.emit("state", {
+    leds,
+    bullets,
+    score,
+    running,
+    lobby,
+    gameState
+  });
+}
+
+// =========================
 // GAME LOOP
 // =========================
 setInterval(() => {
 
   if (!running) {
-    io.emit("state", { leds, bullets, score, running, lobby, gameState });
+    emitState();
     return;
   }
 
@@ -101,7 +115,6 @@ setInterval(() => {
 
   if (now - lastMove > moveInterval) {
 
-    // GAME OVER CONDITION
     if (leds[LED_COUNT - 1]) {
       running = false;
       gameState = "gameover";
@@ -136,7 +149,7 @@ setInterval(() => {
     return b.y >= 0;
   });
 
-  io.emit("state", { leds, bullets, score, running, lobby, gameState });
+  emitState();
 
 }, 1000 / 60);
 
@@ -148,6 +161,7 @@ io.on("connection", (socket) => {
   socket.on("resetLobby", () => {
     newLobby();
     resetGame();
+    emitState();
   });
 
   // JOIN
@@ -175,18 +189,20 @@ io.on("connection", (socket) => {
 
     socket.data.role = role;
 
-    // 👉 UPDATE GAME STATE AUTOMATICALLY
     const count = Object.values(lobby.players).filter(Boolean).length;
 
     if (count === 3) {
       gameState = "ready";
     }
 
+    emitState();
+
     socket.emit("joinResult", { ok: true, role, name });
   });
 
-  // START GAME
+  // START GAME (client triggers from PRE-GAME screen)
   socket.on("start", () => {
+
     const count = Object.values(lobby.players).filter(Boolean).length;
 
     if (count === 3 && gameState === "ready") {
@@ -194,6 +210,8 @@ io.on("connection", (socket) => {
       gameState = "running";
       lastMove = Date.now();
     }
+
+    emitState();
   });
 
   socket.on("shoot", ({ color, letter }) => {
@@ -213,12 +231,14 @@ io.on("connection", (socket) => {
       lobby.players[role] = null;
     }
 
-    // downgrade state if someone leaves
     const count = Object.values(lobby.players).filter(Boolean).length;
+
     if (count < 3 && gameState !== "gameover") {
       gameState = "waiting";
       running = false;
     }
+
+    emitState();
   });
 
 });
