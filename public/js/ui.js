@@ -2,80 +2,76 @@
 
 export const UI = (() => {
 
-  const screens = {
-    start: document.getElementById("start-screen"),
-    lobby: document.getElementById("lobby-screen"),
-    pregame: document.getElementById("pre-game"),
-    game: document.getElementById("game-screen"),
-  };
-
   function show(screenName) {
-    Object.values(screens).forEach(s => s.classList.remove("active"));
-    screens[screenName].classList.add("active");
+    document.querySelectorAll(".screen").forEach(s => {
+      s.style.display = "none";
+    });
+
+    const el = document.getElementById(screenName + "-screen");
+    if (el) {
+      el.style.display = (screenName === "start") ? "flex" : "block";
+    }
   }
 
   function setStartHandlers(onStart) {
-    document.getElementById("startContinue").onclick = () => {
+    const btn = document.getElementById("startContinue");
+
+    if (!btn) {
+      console.error("startContinue button NOT FOUND");
+      return;
+    }
+
+    btn.addEventListener("click", () => {
+      console.log("START BUTTON CLICKED (UI)");
       show("lobby");
-      onStart?.();
-    };
+      if (onStart) onStart();
+    });
   }
 
   function setLobbyHandlers({ onContinue, onStartGame }) {
-    document.getElementById("lobbyContinue").onclick = () => {
-      show("pregame");
-      onContinue?.();
-    };
 
-    document.getElementById("startGameBtn").onclick = () => {
-      show("game");
-      onStartGame?.();
-    };
+    const continueBtn = document.getElementById("lobbyContinue");
+    const startBtn = document.getElementById("startGameBtn");
+
+    if (continueBtn) {
+      continueBtn.addEventListener("click", () => {
+        console.log("CONTINUE CLICKED (UI)");
+        show("pregame");
+        onContinue?.();
+      });
+    }
+
+    if (startBtn) {
+      startBtn.addEventListener("click", () => {
+        console.log("START GAME CLICKED (UI)");
+        show("game");
+        onStartGame?.();
+      });
+    }
   }
 
   function renderPlayers(players) {
     const el = document.getElementById("players");
+    if (!el) return;
 
-    const map = [
+    const roles = [
       { key: "designer", label: "Designer", img: "designer.png" },
       { key: "developer", label: "Developer", img: "developer.png" },
       { key: "tester", label: "Test Engineer", img: "testengineer.png" }
     ];
 
-    el.innerHTML = map.map(p => {
-
-      const data = players?.[p.key];
-
-      const isConnected = !!data;
+    el.innerHTML = roles.map(r => {
+      const p = players?.[r.key];
 
       return `
         <div class="player">
-          <div class="player-card">
-            <img src="${p.img}">
-            
-            <img class="status-icon"
-              src="${isConnected ? "Connected_icon.png" : "Disconnected_Icon.png"}"
-            >
-          </div>
-
-          <div class="player-name">${p.label}</div>
-
-          <div class="player-status">
-            ${isConnected ? data.name : "Waiting"}
-            <span class="dots">.</span>
-          </div>
+          <img src="${r.img}">
+          <div>${r.label}</div>
+          <div>${p ? p.name : "Waiting..."}</div>
         </div>
       `;
     }).join("");
   }
-
-  // simple dot animation
-  setInterval(() => {
-    document.querySelectorAll(".dots").forEach(d => {
-      const current = d.textContent;
-      d.textContent = current.length >= 3 ? "." : current + ".";
-    });
-  }, 500);
 
   return {
     show,
