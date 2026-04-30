@@ -110,11 +110,6 @@ body {
   text-align: center;
 }
 
-#game-screen img {
-  width: 300px;
-  margin-top: 20px;
-}
-
 canvas {
   display: block;
   margin-top: 20px;
@@ -142,6 +137,13 @@ canvas {
 
 .button:disabled {
   opacity: 0.35;
+}
+
+/* GAME OVER */
+#gameover {
+  display: none;
+  font-size: 48px;
+  margin-top: 40px;
 }
 </style>
 </head>
@@ -196,13 +198,14 @@ canvas {
 <div id="game-screen">
   <img src="logo_taskflow.png">
   <canvas id="game"></canvas>
+  <div id="gameover">GAME OVER</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
 
-let lobby = null;
+let state = null;
 
 /* ===== SCREEN SWITCH ===== */
 function showScreen(screen) {
@@ -225,20 +228,26 @@ document.getElementById("lobbyContinue").onclick = () => {
   socket.emit("start");
 };
 
-/* ===== LOBBY STATE ===== */
+/* ===== STATE FROM SERVER ===== */
 socket.on("state", (s) => {
-  lobby = s.lobby;
+  state = s;
 
-  document.getElementById("gameId").textContent = lobby.code;
+  document.getElementById("gameId").textContent = s.lobby.code;
 
-  updatePlayers(lobby.players);
+  updatePlayers(s.lobby.players);
 
-  const count = Object.values(lobby.players).filter(Boolean).length;
+  const count = Object.values(s.lobby.players).filter(Boolean).length;
   document.getElementById("lobbyContinue").disabled = count !== 3;
 
-  if (s.running) {
+  // 👉 GAME STATE HANDLING
+  if (s.gameState === "running") {
     showScreen("game-screen");
     startGame();
+  }
+
+  if (s.gameState === "gameover") {
+    showScreen("game-screen");
+    document.getElementById("gameover").style.display = "block";
   }
 });
 
@@ -262,13 +271,13 @@ function updatePlayers(players) {
     <div class="player">
       <img src="testengineer.png">
       <div class="player-name">
-        Tester<br>${players.tester ? players.tester.name : "❌"}
+        Test Engineer<br>${players.tester ? players.tester.name : "❌"}
       </div>
     </div>
   `;
 }
 
-/* ===== GAME ===== */
+/* ===== GAME CANVAS ===== */
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
