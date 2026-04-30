@@ -22,7 +22,7 @@ body {
   display: none;
 }
 
-.active {
+.screen.active {
   display: block;
 }
 
@@ -54,14 +54,12 @@ body {
   max-width: 420px;
 }
 
-/* titles */
 .section-title {
   font-size: 22px;
   margin: 20px 0 10px;
   opacity: 0.9;
 }
 
-/* steps */
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -94,7 +92,6 @@ body {
   font-weight: 700;
 }
 
-/* players */
 .players {
   display: grid;
   grid-template-columns: repeat(3, 1fr) auto;
@@ -142,30 +139,9 @@ body {
 
 /* ===== PRE GAME ===== */
 #pre-game {
+  display: none;
   padding: 30px;
   text-align: center;
-  display: none;
-}
-
-#instructions {
-  margin-top: 20px;
-  opacity: 0.9;
-}
-
-/* role buttons */
-.role-buttons {
-  display: none;
-  margin-top: 30px;
-}
-
-.role-buttons button {
-  margin: 10px;
-  padding: 14px 30px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: 2px solid #ff8c00;
-  background: transparent;
-  color: white;
 }
 
 /* ===== GAME ===== */
@@ -221,120 +197,127 @@ canvas {
 
   <div class="players" id="players"></div>
 
-  <button class="button" id="lobbyContinue" disabled>
-    CONTINUE
-  </button>
+  <button class="button" id="lobbyContinue" disabled>CONTINUE</button>
 
 </div>
 
 <!-- ===== PRE GAME ===== -->
 <div id="pre-game" class="screen">
-
   <h2>GAME READY</h2>
-
-  <div id="instructions">
-    <p>Press START to begin the match</p>
-  </div>
-
-  <button class="button" id="startGameBtn">
-    START
-  </button>
-
-  <div class="role-buttons" id="roleButtons">
-    <button>WIREFRAME</button>
-    <button>PROTOTYPE</button>
-    <button>VISUALIZE</button>
-  </div>
-
+  <button class="button" id="startGameBtn">START</button>
 </div>
 
 <!-- ===== GAME ===== -->
 <div id="game-screen" class="screen">
-  <h2>GAME RUNNING</h2>
+  <h2>GAME</h2>
   <canvas id="game"></canvas>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+
 <script>
-const socket = io();
+window.addEventListener("DOMContentLoaded", () => {
 
-let lobby = null;
+  const socket = io();
+  let lobby = null;
 
-/* ===== NAV ===== */
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
+  // ---------------------------
+  // SCREEN HANDLER (FIXED)
+  // ---------------------------
+  function show(id) {
+    document.querySelectorAll(".screen").forEach(s => {
+      s.classList.remove("active");
+      s.style.display = "none";
+    });
 
-/* ===== START FLOW ===== */
-document.getElementById("startContinue").onclick = () => {
-  show("lobby-screen");
-  socket.emit("resetLobby");
-};
+    const el = document.getElementById(id);
+    el.classList.add("active");
+    el.style.display = "block";
+  }
 
-/* ===== CONTINUE FROM LOBBY ===== */
-document.getElementById("lobbyContinue").onclick = () => {
-  show("pre-game");
-};
+  show("start-screen");
 
-/* ===== START GAME ===== */
-document.getElementById("startGameBtn").onclick = () => {
-  document.getElementById("instructions").style.display = "none";
-  document.getElementById("roleButtons").style.display = "block";
+  // ---------------------------
+  // START BUTTON
+  // ---------------------------
+  document.getElementById("startContinue").onclick = () => {
+    socket.emit("resetLobby");
+    show("lobby-screen");
+  };
 
-  show("game-screen");
-  startGame();
-};
+  // ---------------------------
+  // CONTINUE TO PRE-GAME
+  // ---------------------------
+  document.getElementById("lobbyContinue").onclick = () => {
+    show("pre-game");
+  };
 
-/* ===== STATE ===== */
-socket.on("state", (s) => {
+  // ---------------------------
+  // START GAME
+  // ---------------------------
+  document.getElementById("startGameBtn").onclick = () => {
+    show("game-screen");
+    startGame();
+  };
 
-  lobby = s.lobby;
+  // ---------------------------
+  // SOCKET STATE
+  // ---------------------------
+  socket.on("state", (s) => {
+    lobby = s.lobby;
 
-  const count = Object.values(lobby.players).filter(Boolean).length;
+    const count = Object.values(lobby.players).filter(Boolean).length;
+    document.getElementById("lobbyContinue").disabled = count !== 3;
 
-  document.getElementById("lobbyContinue").disabled = count !== 3;
+    updatePlayers(lobby.players);
+  });
 
-  updatePlayers(lobby.players);
+  // ---------------------------
+  // PLAYERS UI
+  // ---------------------------
+  function updatePlayers(p) {
+    document.getElementById("players").innerHTML = `
+      <div class="player">
+        <img src="designer.png">
+        <div class="player-name">Designer<br>${p.designer?.name || "❌"}</div>
+      </div>
+
+      <div class="player">
+        <img src="developer.png">
+        <div class="player-name">Developer<br>${p.developer?.name || "❌"}</div>
+      </div>
+
+      <div class="player">
+        <img src="testengineer.png">
+        <div class="player-name">Test Engineer<br>${p.tester?.name || "❌"}</div>
+      </div>
+    `;
+  }
+
+  // ---------------------------
+  // GAME (placeholder)
+  // ---------------------------
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight * 0.6;
+  }
+
+  window.addEventListener("resize", resize);
+
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    requestAnimationFrame(draw);
+  }
+
+  function startGame() {
+    resize();
+    draw();
+  }
+
 });
-
-/* ===== PLAYERS ===== */
-function updatePlayers(p) {
-  document.getElementById("players").innerHTML = `
-    <div class="player">
-      <img src="designer.png">
-      <div class="player-name">Designer<br>${p.designer?.name || "❌"}</div>
-    </div>
-    <div class="player">
-      <img src="developer.png">
-      <div class="player-name">Developer<br>${p.developer?.name || "❌"}</div>
-    </div>
-    <div class="player">
-      <img src="testengineer.png">
-      <div class="player-name">Test Engineer<br>${p.tester?.name || "❌"}</div>
-    </div>
-  `;
-}
-
-/* ===== GAME ===== */
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight * 0.6;
-}
-window.addEventListener("resize", resize);
-
-function draw() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  requestAnimationFrame(draw);
-}
-
-function startGame() {
-  resize();
-  draw();
-}
 </script>
 
 </body>
