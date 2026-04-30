@@ -20,8 +20,11 @@ const letters = ["A", "B", "C"];
 
 let lobby = {};
 let gameState = "waiting"; 
-// waiting | running | gameover
+// waiting | ready | running | gameover
 
+// =========================
+// LOBBY
+// =========================
 function newLobby() {
   lobby = {
     code: Math.floor(1000 + Math.random() * 9000).toString(),
@@ -34,18 +37,26 @@ function newLobby() {
 
   gameState = "waiting";
 }
+
 newLobby();
 
+// =========================
+// GAME RESET
+// =========================
 function resetGame() {
   leds = Array(LED_COUNT).fill(null);
   bullets = [];
   score = 0;
   running = false;
   spawnGap = 0;
+  gameState = "waiting";
 }
 
 resetGame();
 
+// =========================
+// HELPERS
+// =========================
 function randomLetter() {
   return letters[Math.floor(Math.random() * letters.length)];
 }
@@ -76,7 +87,9 @@ function getFirstBlockingIndex() {
   return -1;
 }
 
-// 🎮 GAME LOOP
+// =========================
+// GAME LOOP
+// =========================
 setInterval(() => {
 
   if (!running) {
@@ -88,7 +101,7 @@ setInterval(() => {
 
   if (now - lastMove > moveInterval) {
 
-    // 👉 GAME OVER CONDITION
+    // GAME OVER CONDITION
     if (leds[LED_COUNT - 1]) {
       running = false;
       gameState = "gameover";
@@ -127,7 +140,9 @@ setInterval(() => {
 
 }, 1000 / 60);
 
-// 🔌 SOCKET HANDLING
+// =========================
+// SOCKET HANDLING
+// =========================
 io.on("connection", (socket) => {
 
   socket.on("resetLobby", () => {
@@ -135,7 +150,7 @@ io.on("connection", (socket) => {
     resetGame();
   });
 
-  // 👉 JOIN (role-based)
+  // JOIN
   socket.on("join", ({ code, role, name }) => {
 
     if (!ROLES.includes(role)) {
@@ -160,14 +175,21 @@ io.on("connection", (socket) => {
 
     socket.data.role = role;
 
-    socket.emit("joinResult", { ok: true, role, name });
-  });
-
-  // 👉 START GAME
-  socket.on("start", () => {
+    // 👉 UPDATE GAME STATE AUTOMATICALLY
     const count = Object.values(lobby.players).filter(Boolean).length;
 
     if (count === 3) {
+      gameState = "ready";
+    }
+
+    socket.emit("joinResult", { ok: true, role, name });
+  });
+
+  // START GAME
+  socket.on("start", () => {
+    const count = Object.values(lobby.players).filter(Boolean).length;
+
+    if (count === 3 && gameState === "ready") {
       running = true;
       gameState = "running";
       lastMove = Date.now();
@@ -189,6 +211,13 @@ io.on("connection", (socket) => {
 
     if (role && lobby.players[role]?.id === socket.id) {
       lobby.players[role] = null;
+    }
+
+    // downgrade state if someone leaves
+    const count = Object.values(lobby.players).filter(Boolean).length;
+    if (count < 3 && gameState !== "gameover") {
+      gameState = "waiting";
+      running = false;
     }
   });
 
