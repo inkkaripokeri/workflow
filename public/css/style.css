@@ -111,8 +111,8 @@ body {
   margin-top: 10px;
 }
 
-/* lisäteksti */
-.step div {
+/* lisäteksti (vain tämä vaikuttaa) */
+.step-text {
   font-size: 16px;
   margin-top: 6px;
 }
