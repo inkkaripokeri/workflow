@@ -1,48 +1,97 @@
-function renderPlayers(players) {
+// ui.js
 
-  const el = document.getElementById("playersGrid");
+export const UI = (() => {
 
-  const roles = [
-    { key: "designer", label: "Designer", cls: "designer" },
-    { key: "developer", label: "Developer", cls: "developer" },
-    { key: "tester", label: "Test Engineer", cls: "tester" }
-  ];
+  /* ================= SCREEN ================= */
+  function show(screen) {
+    document.querySelectorAll(".screen").forEach(s =>
+      s.classList.remove("active")
+    );
+    document.getElementById(screen).classList.add("active");
+  }
 
-  el.innerHTML = roles.map(r => {
+  function animateToLobby() {
+    document.body.classList.add("start-to-lobby");
+    setTimeout(() => show("lobby-screen"), 200);
+  }
 
-    const p = players[r.key];
+  /* ================= GAME ID ================= */
+  function renderGameId(code) {
+    if (!code) return;
 
-    let statusText = "WAITING";
-    let statusClass = "waiting";
-    let icon = "";
-    let name = "";
+    document.getElementById("gameId").textContent =
+      code.split("").join(" ");
+  }
 
-    if (p) {
-      name = p.name;
+  /* ================= PLAYERS ================= */
+  function renderPlayers(players) {
 
-      if (p.connected === false) {
-        statusText = "DISCONNECTED";
-        statusClass = "disconnected";
-        icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
-      } else {
-        statusText = "CONNECTED";
-        statusClass = "connected";
-        icon = `<img class="status-icon" src="Connected_icon.png">`;
+    const el = document.getElementById("playersGrid");
+    if (!el) return;
+
+    const roles = [
+      { key: "designer", label: "Designer", cls: "designer" },
+      { key: "developer", label: "Developer", cls: "developer" },
+      { key: "tester", label: "Test Engineer", cls: "tester" }
+    ];
+
+    el.innerHTML = roles.map(r => {
+
+      const p = players[r.key];
+
+      let statusText = "WAITING";
+      let statusClass = "waiting";
+      let icon = "";
+      let name = "";
+
+      if (p) {
+        name = p.name;
+
+        if (p.connected === false) {
+          statusText = "DISCONNECTED";
+          statusClass = "disconnected";
+          icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
+        } else {
+          statusText = "CONNECTED";
+          statusClass = "connected";
+          icon = `<img class="status-icon" src="Connected_icon.png">`;
+        }
       }
-    }
 
-    return `
-      <div class="player ${r.cls}">
-        ${icon}
+      return `
+        <div class="player ${r.cls}">
+          ${icon}
 
-        <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
 
-        <div class="player-role">${r.label}</div>
-        <div class="player-name">${name}</div>
-        <div class="player-status ${statusClass}">
-          ${statusText}<span class="dots">.</span>
+          <div class="player-role">${r.label}</div>
+          <div class="player-name">${name}</div>
+          <div class="player-status ${statusClass}">
+            ${statusText}<span class="dots">.</span>
+          </div>
         </div>
-      </div>
-    `;
-  }).join("");
-}
+      `;
+    }).join("");
+  }
+
+  /* ================= WAITING ANIMATION ================= */
+  setInterval(() => {
+    document.querySelectorAll(".dots").forEach(el => {
+
+      const parent = el.parentElement;
+
+      if (!parent || !parent.classList.contains("waiting")) return;
+
+      el.textContent =
+        el.textContent.length >= 3 ? "." : el.textContent + ".";
+    });
+  }, 500);
+
+  return {
+    show,
+    animateToLobby,
+    renderGameId,
+    renderPlayers
+  };
+
+})();
