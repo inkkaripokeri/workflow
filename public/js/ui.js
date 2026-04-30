@@ -1,83 +1,52 @@
-// ui.js
-
 export const UI = (() => {
 
-  function show(screenName) {
-    document.querySelectorAll(".screen").forEach(s => {
-      s.style.display = "none";
-    });
-
-    const el = document.getElementById(screenName + "-screen");
-    if (el) {
-      el.style.display = (screenName === "start") ? "flex" : "block";
-    }
+  function show(screen) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(screen).classList.add("active");
   }
 
-  function setStartHandlers(onStart) {
-    const btn = document.getElementById("startContinue");
-
-    if (!btn) {
-      console.error("startContinue button NOT FOUND");
-      return;
-    }
-
-    btn.addEventListener("click", () => {
-      console.log("START BUTTON CLICKED (UI)");
-      show("lobby");
-      if (onStart) onStart();
-    });
+  function animateToLobby() {
+    document.body.classList.add("start-to-lobby");
+    setTimeout(() => show("lobby-screen"), 200);
   }
 
-  function setLobbyHandlers({ onContinue, onStartGame }) {
-
-    const continueBtn = document.getElementById("lobbyContinue");
-    const startBtn = document.getElementById("startGameBtn");
-
-    if (continueBtn) {
-      continueBtn.addEventListener("click", () => {
-        console.log("CONTINUE CLICKED (UI)");
-        show("pregame");
-        onContinue?.();
-      });
-    }
-
-    if (startBtn) {
-      startBtn.addEventListener("click", () => {
-        console.log("START GAME CLICKED (UI)");
-        show("game");
-        onStartGame?.();
-      });
-    }
+  function renderGameId(code) {
+    document.getElementById("gameId").textContent =
+      code.split("").join(" ");
   }
 
   function renderPlayers(players) {
-    const el = document.getElementById("players");
-    if (!el) return;
 
-    const roles = [
-      { key: "designer", label: "Designer", img: "designer.png" },
-      { key: "developer", label: "Developer", img: "developer.png" },
-      { key: "tester", label: "Test Engineer", img: "testengineer.png" }
-    ];
+    const el = document.getElementById("playersGrid");
 
-    el.innerHTML = roles.map(r => {
-      const p = players?.[r.key];
+    el.innerHTML = ["designer","developer","tester"].map(role => {
+
+      const p = players[role];
+
+      let status = "WAITING...";
+      let icon = "";
+
+      if (p) {
+        if (p.connected === false) {
+          status = "DISCONNECTED";
+          icon = `<img src="Disconnected_Icon.png" width="16">`;
+        } else {
+          status = "CONNECTED";
+          icon = `<img src="Connected_icon.png" width="16">`;
+        }
+      }
 
       return `
         <div class="player">
-          <img src="${r.img}">
-          <div>${r.label}</div>
-          <div>${p ? p.name : "Waiting..."}</div>
+          <img src="${role === "tester" ? "testengineer.png" : role + ".png"}">
+          <div>${role}</div>
+          <div>${p ? p.name : ""}</div>
+          <div class="status">${icon} ${status}</div>
         </div>
       `;
     }).join("");
   }
 
-  return {
-    show,
-    setStartHandlers,
-    setLobbyHandlers,
-    renderPlayers
-  };
+  return { show, animateToLobby, renderPlayers, renderGameId };
 
 })();
