@@ -4,20 +4,16 @@
 <meta charset="UTF-8">
 <title>Taskflow</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet"
-href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
-
 <style>
 body {
   margin: 0;
   background: #05060c;
   color: #fff;
-  font-family: "Roboto Condensed", Arial, sans-serif;
+  font-family: Arial;
 }
 
 /* =========================
-   SCREEN SYSTEM
+   SCREEN SYSTEM (FIXED)
 ========================= */
 .screen {
   display: none;
@@ -27,104 +23,44 @@ body {
   display: block;
 }
 
-/* =========================
-   START SCREEN (FIXED)
-========================= */
-#start-screen {
-  height: 100vh;
+/* 🔥 START SCREEN FIX */
+#start-screen.active {
   display: flex;
-  flex-direction: column;   /* 🔥 pakottaa allekkain */
+  height: 100vh;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 30px;
 }
 
 #start-screen img {
-  width: 420px;
-  max-width: 85%;
+  width: 400px;
 }
 
 /* =========================
    BUTTON
 ========================= */
 .button {
-  padding: 18px 70px;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  padding: 18px 60px;
+  font-size: 22px;
+  font-weight: bold;
   background: transparent;
-  color: #fff;
-  border: 3px solid #ff8c00;
-  border-radius: 14px;
+  border: 3px solid orange;
+  color: white;
   cursor: pointer;
-}
-
-.button:hover {
-  background: rgba(255,140,0,0.15);
 }
 
 .button:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
 }
 
 /* =========================
    LOBBY
 ========================= */
 #lobby-screen {
-  padding: 40px 60px;
+  padding: 40px;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.header img {
-  max-width: 420px;
-}
-
-/* titles */
-.section-title {
-  font-size: 22px;
-  margin: 25px 0 10px;
-  opacity: 0.9;
-}
-
-/* steps */
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  margin-bottom: 30px;
-}
-
-.step {
-  position: relative;
-  padding-right: 24px;
-}
-
-.step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  right: 0;
-  height: 90%;
-  border-right: 2px dashed rgba(255,255,255,0.6);
-}
-
-.step-number {
-  color: #ff8c00;
-  font-size: 30px;
-  font-weight: 700;
-}
-
-.step-title {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-/* players */
 .players {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -133,38 +69,6 @@ body {
 
 .player {
   text-align: center;
-  position: relative;
-}
-
-.player img {
-  width: 140px;
-  border-radius: 16px;
-}
-
-/* status */
-.status {
-  margin-top: 8px;
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-/* connection icon FIX */
-.status-icon {
-  position: absolute;
-  top: 8px;
-  right: 25px;
-  width: 30px;
-  height: 30px;
-}
-
-/* =========================
-   PRE GAME / GAME
-========================= */
-#pre-game,
-#game-screen {
-  display: none;
-  text-align: center;
-  padding: 40px;
 }
 </style>
 </head>
@@ -179,33 +83,8 @@ body {
 
 <!-- ================= LOBBY ================= -->
 <div id="lobby-screen" class="screen">
+  <h2>Lobby</h2>
 
-  <div class="header">
-    <img src="logo_taskflow.png">
-  </div>
-
-  <div class="section-title">How to Join</div>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-number">1.</div>
-      <div class="step-title">Scan QR</div>
-    </div>
-    <div class="step">
-      <div class="step-number">2.</div>
-      <div class="step-title">Choose Role</div>
-    </div>
-    <div class="step">
-      <div class="step-number">3.</div>
-      <div class="step-title">Enter Game ID</div>
-    </div>
-    <div class="step">
-      <div class="step-number">4.</div>
-      <div class="step-title">Join</div>
-    </div>
-  </div>
-
-  <div class="section-title">Players</div>
   <div class="players" id="players"></div>
 
   <button class="button" id="lobbyBtn" disabled>CONTINUE</button>
@@ -213,22 +92,21 @@ body {
 
 <!-- ================= PRE GAME ================= -->
 <div id="pre-game" class="screen">
-  <h2>GAME READY</h2>
+  <h2>Game Ready</h2>
   <button class="button" id="startGameBtn">START</button>
 </div>
 
 <!-- ================= GAME ================= -->
 <div id="game-screen" class="screen">
-  <h2>GAME</h2>
+  <h2>Game Running</h2>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
 const socket = io();
 
-let lobby = null;
-
-/* ================= NAV ================= */
+/* ================= SCREEN SWITCH ================= */
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -236,6 +114,7 @@ function show(id) {
 
 /* ================= START ================= */
 document.getElementById("startBtn").onclick = () => {
+  console.log("START CLICK");
   show("lobby-screen");
   socket.emit("resetLobby");
 };
@@ -247,14 +126,17 @@ document.getElementById("lobbyBtn").onclick = () => {
 
 /* ================= START GAME ================= */
 document.getElementById("startGameBtn").onclick = () => {
+  socket.emit("start");
   show("game-screen");
 };
 
 /* ================= STATE ================= */
 socket.on("state", (s) => {
-  lobby = s.lobby;
+
+  const lobby = s.lobby;
 
   const count = Object.values(lobby.players).filter(Boolean).length;
+
   document.getElementById("lobbyBtn").disabled = count !== 3;
 
   renderPlayers(lobby.players);
@@ -263,31 +145,12 @@ socket.on("state", (s) => {
 /* ================= PLAYERS ================= */
 function renderPlayers(p) {
   document.getElementById("players").innerHTML = `
-    ${playerCard("designer", "Designer", p.designer)}
-    ${playerCard("developer", "Developer", p.developer)}
-    ${playerCard("tester", "Test Engineer", p.tester)}
+    <div class="player">Designer<br>${p.designer?.name || "Waiting..."}</div>
+    <div class="player">Developer<br>${p.developer?.name || "Waiting..."}</div>
+    <div class="player">Tester<br>${p.tester?.name || "Waiting..."}</div>
   `;
 }
 
-function playerCard(role, label, data) {
-  const connected = !!data;
-
-  return `
-    <div class="player">
-      <img src="${role === "tester" ? "testengineer.png" : role + ".png"}">
-
-      <div class="status">${label}</div>
-
-      <div class="status">
-        ${connected ? "Connected" : "Waiting..."}
-      </div>
-
-      ${connected ? `
-        <img class="status-icon" src="Connected_icon.png">
-      ` : ""}
-    </div>
-  `;
-}
 </script>
 
 </body>
