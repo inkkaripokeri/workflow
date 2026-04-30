@@ -10,21 +10,14 @@ app.use(express.static("public"));
 
 const LED_COUNT = 50;
 
-let leds, bullets, score, running;
-let lastMove, spawnGap;
-
-const moveInterval = 500;
+let leds, bullets, score, running, lastMove, spawnGap;
 
 const ROLES = ["designer", "developer", "tester"];
 const letters = ["A", "B", "C"];
 
 let lobby = {};
-let gameState = "waiting"; 
-// waiting | ready | running | gameover
+let gameState = "waiting";
 
-// =========================
-// LOBBY
-// =========================
 function newLobby() {
   lobby = {
     code: Math.floor(1000 + Math.random() * 9000).toString(),
@@ -34,29 +27,20 @@ function newLobby() {
       tester: null
     }
   };
-
   gameState = "waiting";
 }
 
-newLobby();
-
-// =========================
-// GAME RESET
-// =========================
 function resetGame() {
   leds = Array(LED_COUNT).fill(null);
   bullets = [];
   score = 0;
   running = false;
   spawnGap = 0;
-  gameState = "waiting";
 }
 
+newLobby();
 resetGame();
 
-// =========================
-// HELPERS
-// =========================
 function randomLetter() {
   return letters[Math.floor(Math.random() * letters.length)];
 }
@@ -72,11 +56,7 @@ function spawnTop() {
     return;
   }
 
-  leds[0] = {
-    color: randomColor(),
-    letter: randomLetter()
-  };
-
+  leds[0] = { color: randomColor(), letter: randomLetter() };
   spawnGap = Math.floor(Math.random() * 3) + 1;
 }
 
@@ -87,34 +67,16 @@ function getFirstBlockingIndex() {
   return -1;
 }
 
-// =========================
-// BROADCAST STATE
-// =========================
-function emitState() {
-  io.emit("state", {
-    leds,
-    bullets,
-    score,
-    running,
-    lobby,
-    gameState
-  });
-}
-
-// =========================
-// GAME LOOP
-// =========================
 setInterval(() => {
 
   if (!running) {
-    emitState();
+    io.emit("state", { leds, bullets, score, running, lobby, gameState });
     return;
   }
 
   const now = Date.now();
 
-  if (now - lastMove > moveInterval) {
-
+  if (now - lastMove > 500) {
     if (leds[LED_COUNT - 1]) {
       running = false;
       gameState = "gameover";
@@ -149,96 +111,51 @@ setInterval(() => {
     return b.y >= 0;
   });
 
-  emitState();
+  io.emit("state", { leds, bullets, score, running, lobby, gameState });
 
-}, 1000 / 60);
+}, 1000/60);
 
-// =========================
-// SOCKET HANDLING
-// =========================
 io.on("connection", (socket) => {
 
   socket.on("resetLobby", () => {
     newLobby();
     resetGame();
-    emitState();
   });
 
-  // JOIN
   socket.on("join", ({ code, role, name }) => {
 
-    if (!ROLES.includes(role)) {
-      socket.emit("joinResult", { ok: false, msg: "Invalid role" });
-      return;
-    }
+    if (!ROLES.includes(role)) return;
 
-    if (code !== lobby.code) {
-      socket.emit("joinResult", { ok: false, msg: "Wrong code" });
-      return;
-    }
+    if (code !== lobby.code) return;
 
-    if (lobby.players[role]) {
-      socket.emit("joinResult", { ok: false, msg: "Role already taken" });
-      return;
-    }
+    if (lobby.players[role]) return;
 
-    lobby.players[role] = {
-      id: socket.id,
-      name
-    };
+    lobby.players[role] = { id: socket.id, name };
 
     socket.data.role = role;
 
     const count = Object.values(lobby.players).filter(Boolean).length;
 
-    if (count === 3) {
-      gameState = "ready";
-    }
+    if (count === 3) gameState = "ready";
 
-    emitState();
-
-    socket.emit("joinResult", { ok: true, role, name });
+    socket.emit("joinResult", { ok: true });
   });
 
-  // START GAME (client triggers from PRE-GAME screen)
   socket.on("start", () => {
-
     const count = Object.values(lobby.players).filter(Boolean).length;
 
-    if (count === 3 && gameState === "ready") {
+    if (count === 3) {
       running = true;
       gameState = "running";
       lastMove = Date.now();
     }
-
-    emitState();
-  });
-
-  socket.on("shoot", ({ color, letter }) => {
-    if (!running) return;
-
-    bullets.push({
-      y: LED_COUNT - 1,
-      color,
-      letter
-    });
   });
 
   socket.on("disconnect", () => {
     const role = socket.data.role;
-
     if (role && lobby.players[role]?.id === socket.id) {
       lobby.players[role] = null;
     }
-
-    const count = Object.values(lobby.players).filter(Boolean).length;
-
-    if (count < 3 && gameState !== "gameover") {
-      gameState = "waiting";
-      running = false;
-    }
-
-    emitState();
   });
 
 });
