@@ -69,9 +69,7 @@ body {
 /* ================= STEPS ================= */
 .steps {
   display: grid;
-
   grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
-
   max-width: 1200px;
   margin: 40px auto;
   align-items: center;
@@ -90,8 +88,13 @@ body {
 /* 🔥 HEADER RIVI (NUMERO + TITLE) */
 .step-header {
   display: flex;
-  align-items: flex-start; /* tasaa yläreunaan */
+  align-items: baseline; /* 🔥 MUUTETTU: alalinjaus */
   gap: 12px;
+}
+
+/* 🔥 SISENNYS: kaikki alkaa otsikon kohdalta */
+.step > *:not(.step-header) {
+  margin-left: 50px; /* 🔥 säädä tarvittaessa */
 }
 
 /* 🔥 VIIVA ELEMENTTINÄ */
@@ -104,7 +107,7 @@ body {
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 38px;   /* 🔥 selvästi isompi */
+  font-size: 38px;
   font-weight: 500;
   line-height: 1;
 }
