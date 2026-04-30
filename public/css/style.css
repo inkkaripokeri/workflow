@@ -99,15 +99,15 @@ body {
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 72px;       /* 3x isompi */
-  font-weight: 700;
+  font-size: 48px;       /* 3x isompi */
+  font-weight: 500;
   line-height: 1;
 }
 
 /* otsikko */
 .step-title {
   font-size: 28px;       /* 2x isompi */
-  font-weight: 700;
+  font-weight: 500;
   margin-top: 10px;
 }
 
