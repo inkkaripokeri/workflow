@@ -100,6 +100,12 @@ h1 {
 .button:hover {
   background: rgba(255,140,0,0.2);
 }
+
+/* ===== WAITING ===== */
+#waiting {
+  font-size: 22px;
+  opacity: 0.8;
+}
 </style>
 </head>
 
@@ -132,7 +138,6 @@ h1 {
 
   <h1 id="roleTitle">JOIN GAME</h1>
 
-  <!-- ROLE CARD (uusi) -->
   <div class="role-card" id="roleCard"></div>
 
   <input class="input" id="gameIdInput" placeholder="GAME ID" maxlength="4">
@@ -144,12 +149,23 @@ h1 {
 
 </div>
 
+<!-- ===== WAITING ===== -->
+<div id="waiting-screen" class="screen">
+  <h1 id="waitingTitle">WAITING...</h1>
+
+  <div class="role-card" id="waitingCard"></div>
+
+  <div id="waitingName"></div>
+  <div id="waitingText">Waiting for players...</div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
 const socket = io();
 
 let role = null;
+let playerName = null;
 
 /* ===== SCREEN SWITCH ===== */
 function showScreen(id) {
@@ -170,9 +186,8 @@ function selectRole(selectedRole) {
   document.getElementById("roleTitle").textContent =
     "JOIN AS " + roleTitleMap[role];
 
-  document.getElementById("roleCard").innerHTML = `
-    <img src="${role}.png">
-  `;
+  document.getElementById("roleCard").innerHTML =
+    `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
   showScreen("join-screen");
 }
@@ -188,14 +203,40 @@ function joinGame() {
     return;
   }
 
+  playerName = name;
+
   socket.emit("join", {
     code: gameId,
     role,
     name
   });
-
-  alert("Joining...");
 }
+
+/* ===== JOIN RESULT ===== */
+socket.on("joinResult", (res) => {
+
+  if (!res.ok) {
+    alert(res.msg);
+    return;
+  }
+
+  document.getElementById("waitingCard").innerHTML =
+    `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
+
+  document.getElementById("waitingName").textContent = playerName;
+
+  document.getElementById("waitingTitle").textContent =
+    role.toUpperCase();
+
+  showScreen("waiting-screen");
+});
+
+/* ===== STATE (future game sync) ===== */
+socket.on("state", (s) => {
+  if (s.gameState === "running") {
+    // myöhemmin game screen
+  }
+});
 
 </script>
 
