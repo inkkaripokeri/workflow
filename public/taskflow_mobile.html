@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Taskflow Mobile</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
+
+<style>
+body {
+  margin: 0;
+  background: #05060c;
+  color: #fff;
+  font-family: "Roboto Condensed", Arial, sans-serif;
+  text-align: center;
+}
+
+/* ===== COMMON ===== */
+.screen {
+  display: none;
+  padding: 40px 20px;
+}
+
+.active {
+  display: block;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+  letter-spacing: 2px;
+}
+
+/* ===== ROLE ===== */
+.role {
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.role-title {
+  font-size: 22px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.role img {
+  width: 260px;
+  max-width: 90%;
+  border-radius: 24px;
+  border: 6px solid transparent;
+  transition: 0.2s;
+}
+
+.role.dev img { border-color: #6c5ce7; }
+.role.test img { border-color: #00b894; }
+.role.design img { border-color: #f39c12; }
+
+.role:hover img {
+  transform: scale(1.05);
+}
+
+/* ===== JOIN ===== */
+.input {
+  width: 80%;
+  max-width: 300px;
+  padding: 14px;
+  margin: 12px 0;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 16px 50px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #ff8c00;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: rgba(255,140,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== ROLE SELECT ===== -->
+<div id="role-screen" class="screen active">
+
+  <h1>SELECT ROLE</h1>
+
+  <div class="role dev" onclick="selectRole('developer')">
+    <div class="role-title">DEVELOPER</div>
+    <img src="developer.png">
+  </div>
+
+  <div class="role test" onclick="selectRole('tester')">
+    <div class="role-title">TEST ENGINEER</div>
+    <img src="testengineer.png">
+  </div>
+
+  <div class="role design" onclick="selectRole('designer')">
+    <div class="role-title">DESIGNER</div>
+    <img src="designer.png">
+  </div>
+
+</div>
+
+<!-- ===== JOIN ===== -->
+<div id="join-screen" class="screen">
+
+  <h1 id="roleTitle">JOIN GAME</h1>
+
+  <input class="input" id="gameIdInput" placeholder="GAME ID" maxlength="4">
+  <br>
+  <input class="input" id="nameInput" placeholder="YOUR NAME">
+  <br>
+
+  <button class="button" onclick="joinGame()">JOIN</button>
+
+</div>
+
+<script>
+let role = null;
+
+/* ===== SCREEN SWITCH ===== */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ===== ROLE SELECT ===== */
+function selectRole(selectedRole) {
+  role = selectedRole;
+
+  document.getElementById("roleTitle").textContent =
+    "JOIN AS " + role.toUpperCase();
+
+  showScreen("join-screen");
+}
+
+/* ===== JOIN ===== */
+function joinGame() {
+  const gameId = document.getElementById("gameIdInput").value;
+  const name = document.getElementById("nameInput").value;
+
+  if (!gameId || !name) {
+    alert("Enter Game ID and Name");
+    return;
+  }
+
+  console.log("JOIN:", { role, gameId, name });
+
+  // 👉 tähän myöhemmin server connection
+  alert(`Joined as ${role}\nGame: ${gameId}\nName: ${name}`);
+}
+</script>
+
+</body>
+</html>
