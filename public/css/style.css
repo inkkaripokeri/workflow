@@ -1,14 +1,213 @@
+/* =========================
+   BASE
+========================= */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: #05060c;
-  color: white;
-  font-family: Arial;
+  color: #fff;
+  font-family: "Roboto Condensed", Arial, sans-serif;
 }
 
+/* =========================
+   SCREEN SYSTEM (STATE MACHINE)
+========================= */
 .screen {
   display: none;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .screen.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   START SCREEN
+========================= */
+#start-screen {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 30px;
+}
+
+#start-screen img {
+  width: 420px;
+  max-width: 90%;
   display: block;
+}
+
+.button {
+  padding: 18px 72px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  background: transparent;
+  color: #fff;
+  border: 3px solid #ff8c00;
+  border-radius: 16px;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(255, 140, 0, 0.15);
+}
+
+.button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* =========================
+   LOBBY
+========================= */
+#lobby-screen {
+  padding: 40px 60px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header img {
+  max-width: 420px;
+}
+
+/* section titles */
+.section-title {
+  font-size: 22px;
+  margin: 25px 0 10px;
+  opacity: 0.9;
+}
+
+/* steps */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.step {
+  position: relative;
+  padding-right: 24px;
+}
+
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  height: 90%;
+  border-right: 2px dashed rgba(255, 255, 255, 0.6);
+}
+
+.step-number {
+  color: #ff8c00;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* QR */
+.qr-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.qr-container img {
+  width: 180px;
+  max-width: 60%;
+}
+
+/* players */
+.players {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 20px;
+}
+
+/* player card */
+.player {
+  text-align: center;
+  position: relative;
+}
+
+.player img {
+  width: 140px;
+  border-radius: 16px;
+}
+
+/* status icon (IMPORTANT FIX) */
+.status-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 30px;
+  height: 30px;
+
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* player name */
+.player-name {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+/* waiting animation */
+.waiting {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.waiting::after {
+  content: "";
+  display: inline-block;
+  animation: dots 1.2s infinite steps(4);
+}
+
+@keyframes dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+  100% { content: ""; }
+}
+
+/* =========================
+   PRE-GAME
+========================= */
+#pre-game {
+  text-align: center;
+  padding: 40px;
+}
+
+/* =========================
+   GAME
+========================= */
+#game-screen {
+  text-align: center;
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
 }
