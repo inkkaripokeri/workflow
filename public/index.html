@@ -17,15 +17,6 @@ body {
   font-family: "Roboto Condensed", Arial, sans-serif;
 }
 
-/* ===== SCREENS ===== */
-.screen {
-  display: none;
-}
-
-.active {
-  display: block;
-}
-
 /* ===== START ===== */
 #start-screen {
   min-height: 100vh;
@@ -40,31 +31,9 @@ body {
   max-width: 90%;
 }
 
-.button {
-  margin-top: 40px;
-  padding: 18px 72px;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-
-  background: transparent;
-  color: #fff;
-  border: 3px solid #ff8c00;
-  border-radius: 16px;
-  cursor: pointer;
-}
-
-.button:hover:not(:disabled) {
-  background: rgba(255,140,0,0.15);
-}
-
-.button:disabled {
-  opacity: 0.35;
-}
-
 /* ===== LOBBY ===== */
 #lobby-screen {
+  display: none;
   padding: 40px 60px;
 }
 
@@ -77,6 +46,7 @@ body {
   max-width: 420px;
 }
 
+/* steps */
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -108,11 +78,7 @@ body {
   font-weight: 700;
 }
 
-.step-body {
-  font-size: 16px;
-  opacity: 0.9;
-}
-
+/* players */
 .players {
   display: grid;
   grid-template-columns: repeat(3, 1fr) auto;
@@ -140,6 +106,7 @@ body {
 
 /* ===== GAME ===== */
 #game-screen {
+  display: none;
   text-align: center;
 }
 
@@ -152,19 +119,43 @@ canvas {
   display: block;
   margin-top: 20px;
 }
+
+/* ===== BUTTON ===== */
+.button {
+  margin-top: 40px;
+  padding: 18px 72px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  background: transparent;
+  color: #fff;
+  border: 3px solid #ff8c00;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(255,140,0,0.15);
+}
+
+.button:disabled {
+  opacity: 0.35;
+}
 </style>
 </head>
 
 <body>
 
 <!-- ===== START ===== -->
-<div id="start-screen" class="screen active">
+<div id="start-screen">
   <img src="logo_taskflow.png">
   <button class="button" id="startContinue">Continue</button>
 </div>
 
 <!-- ===== LOBBY ===== -->
-<div id="lobby-screen" class="screen">
+<div id="lobby-screen">
 
   <div class="header">
     <img src="logo_taskflow.png">
@@ -217,24 +208,27 @@ canvas {
 </div>
 
 <!-- ===== GAME ===== -->
-<div id="game-screen" class="screen">
+<div id="game-screen">
   <img src="logo_taskflow.png">
   <canvas id="game"></canvas>
 </div>
 
 <script>
-/* ===== SCREEN SYSTEM ===== */
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+/* ===== SCREEN SWITCH ===== */
+function showScreen(screen) {
+  document.getElementById("start-screen").style.display = "none";
+  document.getElementById("lobby-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "none";
+
+  document.getElementById(screen).style.display =
+    screen === "start-screen" ? "flex" : "block";
 }
 
-/* ===== START → LOBBY ===== */
+/* ===== BUTTONS ===== */
 document.getElementById("startContinue").onclick = () => {
   showScreen("lobby-screen");
 };
 
-/* ===== LOBBY → GAME ===== */
 document.getElementById("lobbyContinue").onclick = () => {
   showScreen("game-screen");
   startGame();
@@ -244,13 +238,11 @@ document.getElementById("lobbyContinue").onclick = () => {
 document.getElementById("gameId").textContent =
   Math.floor(1000 + Math.random() * 9000);
 
-/* ===== CANVAS GAME ===== */
+/* ===== CANVAS ===== */
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 const COUNT = 14;
-
-const labels = new Array(COUNT).fill(null);
 const weekdays = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
 function resize() {
