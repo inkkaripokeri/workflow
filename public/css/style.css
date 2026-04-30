@@ -69,36 +69,27 @@ body {
 /* ================= STEPS ================= */
 .steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+
+  /* 🔥 7 column layout: STEP | LINE | STEP | LINE | STEP | LINE | STEP */
+  grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
 
   max-width: 1200px;
   margin: 40px auto;
-
-  gap: 0; /* tärkeä */
-  padding: 0 20px;
+  align-items: center;
 }
 
+/* step */
 .step {
-  position: relative;
   text-align: center;
-
   max-width: 300px;
   margin: 0 auto;
-  padding: 0 20px;
 }
 
-/* 🔥 OIKEAT PYSTYVIIVAT */
-.step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-
-  top: 10%;
+/* 🔥 VIIVA ELEMENTTINÄ */
+.step-divider {
   height: 80%;
-
-  right: -50%;                 /* 🔥 keskelle väliä */
-  transform: translateX(50%);  /* 🔥 tarkka keskitys */
-
-  border-right: 2px dashed rgba(255,255,255,0.4);
+  border-left: 2px dashed rgba(255,255,255,0.4);
+  justify-self: center;
 }
 
 /* numero */
