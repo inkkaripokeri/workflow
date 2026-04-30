@@ -14,20 +14,21 @@ let leds, bullets, score, running;
 let lastMove, spawnGap;
 
 const moveInterval = 500;
-const colors = ["red","green","blue"];
-const letters = ["A","B","C"];
+
+const ROLES = ["designer", "developer", "tester"];
+const letters = ["A", "B", "C"];
 
 let lobby = {};
 
 function newLobby() {
   lobby = {
-  code: Math.floor(1000 + Math.random()*9000).toString(),
-  players: {
-    red: null,
-    green: null,
-    blue: null
-  }
-};
+    code: Math.floor(1000 + Math.random() * 9000).toString(),
+    players: {
+      designer: null,
+      developer: null,
+      tester: null
+    }
+  };
 }
 newLobby();
 
@@ -38,13 +39,16 @@ function resetGame() {
   running = false;
   spawnGap = 0;
 }
+
 resetGame();
 
-function randomColor() {
-  return colors[Math.floor(Math.random()*3)];
-}
 function randomLetter() {
-  return letters[Math.floor(Math.random()*3)];
+  return letters[Math.floor(Math.random() * letters.length)];
+}
+
+function randomColor() {
+  // voidaan myöhemmin sitoa rooliin, nyt pidetään peli-logiikka ennallaan
+  return ["red", "green", "blue"][Math.floor(Math.random() * 3)];
 }
 
 function spawnTop() {
@@ -53,20 +57,24 @@ function spawnTop() {
     spawnGap--;
     return;
   }
-  leds[0] = { color: randomColor(), letter: randomLetter() };
-  spawnGap = Math.floor(Math.random()*3)+1;
+
+  leds[0] = {
+    color: randomColor(),
+    letter: randomLetter()
+  };
+
+  spawnGap = Math.floor(Math.random() * 3) + 1;
 }
 
 function getFirstBlockingIndex() {
-  for (let i=LED_COUNT-1;i>=0;i--) {
+  for (let i = LED_COUNT - 1; i >= 0; i--) {
     if (leds[i]) return i;
   }
   return -1;
 }
 
 // 🎮 GAME LOOP
-setInterval(()=>{
-
+setInterval(() => {
   if (!running) {
     io.emit("state", { leds, bullets, score, running, lobby });
     return;
@@ -76,12 +84,12 @@ setInterval(()=>{
 
   if (now - lastMove > moveInterval) {
 
-    if (leds[LED_COUNT-1]) {
+    if (leds[LED_COUNT - 1]) {
       running = false;
     }
 
-    for (let i=LED_COUNT-1;i>0;i--) {
-      leds[i] = leds[i-1];
+    for (let i = LED_COUNT - 1; i > 0; i--) {
+      leds[i] = leds[i - 1];
     }
 
     spawnTop();
@@ -105,65 +113,77 @@ setInterval(()=>{
       }
       return false;
     }
+
     return b.y >= 0;
   });
 
   io.emit("state", { leds, bullets, score, running, lobby });
 
-}, 1000/60);
+}, 1000 / 60);
 
-// 🔌 SOCKET
-io.on("connection", (socket)=>{
+// 🔌 SOCKET HANDLING
+io.on("connection", (socket) => {
 
-  socket.on("resetLobby", ()=>{
+  socket.on("resetLobby", () => {
     newLobby();
     resetGame();
   });
 
-  socket.on("join", ({ code, color, name }) => {
-  
+  // 👉 UPDATED JOIN (role-based)
+  socket.on("join", ({ code, role, name }) => {
+
+    if (!ROLES.includes(role)) {
+      socket.emit("joinResult", { ok: false, msg: "Invalid role" });
+      return;
+    }
+
     if (code !== lobby.code) {
-      socket.emit("joinResult", { ok:false, msg:"Wrong code" });
+      socket.emit("joinResult", { ok: false, msg: "Wrong code" });
       return;
     }
-  
-    if (lobby.players[color]) {
-      socket.emit("joinResult", { ok:false, msg:"Taken" });
+
+    if (lobby.players[role]) {
+      socket.emit("joinResult", { ok: false, msg: "Role already taken" });
       return;
     }
-  
-    lobby.players[color] = {
+
+    lobby.players[role] = {
       id: socket.id,
       name
     };
-  
-    socket.data.color = color;
-  
-    socket.emit("joinResult", { ok:true, name });
+
+    socket.data.role = role;
+
+    socket.emit("joinResult", { ok: true, role, name });
   });
 
-  socket.on("start", ()=>{
+  socket.on("start", () => {
     const count = Object.values(lobby.players).filter(Boolean).length;
+
     if (count === 3) {
       running = true;
       lastMove = Date.now();
     }
   });
 
-  socket.on("shoot", ({ color, letter })=>{
+  socket.on("shoot", ({ color, letter }) => {
     if (!running) return;
 
-    bullets.push({ y: LED_COUNT-1, color, letter });
+    bullets.push({
+      y: LED_COUNT - 1,
+      color,
+      letter
+    });
   });
 
-socket.on("disconnect", () => {
-  const c = socket.data.color;
+  socket.on("disconnect", () => {
+    const role = socket.data.role;
 
-  if (c && lobby.players[c]?.id === socket.id) {
-    lobby.players[c] = null;
-  }
+    if (role && lobby.players[role]?.id === socket.id) {
+      lobby.players[role] = null;
+    }
+  });
+
 });
 
-});
-
-server.listen(3000, ()=>console.log("Server running"));
+server.listen(3000, () => console.log("Server running"));
