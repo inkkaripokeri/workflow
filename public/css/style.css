@@ -58,34 +58,69 @@ body {
   width: 260px;
 }
 
-/* steps */
+/* ================= SECTION TITLE ================= */
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 40px;
+}
+
+/* ================= STEPS ================= */
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-  padding: 40px;
+
+  max-width: 1200px;     /* keskitys */
+  margin: 40px auto;
+
+  gap: 40px;
+  padding: 0 20px;
 }
 
 .step {
   position: relative;
+  text-align: center;
+
+  max-width: 300px;      /* max leveys */
+  margin: 0 auto;
 }
 
+/* dashed divider */
 .step:not(:last-child)::after {
   content: "";
   position: absolute;
-  right: -15px;
-  top: 10px;
-  height: 90%;
+  right: -20px;
+  top: 20px;
+  height: 70%;
   border-right: 2px dashed rgba(255,255,255,0.4);
 }
 
+/* numero */
 .step-number {
   color: #ff8c00;
+  font-size: 72px;       /* 3x isompi */
   font-weight: 700;
+  line-height: 1;
 }
 
+/* otsikko */
+.step-title {
+  font-size: 28px;       /* 2x isompi */
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* lisäteksti */
+.step div {
+  font-size: 16px;
+  margin-top: 6px;
+}
+
+/* QR */
 .qr {
   width: 120px;
+  margin-top: 12px;
 }
 
 /* game id */
@@ -96,6 +131,7 @@ body {
   font-size: 28px;
   letter-spacing: 10px;
   display: inline-block;
+  margin-top: 10px;
 }
 
 /* ================= PLAYERS ================= */
