@@ -4,154 +4,65 @@
 <meta charset="UTF-8">
 <title>Taskflow</title>
 
-<style>
-body {
-  margin: 0;
-  background: #05060c;
-  color: #fff;
-  font-family: Arial;
-}
-
-/* =========================
-   SCREEN SYSTEM (FIXED)
-========================= */
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-/* 🔥 START SCREEN FIX */
-#start-screen.active {
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-}
-
-#start-screen img {
-  width: 400px;
-}
-
-/* =========================
-   BUTTON
-========================= */
-.button {
-  padding: 18px 60px;
-  font-size: 22px;
-  font-weight: bold;
-  background: transparent;
-  border: 3px solid orange;
-  color: white;
-  cursor: pointer;
-}
-
-.button:disabled {
-  opacity: 0.4;
-}
-
-/* =========================
-   LOBBY
-========================= */
-#lobby-screen {
-  padding: 40px;
-}
-
-.players {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-}
-
-.player {
-  text-align: center;
-}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<!-- ================= START ================= -->
+<!-- START -->
 <div id="start-screen" class="screen active">
   <img src="logo_taskflow.png">
   <button class="button" id="startBtn">CONTINUE</button>
 </div>
 
-<!-- ================= LOBBY ================= -->
+<!-- LOBBY -->
 <div id="lobby-screen" class="screen">
-  <h2>Lobby</h2>
 
-  <div class="players" id="players"></div>
+  <div class="header">
+    <img src="logo_taskflow.png">
+  </div>
 
-  <button class="button" id="lobbyBtn" disabled>CONTINUE</button>
-</div>
+  <div class="steps">
 
-<!-- ================= PRE GAME ================= -->
-<div id="pre-game" class="screen">
-  <h2>Game Ready</h2>
-  <button class="button" id="startGameBtn">START</button>
-</div>
+    <div class="step">
+      <div class="step-number">1.</div>
+      <div class="step-title">Scan the QR Code</div>
+      <img src="taskflow_mobile_url.png" class="qr">
+    </div>
 
-<!-- ================= GAME ================= -->
-<div id="game-screen" class="screen">
-  <h2>Game Running</h2>
+    <div class="step">
+      <div class="step-number">2.</div>
+      <div class="step-title">Select Your Role</div>
+      <div>Developer, Designer, Test Engineer</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3.</div>
+      <div class="step-title">Enter Game ID</div>
+      <div id="gameId" class="game-id">----</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4.</div>
+      <div class="step-title">Tap Join to Play</div>
+    </div>
+
+  </div>
+
+  <div class="players">
+    <h2>Players</h2>
+
+    <div id="playersGrid" class="player-grid"></div>
+
+    <div class="continue-wrapper">
+      <button id="lobbyBtn" class="button" disabled>CONTINUE</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-
-const socket = io();
-
-/* ================= SCREEN SWITCH ================= */
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-/* ================= START ================= */
-document.getElementById("startBtn").onclick = () => {
-  console.log("START CLICK");
-  show("lobby-screen");
-  socket.emit("resetLobby");
-};
-
-/* ================= LOBBY CONTINUE ================= */
-document.getElementById("lobbyBtn").onclick = () => {
-  show("pre-game");
-};
-
-/* ================= START GAME ================= */
-document.getElementById("startGameBtn").onclick = () => {
-  socket.emit("start");
-  show("game-screen");
-};
-
-/* ================= STATE ================= */
-socket.on("state", (s) => {
-
-  const lobby = s.lobby;
-
-  const count = Object.values(lobby.players).filter(Boolean).length;
-
-  document.getElementById("lobbyBtn").disabled = count !== 3;
-
-  renderPlayers(lobby.players);
-});
-
-/* ================= PLAYERS ================= */
-function renderPlayers(p) {
-  document.getElementById("players").innerHTML = `
-    <div class="player">Designer<br>${p.designer?.name || "Waiting..."}</div>
-    <div class="player">Developer<br>${p.developer?.name || "Waiting..."}</div>
-    <div class="player">Tester<br>${p.tester?.name || "Waiting..."}</div>
-  `;
-}
-
-</script>
+<script type="module" src="js/socket.js"></script>
 
 </body>
 </html>
