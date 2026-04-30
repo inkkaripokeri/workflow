@@ -1,52 +1,48 @@
-export const UI = (() => {
+function renderPlayers(players) {
 
-  function show(screen) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(screen).classList.add("active");
-  }
+  const el = document.getElementById("playersGrid");
 
-  function animateToLobby() {
-    document.body.classList.add("start-to-lobby");
-    setTimeout(() => show("lobby-screen"), 200);
-  }
+  const roles = [
+    { key: "designer", label: "Designer", cls: "designer" },
+    { key: "developer", label: "Developer", cls: "developer" },
+    { key: "tester", label: "Test Engineer", cls: "tester" }
+  ];
 
-  function renderGameId(code) {
-    document.getElementById("gameId").textContent =
-      code.split("").join(" ");
-  }
+  el.innerHTML = roles.map(r => {
 
-  function renderPlayers(players) {
+    const p = players[r.key];
 
-    const el = document.getElementById("playersGrid");
+    let statusText = "WAITING";
+    let statusClass = "waiting";
+    let icon = "";
+    let name = "";
 
-    el.innerHTML = ["designer","developer","tester"].map(role => {
+    if (p) {
+      name = p.name;
 
-      const p = players[role];
-
-      let status = "WAITING...";
-      let icon = "";
-
-      if (p) {
-        if (p.connected === false) {
-          status = "DISCONNECTED";
-          icon = `<img src="Disconnected_Icon.png" width="16">`;
-        } else {
-          status = "CONNECTED";
-          icon = `<img src="Connected_icon.png" width="16">`;
-        }
+      if (p.connected === false) {
+        statusText = "DISCONNECTED";
+        statusClass = "disconnected";
+        icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
+      } else {
+        statusText = "CONNECTED";
+        statusClass = "connected";
+        icon = `<img class="status-icon" src="Connected_icon.png">`;
       }
+    }
 
-      return `
-        <div class="player">
-          <img src="${role === "tester" ? "testengineer.png" : role + ".png"}">
-          <div>${role}</div>
-          <div>${p ? p.name : ""}</div>
-          <div class="status">${icon} ${status}</div>
+    return `
+      <div class="player ${r.cls}">
+        ${icon}
+
+        <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+
+        <div class="player-role">${r.label}</div>
+        <div class="player-name">${name}</div>
+        <div class="player-status ${statusClass}">
+          ${statusText}<span class="dots">.</span>
         </div>
-      `;
-    }).join("");
-  }
-
-  return { show, animateToLobby, renderPlayers, renderGameId };
-
-})();
+      </div>
+    `;
+  }).join("");
+}
