@@ -94,7 +94,7 @@ body {
 
 /* 🔥 SISENNYS: kaikki alkaa otsikon kohdalta */
 .step > *:not(.step-header) {
-  margin-left: 50px; /* 🔥 säädä tarvittaessa */
+  margin-left: 45px; /* 🔥 säädä tarvittaessa */
 }
 
 /* 🔥 VIIVA ELEMENTTINÄ */
