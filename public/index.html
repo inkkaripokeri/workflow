@@ -17,11 +17,20 @@ body {
   font-family: "Roboto Condensed", Arial, sans-serif;
 }
 
-/* ================= START ================= */
+/* ===== SCREENS ===== */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* ===== START ===== */
 #start-screen {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;   /* FIX: vertical layout */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 30px;
@@ -32,11 +41,7 @@ body {
   max-width: 90%;
 }
 
-/* ================= SCREENS ================= */
-.screen { display: none; }
-.screen.active { display: block; }
-
-/* ================= LOBBY ================= */
+/* ===== LOBBY ===== */
 #lobby-screen {
   padding: 40px 60px;
 }
@@ -50,6 +55,12 @@ body {
   max-width: 420px;
 }
 
+.section-title {
+  font-size: 22px;
+  margin: 20px 0 10px;
+  opacity: 0.9;
+}
+
 /* QR */
 .qr {
   text-align: center;
@@ -61,12 +72,6 @@ body {
 }
 
 /* steps */
-.section-title {
-  font-size: 22px;
-  margin: 20px 0 10px;
-  opacity: 0.9;
-}
-
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -152,9 +157,15 @@ body {
   cursor: pointer;
 }
 
-.button:disabled { opacity: 0.35; }
+.button:disabled {
+  opacity: 0.35;
+}
 
-/* ================= GAME ================= */
+.button:hover:not(:disabled) {
+  background: rgba(255,140,0,0.15);
+}
+
+/* ===== GAME ===== */
 #game-screen {
   display: none;
   text-align: center;
@@ -164,20 +175,19 @@ body {
 
 <body>
 
-<!-- ================= START ================= -->
+<!-- START -->
 <div id="start-screen" class="screen active">
   <img src="logo_taskflow.png">
   <button class="button" id="startContinue">Continue</button>
 </div>
 
-<!-- ================= LOBBY ================= -->
+<!-- LOBBY -->
 <div id="lobby-screen" class="screen">
 
   <div class="header">
     <img src="logo_taskflow.png">
   </div>
 
-  <!-- QR FIX -->
   <div class="qr">
     <img src="taskflow_mobile_url.png">
   </div>
@@ -185,25 +195,10 @@ body {
   <div class="section-title">How to Join</div>
 
   <div class="steps">
-    <div class="step">
-      <div class="step-number">1.</div>
-      <div class="step-title">Scan QR</div>
-    </div>
-
-    <div class="step">
-      <div class="step-number">2.</div>
-      <div class="step-title">Choose Role</div>
-    </div>
-
-    <div class="step">
-      <div class="step-number">3.</div>
-      <div class="step-title">Game ID</div> <!-- FIXED -->
-    </div>
-
-    <div class="step">
-      <div class="step-number">4.</div>
-      <div class="step-title">Join</div>
-    </div>
+    <div class="step"><div class="step-number">1.</div><div class="step-title">Scan QR</div></div>
+    <div class="step"><div class="step-number">2.</div><div class="step-title">Choose Role</div></div>
+    <div class="step"><div class="step-number">3.</div><div class="step-title">Game ID</div></div>
+    <div class="step"><div class="step-number">4.</div><div class="step-title">Join</div></div>
   </div>
 
   <div class="section-title">Players</div>
@@ -211,10 +206,9 @@ body {
   <div class="players" id="players"></div>
 
   <button class="button" id="lobbyContinue" disabled>CONTINUE</button>
-
 </div>
 
-<!-- ================= GAME ================= -->
+<!-- GAME -->
 <div id="game-screen" class="screen">
   <h2>GAME</h2>
 </div>
@@ -225,15 +219,26 @@ body {
 const socket = io();
 
 let lobby = null;
+let inLobby = false;
 
-/* SCREEN */
+/* =========================
+   SCREEN CONTROL (FIXED)
+========================= */
 function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+    s.style.display = "none";
+  });
+
+  const el = document.getElementById(id);
+  el.classList.add("active");
+
+  el.style.display = (id === "start-screen") ? "flex" : "block";
 }
 
 /* START */
 document.getElementById("startContinue").onclick = () => {
+  inLobby = true;
   socket.emit("resetLobby");
   show("lobby-screen");
 };
@@ -243,26 +248,32 @@ document.getElementById("lobbyContinue").onclick = () => {
   show("game-screen");
 };
 
-/* WAITING ANIMATION */
-function waitingText(el) {
-  let i = 0;
-  setInterval(() => {
-    const dots = ".".repeat(i % 4);
-    el.textContent = "Waiting" + dots;
-    i++;
-  }, 500);
-}
+/* =========================
+   SOCKET STATE
+   ========================= */
+socket.on("state", (s) => {
 
-/* PLAYERS */
+  if (!inLobby) return;
+
+  lobby = s.lobby;
+
+  const count = Object.values(lobby.players).filter(Boolean).length;
+  document.getElementById("lobbyContinue").disabled = count !== 3;
+
+  updatePlayers(lobby.players);
+});
+
+/* =========================
+   PLAYERS UI
+========================= */
 function updatePlayers(p) {
-
   document.getElementById("players").innerHTML = `
-    ${playerCard("designer", "Designer")}
-    ${playerCard("developer", "Developer")}
-    ${playerCard("tester", "Test Engineer")}
+    ${card("designer", "Designer")}
+    ${card("developer", "Developer")}
+    ${card("tester", "Test Engineer")}
   `;
 
-  function playerCard(role, label) {
+  function card(role, label) {
     const player = p[role];
     const connected = player && player.name;
 
@@ -275,27 +286,22 @@ function updatePlayers(p) {
           : `<img class="status-icon" src="Disconnected_Icon.png">`
         }
 
-        <div class="player-name">
-          ${label}
-        </div>
+        <div class="player-name">${label}</div>
 
         <div class="waiting"></div>
       </div>
     `;
   }
 
-  document.querySelectorAll(".waiting").forEach(waitingText);
+  document.querySelectorAll(".waiting").forEach(el => {
+    let i = 0;
+    setInterval(() => {
+      el.textContent = "Waiting" + ".".repeat(i % 4);
+      i++;
+    }, 500);
+  });
 }
 
-/* STATE */
-socket.on("state", (s) => {
-  lobby = s.lobby;
-
-  const count = Object.values(lobby.players).filter(Boolean).length;
-  document.getElementById("lobbyContinue").disabled = count !== 3;
-
-  updatePlayers(lobby.players);
-});
 </script>
 
 </body>
