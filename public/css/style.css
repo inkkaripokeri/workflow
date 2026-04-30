@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background: #05060c;
+  color: white;
+  font-family: Arial;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
