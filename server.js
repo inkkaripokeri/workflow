@@ -19,6 +19,8 @@ const ROLES = ["designer", "developer", "tester"];
 const letters = ["A", "B", "C"];
 
 let lobby = {};
+let gameState = "waiting"; 
+// waiting | running | gameover
 
 function newLobby() {
   lobby = {
@@ -29,6 +31,8 @@ function newLobby() {
       tester: null
     }
   };
+
+  gameState = "waiting";
 }
 newLobby();
 
@@ -47,7 +51,6 @@ function randomLetter() {
 }
 
 function randomColor() {
-  // voidaan myöhemmin sitoa rooliin, nyt pidetään peli-logiikka ennallaan
   return ["red", "green", "blue"][Math.floor(Math.random() * 3)];
 }
 
@@ -75,8 +78,9 @@ function getFirstBlockingIndex() {
 
 // 🎮 GAME LOOP
 setInterval(() => {
+
   if (!running) {
-    io.emit("state", { leds, bullets, score, running, lobby });
+    io.emit("state", { leds, bullets, score, running, lobby, gameState });
     return;
   }
 
@@ -84,8 +88,10 @@ setInterval(() => {
 
   if (now - lastMove > moveInterval) {
 
+    // 👉 GAME OVER CONDITION
     if (leds[LED_COUNT - 1]) {
       running = false;
+      gameState = "gameover";
     }
 
     for (let i = LED_COUNT - 1; i > 0; i--) {
@@ -117,7 +123,7 @@ setInterval(() => {
     return b.y >= 0;
   });
 
-  io.emit("state", { leds, bullets, score, running, lobby });
+  io.emit("state", { leds, bullets, score, running, lobby, gameState });
 
 }, 1000 / 60);
 
@@ -129,7 +135,7 @@ io.on("connection", (socket) => {
     resetGame();
   });
 
-  // 👉 UPDATED JOIN (role-based)
+  // 👉 JOIN (role-based)
   socket.on("join", ({ code, role, name }) => {
 
     if (!ROLES.includes(role)) {
@@ -157,11 +163,13 @@ io.on("connection", (socket) => {
     socket.emit("joinResult", { ok: true, role, name });
   });
 
+  // 👉 START GAME
   socket.on("start", () => {
     const count = Object.values(lobby.players).filter(Boolean).length;
 
     if (count === 3) {
       running = true;
+      gameState = "running";
       lastMove = Date.now();
     }
   });
