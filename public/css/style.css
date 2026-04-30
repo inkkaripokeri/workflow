@@ -71,10 +71,10 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 
-  max-width: 1200px;     /* keskitys */
+  max-width: 1200px;
   margin: 40px auto;
 
-  gap: 40px;
+  gap: 0; /* 🔥 tärkeä */
   padding: 0 20px;
 }
 
@@ -82,36 +82,40 @@ body {
   position: relative;
   text-align: center;
 
-  max-width: 300px;      /* max leveys */
+  max-width: 300px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
-/* dashed divider */
+/* 🔥 UUSI KESKITETTY VIIVA */
 .step:not(:last-child)::after {
   content: "";
   position: absolute;
-  right: -20px;
-  top: 20px;
-  height: 70%;
-  border-right: 2px dashed rgba(255,255,255,0.4);
+
+  top: 50%;
+  right: -50%;
+  transform: translateY(-50%);
+
+  width: 100%;
+  border-top: 2px dashed rgba(255,255,255,0.4);
 }
 
 /* numero */
 .step-number {
   color: #ff8c00;
-  font-size: 48px;       /* 3x isompi */
-  font-weight: 500;
+  font-size: 72px; /* 🔥 oikeasti iso */
+  font-weight: 700;
   line-height: 1;
 }
 
 /* otsikko */
 .step-title {
-  font-size: 28px;       /* 2x isompi */
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 700;
   margin-top: 10px;
 }
 
-/* lisäteksti (vain tämä vaikuttaa) */
+/* lisäteksti */
 .step-text {
   font-size: 16px;
   margin-top: 6px;
