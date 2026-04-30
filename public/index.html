@@ -22,7 +22,7 @@ body {
   display: none;
 }
 
-.screen.active {
+.active {
   display: block;
 }
 
@@ -30,7 +30,7 @@ body {
 #start-screen {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;   /* FIX: vertical layout */
   align-items: center;
   justify-content: center;
   gap: 30px;
@@ -55,12 +55,6 @@ body {
   max-width: 420px;
 }
 
-.section-title {
-  font-size: 22px;
-  margin: 20px 0 10px;
-  opacity: 0.9;
-}
-
 /* QR */
 .qr {
   text-align: center;
@@ -68,7 +62,14 @@ body {
 }
 
 .qr img {
-  width: 180px;
+  width: 140px;
+}
+
+/* titles */
+.section-title {
+  font-size: 22px;
+  margin: 20px 0 10px;
+  opacity: 0.9;
 }
 
 /* steps */
@@ -76,7 +77,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .step {
@@ -104,10 +105,17 @@ body {
   font-weight: 700;
 }
 
+/* Game ID FIX VISIBILITY */
+.game-id {
+  font-size: 20px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
 /* players */
 .players {
   display: grid;
-  grid-template-columns: repeat(3, 1fr) auto;
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   margin-top: 20px;
 }
@@ -122,27 +130,41 @@ body {
   border-radius: 16px;
 }
 
+/* status icon FIX */
+.status-icon {
+  position: absolute;
+  top: 8px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain; /* FIX no stretching */
+}
+
+/* name */
 .player-name {
   margin-top: 10px;
   font-weight: 700;
 }
 
-/* status text */
+/* waiting animation */
 .waiting {
-  font-size: 14px;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
-/* icon */
-.status-icon {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 30px;
-  height: 30px;
+.dots::after {
+  content: "";
+  display: inline-block;
+  animation: dots 1.2s infinite;
 }
 
-/* button */
+@keyframes dots {
+  0% { content: ""; }
+  33% { content: "."; }
+  66% { content: ".."; }
+  100% { content: "..."; }
+}
+
+/* BUTTON */
 .button {
   margin-top: 40px;
   padding: 18px 72px;
@@ -164,30 +186,25 @@ body {
 .button:hover:not(:disabled) {
   background: rgba(255,140,0,0.15);
 }
-
-/* ===== GAME ===== */
-#game-screen {
-  display: none;
-  text-align: center;
-}
 </style>
 </head>
 
 <body>
 
-<!-- START -->
+<!-- ===== START ===== -->
 <div id="start-screen" class="screen active">
   <img src="logo_taskflow.png">
   <button class="button" id="startContinue">Continue</button>
 </div>
 
-<!-- LOBBY -->
+<!-- ===== LOBBY ===== -->
 <div id="lobby-screen" class="screen">
 
   <div class="header">
     <img src="logo_taskflow.png">
   </div>
 
+  <!-- QR FIXED -->
   <div class="qr">
     <img src="taskflow_mobile_url.png">
   </div>
@@ -195,67 +212,61 @@ body {
   <div class="section-title">How to Join</div>
 
   <div class="steps">
-    <div class="step"><div class="step-number">1.</div><div class="step-title">Scan QR</div></div>
-    <div class="step"><div class="step-number">2.</div><div class="step-title">Choose Role</div></div>
-    <div class="step"><div class="step-number">3.</div><div class="step-title">Game ID</div></div>
-    <div class="step"><div class="step-number">4.</div><div class="step-title">Join</div></div>
+    <div class="step">
+      <div class="step-number">1.</div>
+      <div class="step-title">Scan QR</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2.</div>
+      <div class="step-title">Choose Role</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3.</div>
+      <div class="step-title">Enter Game ID</div>
+      <div class="game-id" id="gameId">----</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4.</div>
+      <div class="step-title">Join</div>
+    </div>
   </div>
 
   <div class="section-title">Players</div>
 
   <div class="players" id="players"></div>
 
-  <button class="button" id="lobbyContinue" disabled>CONTINUE</button>
-</div>
+  <button class="button" id="lobbyContinue" disabled>
+    CONTINUE
+  </button>
 
-<!-- GAME -->
-<div id="game-screen" class="screen">
-  <h2>GAME</h2>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
 const socket = io();
 
 let lobby = null;
-let inLobby = false;
 
-/* =========================
-   SCREEN CONTROL (FIXED)
-========================= */
+/* NAV */
 function show(id) {
-  document.querySelectorAll(".screen").forEach(s => {
-    s.classList.remove("active");
-    s.style.display = "none";
-  });
-
-  const el = document.getElementById(id);
-  el.classList.add("active");
-
-  el.style.display = (id === "start-screen") ? "flex" : "block";
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* START */
+/* START FIX */
 document.getElementById("startContinue").onclick = () => {
-  inLobby = true;
-  socket.emit("resetLobby");
   show("lobby-screen");
+  socket.emit("resetLobby");
 };
 
-/* CONTINUE */
-document.getElementById("lobbyContinue").onclick = () => {
-  show("game-screen");
-};
-
-/* =========================
-   SOCKET STATE
-   ========================= */
+/* STATE */
 socket.on("state", (s) => {
-
-  if (!inLobby) return;
-
   lobby = s.lobby;
+
+  document.getElementById("gameId").textContent = lobby.code;
 
   const count = Object.values(lobby.players).filter(Boolean).length;
   document.getElementById("lobbyContinue").disabled = count !== 3;
@@ -263,45 +274,28 @@ socket.on("state", (s) => {
   updatePlayers(lobby.players);
 });
 
-/* =========================
-   PLAYERS UI
-========================= */
+/* PLAYERS UI FIX */
 function updatePlayers(p) {
   document.getElementById("players").innerHTML = `
-    ${card("designer", "Designer")}
-    ${card("developer", "Developer")}
-    ${card("tester", "Test Engineer")}
+    <div class="player">
+      <img src="designer.png">
+      <img class="status-icon" src="${p.designer ? "Connected_icon.png" : "Disconnected_Icon.png"}">
+      <div class="player-name">Designer<br><span class="waiting">${p.designer ? p.designer.name : "Waiting"}<span class="dots"></span></span></div>
+    </div>
+
+    <div class="player">
+      <img src="developer.png">
+      <img class="status-icon" src="${p.developer ? "Connected_icon.png" : "Disconnected_Icon.png"}">
+      <div class="player-name">Developer<br><span class="waiting">${p.developer ? p.developer.name : "Waiting"}<span class="dots"></span></span></div>
+    </div>
+
+    <div class="player">
+      <img src="testengineer.png">
+      <img class="status-icon" src="${p.tester ? "Connected_icon.png" : "Disconnected_Icon.png"}">
+      <div class="player-name">Test Engineer<br><span class="waiting">${p.tester ? p.tester.name : "Waiting"}<span class="dots"></span></span></div>
+    </div>
   `;
-
-  function card(role, label) {
-    const player = p[role];
-    const connected = player && player.name;
-
-    return `
-      <div class="player">
-        <img src="${role === "tester" ? "testengineer.png" : role + ".png"}">
-
-        ${connected
-          ? `<img class="status-icon" src="Connected_icon.png">`
-          : `<img class="status-icon" src="Disconnected_Icon.png">`
-        }
-
-        <div class="player-name">${label}</div>
-
-        <div class="waiting"></div>
-      </div>
-    `;
-  }
-
-  document.querySelectorAll(".waiting").forEach(el => {
-    let i = 0;
-    setInterval(() => {
-      el.textContent = "Waiting" + ".".repeat(i % 4);
-      i++;
-    }, 500);
-  });
 }
-
 </script>
 
 </body>
