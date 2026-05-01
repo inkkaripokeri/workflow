@@ -78,17 +78,16 @@ body {
 
 .step {
   text-align: left;
-  width: 100%;        /* 🔥 tärkein */
-  max-width: none;    /* 🔥 poista rajoitus */
-  margin: 0;          /* 🔥 poista keskitys */
+  width: 100%;
+  max-width: none;
+  margin: 0;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-/* 🔥 HEADER RIVI (NUMERO + TITLE) */
-/* 🔥 kaikille headereille sama korkeus */
+/* HEADER */
 .step-header {
   display: flex;
   align-items: baseline;
@@ -96,12 +95,12 @@ body {
   margin-bottom: 12px;
 }
 
-/* 🔥 SISENNYS: kaikki alkaa otsikon kohdalta */
+/* indent */
 .step > *:not(.step-header) {
-  margin-left: 45px; /* 🔥 säädä tarvittaessa */
+  margin-left: 45px;
 }
 
-/* 🔥 VIIVA ELEMENTTINÄ */
+/* divider */
 .step-divider {
   height: auto;
   align-self: stretch;
@@ -111,7 +110,7 @@ body {
   margin-bottom: 5px;
 }
 
-/* numero */
+/* number */
 .step-number {
   color: #ff8c00;
   font-size: 38px;
@@ -119,14 +118,14 @@ body {
   line-height: 1;
 }
 
-/* otsikko */
+/* title */
 .step-title {
   font-size: 24px;
   font-weight: 500;
   line-height: 1.2;
 }
 
-/* lisäteksti */
+/* text */
 .step-text {
   font-size: 18px;
   margin-top: 6px;
@@ -138,7 +137,7 @@ body {
   margin-top: 12px;
 }
 
-/* ================= GAME ID (BOXES) ================= */
+/* ================= GAME ID ================= */
 .game-id {
   display: flex;
   gap: 12px;
@@ -148,8 +147,7 @@ body {
 .digit {
   width: 40px;
   height: 60px;
-
-  background: #2a2a2a;   /* tumma harmaa */
+  background: #2a2a2a;
   border-radius: 8px;
 
   display: flex;
@@ -164,7 +162,7 @@ body {
 .player-grid {
   display: grid;
   grid-template-columns: repeat(3, 240px);
-  justify-content: center; 
+  justify-content: center;
   gap: 20px;
   text-align: center;
 }
@@ -189,24 +187,20 @@ body {
   border: 6px solid #00b894;
 }
 
-/* ================= WAITING DOTS ================= */
-.dots span {
-  opacity: 0;
+/* ================= WAITING DOTS (FIXED) ================= */
+.dots {
+  margin-left: 6px;
+  display: inline-block;
   animation: dotsFade 1.2s infinite;
 }
 
-/* viiveet per piste */
-.dots span:nth-child(1) { animation-delay: 0s; }
-.dots span:nth-child(2) { animation-delay: 0.2s; }
-.dots span:nth-child(3) { animation-delay: 0.4s; }
-
 @keyframes dotsFade {
-  0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  100% { opacity: 0; }
+  0%   { opacity: 0.2; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.2; }
 }
 
-/* status icon */
+/* ================= STATUS ================= */
 .status-icon {
   position: absolute;
   top: 8px;
@@ -215,11 +209,10 @@ body {
   height: 28px;
 }
 
-/* text */
 .player-role {
   margin-top: 6px;
   font-size: 18px;
-  opacity: 1.0;
+  opacity: 1;
 }
 
 .player-name {
