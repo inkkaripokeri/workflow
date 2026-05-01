@@ -80,20 +80,6 @@ export const UI = (() => {
   }
 
   /* ================= WAITING ANIMATION ================= */
-  let dotCount = 1;
-
-  setInterval(() => {
-
-    dotCount = dotCount >= 3 ? 1 : dotCount + 1;
-
-    const dots = ".".repeat(dotCount);
-
-    document.querySelectorAll(".player-status.waiting .dots")
-      .forEach(el => {
-        el.textContent = dots;
-      });
-
-  }, 500);
 
   return {
     show,
