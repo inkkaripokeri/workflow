@@ -20,7 +20,7 @@ let gameState = "waiting";
 
 function newLobby() {
   lobby = {
-    code: Math.floor(1000 + Math.random() * 9000).toString(),
+    code: Math.floor(Math.random() * 10000).toString().padStart(4, "0"),
     players: {
       designer: null,
       developer: null,
