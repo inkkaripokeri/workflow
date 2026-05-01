@@ -19,8 +19,13 @@ export const UI = (() => {
   function renderGameId(code) {
     if (!code) return;
 
-    document.getElementById("gameId").textContent =
-      code.split("").join(" ");
+    const el = document.getElementById("gameId");
+    if (!el) return;
+
+    el.innerHTML = code
+      .split("")
+      .map(d => `<div class="digit">${d}</div>`)
+      .join("");
   }
 
   /* ================= PLAYERS ================= */
