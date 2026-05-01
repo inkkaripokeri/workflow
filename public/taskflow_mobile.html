@@ -333,8 +333,8 @@ socket.on("joinResult", (res) => {
 
   document.getElementById("waitingName").textContent = playerName;
 
-  document.getElementById("waitingTitle").textContent =
-    role.toUpperCase();
+  // 🔥 TÄRKEÄ MUUTOS
+  document.getElementById("waitingTitle").textContent = playerName;
 
   showScreen("waiting-screen");
 });
