@@ -72,7 +72,7 @@ export const UI = (() => {
           <div class="player-role">${r.label}</div>
           <div class="player-name">${name}</div>
           <div class="player-status ${statusClass}">
-            ${statusText}${statusClass === "waiting" ? `<span class="dots"></span>` : ""}
+            ${statusClass === "waiting" ? "WAITING..." : statusText}
           </div>
         </div>
       `;
