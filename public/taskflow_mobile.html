@@ -260,6 +260,9 @@ socket.on("joinResult", (res) => {
     return;
   }
 
+  // 🔥 LISÄTTY: roolikohtainen class (borderit ym.)
+  document.getElementById("waitingCard").className = `role-card ${role}`;
+
   document.getElementById("waitingCard").innerHTML =
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
@@ -270,7 +273,6 @@ socket.on("joinResult", (res) => {
 
   showScreen("waiting-screen");
 });
-
 /* STATE FROM SERVER */
 socket.on("state", (s) => {
 
