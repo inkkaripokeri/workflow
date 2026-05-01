@@ -170,6 +170,29 @@ h1 {
 .button:hover {
   background: rgba(255,140,0,0.2);
 }
+
+/* ================= WAITING SCREEN ================= */
+#waiting-screen {
+  justify-content: center;   /* 🔥 keskelle pystysuunnassa */
+  gap: 20px;                 /* 🔥 tasaiset välit */
+}
+
+/* nimi (title) */
+#waitingTitle {
+  margin: 0;
+}
+
+/* roolikortti */
+#waitingCard {
+  margin: 0;
+}
+
+/* status teksti */
+#waitingText {
+  font-size: 16px;
+  opacity: 0.8;
+}
+  
 </style>
 </head>
 
@@ -228,7 +251,7 @@ h1 {
 
 <!-- WAITING / READY -->
 <div id="waiting-screen" class="screen">
-  <h1 id="waitingTitle">WAITING...</h1>
+  <h1 id="waitingTitle">Waiting for other players</h1>
 
   <div class="role-card" id="waitingCard"></div>
 
