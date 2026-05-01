@@ -101,9 +101,12 @@ body {
 
 /* 🔥 VIIVA ELEMENTTINÄ */
 .step-divider {
-  height: 90%;
-  border-left: 2px dashed rgba(255,255,255,0.4);
+  height: auto;
+  align-self: stretch;
+  border-left: 3px dashed rgba(255,255,255,0.4);
   justify-self: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* numero */
