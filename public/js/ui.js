@@ -72,7 +72,11 @@ export const UI = (() => {
           <div class="player-role">${r.label}</div>
           <div class="player-name">${name}</div>
           <div class="player-status ${statusClass}">
-            ${statusText}<span class="dots">.</span>
+            ${statusText}
+            ${statusClass === "waiting" 
+              ? `<span class="dots"><span>.</span><span>.</span><span>.</span></span>` 
+              : ""
+            }
           </div>
         </div>
       `;
@@ -80,6 +84,7 @@ export const UI = (() => {
   }
 
   /* ================= WAITING ANIMATION ================= */
+  // 🔥 Ei enää JS-animaatiota → hoidetaan CSS:llä
 
   return {
     show,
