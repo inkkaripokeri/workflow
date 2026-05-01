@@ -187,22 +187,10 @@ body {
   border: 6px solid #00b894;
 }
 
-/* ================= WAITING DOTS (FIXED) ================= */
+/* ================= WAITING DOTS ================= */
 .dots {
   margin-left: 6px;
   display: inline-block;
-  opacity: 1;
-  animation: dotsFade 1.2s ease-in-out infinite;
-}
-
-@keyframes dotsFade {
-  0%   { opacity: 0.3; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-.player-status.waiting .dots {
-  animation-play-state: running;
 }
 
 /* ================= STATUS ================= */
