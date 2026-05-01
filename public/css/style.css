@@ -162,7 +162,8 @@ body {
 /* ================= PLAYERS ================= */
 .player-grid {
   display: grid;
-  grid-template-columns: repeat(3, 200px);
+  grid-template-columns: repeat(3, 240px);
+  justify-content: center; 
   gap: 20px;
   text-align: center;
 }
@@ -172,7 +173,7 @@ body {
 }
 
 .player img {
-  width: 150px;
+  width: 180px;
   border-radius: 12px;
 }
 
@@ -198,19 +199,21 @@ body {
 
 /* text */
 .player-role {
-  margin-top: 8px;
-  font-size: 14px;
-  opacity: 0.8;
+  margin-top: 6px;
+  font-size: 18px;
+  opacity: 1.0;
 }
 
 .player-name {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 6px;
 }
 
 .player-status {
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 6px;
 }
 
 /* colors */
