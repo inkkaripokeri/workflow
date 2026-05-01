@@ -187,12 +187,6 @@ body {
   border: 6px solid #00b894;
 }
 
-/* ================= WAITING DOTS ================= */
-.dots {
-  margin-left: 6px;
-  display: inline-block;
-}
-
 /* ================= STATUS ================= */
 .status-icon {
   position: absolute;
