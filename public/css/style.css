@@ -77,8 +77,9 @@ body {
 
 .step {
   text-align: left;
-  max-width: 300px;
-  margin: 0 auto;
+  width: 100%;        /* 🔥 tärkein */
+  max-width: none;    /* 🔥 poista rajoitus */
+  margin: 0;          /* 🔥 poista keskitys */
 
   display: flex;
   flex-direction: column;
