@@ -64,20 +64,17 @@ export const UI = (() => {
       }
 
       return `
-        <div class="player ${r.cls}">
-          ${icon}
+<div class="player ${r.cls}">
+  ${icon}
 
-          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+  <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
 
-          <div class="player-role">${r.label}</div>
-          <div class="player-name">${name}</div>
-          <div class="player-status ${statusClass}">
-            ${statusText}
-            ${statusClass === "waiting" 
-              ? `<span class="dots"><span>.</span><span>.</span><span>.</span></span>` 
-              : ""
-            }
-          </div>
+  <div class="player-role">${r.label}</div>
+  <div class="player-name">${name}</div>
+  <div class="player-status ${statusClass}">
+    ${statusText}${statusClass === "waiting" ? `<span class="dots">...</span>` : ""}
+  </div>
+</div>
         </div>
       `;
     }).join("");
