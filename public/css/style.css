@@ -189,6 +189,18 @@ body {
   border: 6px solid #00b894;
 }
 
+.dots::after {
+  content: ".";
+  animation: dots 1.2s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: "."; opacity: 0.5; }
+  33%  { content: ".."; opacity: 0.7; }
+  66%  { content: "..."; opacity: 1; }
+  100% { content: "."; opacity: 0.5; }
+}
+
 /* status icon */
 .status-icon {
   position: absolute;
