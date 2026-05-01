@@ -268,12 +268,7 @@ function selectRole(selectedRole) {
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
   showScreen("join-screen");showScreen("join-screen");
-
-// 🔥 auto focus ensimmäiseen Game ID boksiin
-setTimeout(() => {
-  const firstInput = document.querySelector(".digit-input");
-  if (firstInput) firstInput.focus();
-}, 100);
+  
 }
 
 /* JOIN */
