@@ -72,7 +72,7 @@ body {
   grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
   max-width: 1200px;
   margin: 40px auto;
-  align-items: center;
+  align-items: start;
 }
 
 .step {
@@ -91,8 +91,6 @@ body {
   display: flex;
   align-items: baseline;
   gap: 12px;
-
-  min-height: 80px;   /* 🔥 tämä tekee linjauksen */
 }
 
 /* 🔥 SISENNYS: kaikki alkaa otsikon kohdalta */
