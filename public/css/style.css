@@ -162,8 +162,8 @@ body {
 /* ================= PLAYERS ================= */
 .player-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(3, 200px);
+  gap: 20px;
   text-align: center;
 }
 
@@ -172,19 +172,19 @@ body {
 }
 
 .player img {
-  width: 140px;
-  border-radius: 16px;
+  width: 150px;
+  border-radius: 12px;
 }
 
 /* role borders */
 .player.designer img {
-  border: 4px solid #f39c12;
+  border: 6px solid #f39c12;
 }
 .player.developer img {
-  border: 4px solid #6c5ce7;
+  border: 6px solid #6c5ce7;
 }
 .player.tester img {
-  border: 4px solid #00b894;
+  border: 6px solid #00b894;
 }
 
 /* status icon */
