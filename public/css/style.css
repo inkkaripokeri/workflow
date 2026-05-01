@@ -86,10 +86,13 @@ body {
 }
 
 /* 🔥 HEADER RIVI (NUMERO + TITLE) */
+/* 🔥 kaikille headereille sama korkeus */
 .step-header {
   display: flex;
-  align-items: baseline; /* 🔥 MUUTETTU: alalinjaus */
+  align-items: baseline;
   gap: 12px;
+
+  min-height: 80px;   /* 🔥 tämä tekee linjauksen */
 }
 
 /* 🔥 SISENNYS: kaikki alkaa otsikon kohdalta */
