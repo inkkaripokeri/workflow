@@ -212,10 +212,10 @@ h1 {
 
   <div class="input-title">Game ID</div>
   <div id="gameIdInputs" class="game-id-inputs">
-    <input maxlength="1" class="digit-input">
-    <input maxlength="1" class="digit-input">
-    <input maxlength="1" class="digit-input">
-    <input maxlength="1" class="digit-input">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
   </div>
   <br>
   <input class="input" id="nameInput" placeholder="YOUR NAME">
@@ -268,13 +268,6 @@ function selectRole(selectedRole) {
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
   showScreen("join-screen");
-  
-  // 🔥 auto focus ensimmäiseen Game ID boksiin
-  setTimeout(() => {
-    const firstInput = document.querySelector(".digit-input");
-    if (firstInput) firstInput.focus();
-  }, 100);
-  
 }
 
 /* JOIN */
