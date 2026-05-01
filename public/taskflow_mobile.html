@@ -144,6 +144,14 @@ h1 {
   margin: 16px 0;
 }
 
+.input-title {
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}  
+  
 .digit-input {
   width: 50px;
   height: 60px;
@@ -202,6 +210,7 @@ h1 {
 
   <div class="role-card" id="roleCard"></div>
 
+  <div class="input-title">Game ID</div>
   <div id="gameIdInputs" class="game-id-inputs">
     <input maxlength="1" class="digit-input">
     <input maxlength="1" class="digit-input">
@@ -258,7 +267,13 @@ function selectRole(selectedRole) {
   document.getElementById("roleCard").innerHTML =
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
-  showScreen("join-screen");
+  showScreen("join-screen");showScreen("join-screen");
+
+// 🔥 auto focus ensimmäiseen Game ID boksiin
+setTimeout(() => {
+  const firstInput = document.querySelector(".digit-input");
+  if (firstInput) firstInput.focus();
+}, 100);
 }
 
 /* JOIN */
