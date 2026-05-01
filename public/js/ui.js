@@ -64,24 +64,36 @@ export const UI = (() => {
       }
 
       return `
-<div class="player ${r.cls}">
-  ${icon}
+        <div class="player ${r.cls}">
+          ${icon}
 
-  <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
 
-  <div class="player-role">${r.label}</div>
-  <div class="player-name">${name}</div>
-  <div class="player-status ${statusClass}">
-    ${statusText}${statusClass === "waiting" ? `<span class="dots">...</span>` : ""}
-  </div>
-</div>
+          <div class="player-role">${r.label}</div>
+          <div class="player-name">${name}</div>
+          <div class="player-status ${statusClass}">
+            ${statusText}${statusClass === "waiting" ? `<span class="dots"></span>` : ""}
+          </div>
         </div>
       `;
     }).join("");
   }
 
-  /* ================= WAITING ANIMATION ================= */
-  // 🔥 Ei enää JS-animaatiota → hoidetaan CSS:llä
+  /* ================= WAITING ANIMATION (STABLE) ================= */
+
+  const dotStates = new Map();
+
+  setInterval(() => {
+    document.querySelectorAll(".player-status.waiting .dots")
+      .forEach(el => {
+
+        let count = dotStates.get(el) || 1;
+        count = count >= 3 ? 1 : count + 1;
+
+        dotStates.set(el, count);
+        el.textContent = ".".repeat(count);
+      });
+  }, 500);
 
   return {
     show,
