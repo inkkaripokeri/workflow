@@ -103,10 +103,10 @@ body {
 .step-divider {
   height: auto;
   align-self: stretch;
-  border-left: 3px dashed rgba(255,255,255,0.4);
+  border-left: 3px dashed rgba(255,255,255,0.2);
   justify-self: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 /* numero */
