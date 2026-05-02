@@ -226,3 +226,15 @@ body {
   text-align: center;
   margin-top: 40px;
 }
+
+/* ================= GAME SCREEN ================= */
+
+#game-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#game-screen .players {
+  margin-top: auto; /* 🔥 puskee alas */
+}
