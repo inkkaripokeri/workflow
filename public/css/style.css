@@ -187,6 +187,19 @@ body {
   border: 6px solid #00b894;
 }
 
+.player-anim {
+  height: 40px;
+  width: auto;
+
+  border: none !important;       /* 🔥 poistaa borderin */
+  border-radius: 0 !important;  /* 🔥 poistaa pyöristyksen */
+
+  display: block;
+  margin: 6px auto;
+
+  opacity: 0.9;
+}
+
 /* ================= STATUS ================= */
 .status-icon {
   position: absolute;
