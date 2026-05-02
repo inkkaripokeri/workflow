@@ -28,66 +28,74 @@ export const UI = (() => {
       .join("");
   }
 
-  /* ================= PLAYERS ================= */
-  function renderPlayers(players) {
+/* ================= PLAYERS ================= */
+function renderPlayers(players) {
 
-    // 🔥 laske montako pelaajaa liittynyt
-    const count = Object.values(players).filter(p => p !== null).length;
-    
-    // 🔥 päivitä otsikko
-    const title = document.getElementById("playersTitle");
-    if (title) {
-      title.textContent = `Players Joined ${count}/3`;
-    }
-    
-    const el = document.getElementById("playersGrid");
-    if (!el) return;
-
-    const roles = [
-      { key: "designer", label: "Designer", cls: "designer" },
-      { key: "developer", label: "Developer", cls: "developer" },
-      { key: "tester", label: "Test Engineer", cls: "tester" }
-    ];
-
-    el.innerHTML = roles.map(r => {
-
-      const p = players[r.key];
-
-      let statusText = "WAITING";
-      let statusClass = "waiting";
-      let icon = "";
-      let name = "";
-
-      if (p) {
-        name = p.name;
-
-        if (p.connected === false) {
-          statusText = "DISCONNECTED";
-          statusClass = "disconnected";
-          icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
-        } else {
-          statusText = "CONNECTED";
-          statusClass = "connected";
-          icon = `<img class="status-icon" src="Connected_icon.png">`;
-        }
-      }
-
-      return `
-        <div class="player ${r.cls}">
-          ${icon}
-
-          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
-
-          <div class="player-role">${r.label}</div>
-          <div class="player-name">${name}</div>
-          <div class="player-status ${statusClass}">
-            ${statusClass === "waiting" ? "WAITING..." : statusText}
-          </div>
-        </div>
-      `;
-    }).join("");
+  // 🔥 laske montako pelaajaa liittynyt
+  const count = Object.values(players).filter(p => p !== null).length;
+  
+  // 🔥 päivitä otsikko
+  const title = document.getElementById("playersTitle");
+  if (title) {
+    title.textContent = `Players Joined ${count}/3`;
   }
+  
+  const el = document.getElementById("playersGrid");
+  if (!el) return;
 
+  const roles = [
+    { key: "designer", label: "Designer", cls: "designer" },
+    { key: "developer", label: "Developer", cls: "developer" },
+    { key: "tester", label: "Test Engineer", cls: "tester" }
+  ];
+
+  el.innerHTML = roles.map(r => {
+
+    const p = players[r.key];
+
+    let statusText = "WAITING";
+    let statusClass = "waiting";
+    let icon = "";
+    let name = "";
+
+    if (p) {
+      name = p.name;
+
+      if (p.connected === false) {
+        statusText = "DISCONNECTED";
+        statusClass = "disconnected";
+        icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
+      } else {
+        statusText = "CONNECTED";
+        statusClass = "connected";
+        icon = `<img class="status-icon" src="Connected_icon.png">`;
+      }
+    }
+
+    return `
+      <div class="player ${r.cls}">
+        ${icon}
+
+        <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+
+        <div class="player-role">${r.label}</div>
+
+        ${statusClass === "waiting" ? `
+          <video class="player-anim" autoplay loop muted playsinline>
+            <source src="Typing.webm" type="video/webm">
+          </video>
+        ` : ""}
+
+        <div class="player-name">${name}</div>
+
+        <div class="player-status ${statusClass}">
+          ${statusClass === "waiting" ? "WAITING..." : statusText}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+  
   /* ================= WAITING ANIMATION (STABLE) ================= */
 
   const dotStates = new Map();
