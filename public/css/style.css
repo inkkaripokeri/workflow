@@ -237,18 +237,16 @@ body {
 /* ================= TASK GRID ================= */
 
 #taskGrid {
-  width: calc(100% - 40px); /* 🔥 estää leikkaantumisen */
+  width: 90%;
   margin: 30px auto;
 
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
-
-  box-sizing: border-box; /* 🔥 tärkeä */
+  grid-template-columns: repeat(14, 1fr); /* 🔥 14 tasaleveää */
 }
 
 /* yksittäinen laatikko */
 .task-cell {
-  aspect-ratio: 1 / 1;
+  height: 40px; /* 🔥 kiinteä korkeus */
 
   border: 2px solid #444;
   border-radius: 4px;
