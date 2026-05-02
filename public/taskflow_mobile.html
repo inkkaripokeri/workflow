@@ -251,14 +251,14 @@ h1 {
 
 <!-- WAITING / READY -->
 <div id="waiting-screen" class="screen">
-  <h1 id="waitingTitle">Waiting for other players</h1>
+  <h1 id="waitingTitle"></h1>
 
   <div class="role-card" id="waitingCard"></div>
 
   <div id="waitingName"></div>
-  <div id="waitingText">Waiting for players...</div>
+  <div id="waitingText">Waiting for teammates...</div>
 </div>
-
+  
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
@@ -331,9 +331,16 @@ socket.on("joinResult", (res) => {
   document.getElementById("waitingCard").innerHTML =
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
-  document.getElementById("waitingName").textContent = playerName;
+  // 🔥 MUUTETTU TÄMÄ KOHTA
+  const roleLabelMap = {
+    designer: "Designer",
+    developer: "Developer",
+    tester: "Test Engineer"
+  };
 
-  // 🔥 TÄRKEÄ MUUTOS
+  document.getElementById("waitingName").textContent = roleLabelMap[role];
+
+  // otsikko = pelaajan nimi
   document.getElementById("waitingTitle").textContent = playerName;
 
   showScreen("waiting-screen");
