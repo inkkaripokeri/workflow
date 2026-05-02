@@ -245,7 +245,7 @@ body {
 
 /* yksittäinen laatikko */
 .task-cell {
-  width: calc(100% / 14);  /* 🔥 aina mahtuu */
+  width: calc(100% / 10);  /* 🔥 aina mahtuu */
   height: 40px;
 
   border: 2px solid #444;
