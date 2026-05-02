@@ -23,60 +23,75 @@
   <div class="section-title">How to Join</div>
   <div class="steps">
 
-  <div class="step">
-    <div class="step-header">
-      <div class="step-number">1.</div>
-      <div class="step-title">Scan the QR Code</div>
-    </div>  
-    <img src="taskflow_mobile_url.png" class="qr">
-  </div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-number">1.</div>
+        <div class="step-title">Scan the QR Code</div>
+      </div>  
+      <img src="taskflow_mobile_url.png" class="qr">
+    </div>
 
-  <div class="step-divider"></div>
+    <div class="step-divider"></div>
 
-  <div class="step">
-    <div class="step-header">
-      <div class="step-number">2.</div>
-      <div class="step-title">Select Your Role</div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-number">2.</div>
+        <div class="step-title">Select Your Role</div>
       </div>
-    <div class="step-text">Developer, Designer, Test Engineer</div>
-  </div>
-
-  <div class="step-divider"></div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-number">3.</div>
-      <div class="step-title">Enter Game ID</div>
+      <div class="step-text">Developer, Designer, Test Engineer</div>
     </div>
-    <div id="gameId" class="game-id">
-      <div class="digit">-</div>
-      <div class="digit">-</div>
-      <div class="digit">-</div>
-      <div class="digit">-</div>
+
+    <div class="step-divider"></div>
+
+    <div class="step">
+      <div class="step-header">
+        <div class="step-number">3.</div>
+        <div class="step-title">Enter Game ID</div>
+      </div>
+      <div id="gameId" class="game-id">
+        <div class="digit">-</div>
+        <div class="digit">-</div>
+        <div class="digit">-</div>
+        <div class="digit">-</div>
+      </div>
     </div>
-  </div>
 
-  <div class="step-divider"></div>
+    <div class="step-divider"></div>
 
-  <div class="step">
-    <div class="step-header">
-      <div class="step-number">4.</div>
-      <div class="step-title">Tap Join to Play</div>
+    <div class="step">
+      <div class="step-header">
+        <div class="step-number">4.</div>
+        <div class="step-title">Tap Join to Play</div>
+      </div>
     </div>
-  </div>
 
-</div>
+  </div>
 
   <div class="players">
-  <div id="playersTitle" class="section-title">
-    Players Joined 0/3
-  </div>
+    <div id="playersTitle" class="section-title">
+      Players Joined 0/3
+    </div>
 
     <div id="playersGrid" class="player-grid"></div>
 
     <div class="continue-wrapper">
       <button id="lobbyBtn" class="button" disabled>CONTINUE</button>
     </div>
+  </div>
+
+</div>
+
+<!-- 🔥 GAME SCREEN (UUSI) -->
+<div id="game-screen" class="screen">
+
+  <div class="header">
+    <img src="logo_taskflow.png">
+  </div>
+
+  <div class="section-title">Game</div>
+
+  <div class="continue-wrapper">
+    <button id="startGameBtn" class="button">START</button>
   </div>
 
 </div>
