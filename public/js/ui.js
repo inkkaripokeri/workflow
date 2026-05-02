@@ -1,5 +1,6 @@
 // ui.js
 let movedToGame = false;
+
 export const UI = (() => {
 
   /* ================= SCREEN ================= */
@@ -7,7 +8,11 @@ export const UI = (() => {
     document.querySelectorAll(".screen").forEach(s =>
       s.classList.remove("active")
     );
+
     document.getElementById(screen).classList.add("active");
+
+    // 🔥 FIX: reset scroll aina kun vaihdetaan screen
+    window.scrollTo(0, 0);
   }
 
   function animateToLobby() {
@@ -28,73 +33,72 @@ export const UI = (() => {
       .join("");
   }
 
-/* ================= PLAYERS ================= */
-function renderPlayers(players) {
+  /* ================= PLAYERS ================= */
+  function renderPlayers(players) {
 
-  // 🔥 laske montako pelaajaa liittynyt
-  const count = Object.values(players).filter(p => p !== null).length;
-  
-  // 🔥 päivitä otsikko
-  const title = document.getElementById("playersTitle");
-  if (title) {
-    title.textContent = `Players Joined ${count}/3`;
-  }
-  
-  const el = document.getElementById("playersGrid");
-  if (!el) return;
-
-  const roles = [
-    { key: "designer", label: "Designer", cls: "designer" },
-    { key: "developer", label: "Developer", cls: "developer" },
-    { key: "tester", label: "Test Engineer", cls: "tester" }
-  ];
-
-  el.innerHTML = roles.map(r => {
-
-    const p = players[r.key];
-
-    let statusText = "Waiting";
-    let statusClass = "waiting";
-    let name = "";
-
-    if (p) {
-      name = p.name;
-
-      if (p.connected === false) {
-        statusText = "DISCONNECTED";
-        statusClass = "disconnected";
-      } else {
-        statusText = "CONNECTED";
-        statusClass = "connected";
-      }
+    // 🔥 laske montako pelaajaa liittynyt
+    const count = Object.values(players).filter(p => p !== null).length;
+    
+    // 🔥 päivitä otsikko
+    const title = document.getElementById("playersTitle");
+    if (title) {
+      title.textContent = `Players Joined ${count}/3`;
     }
+    
+    const el = document.getElementById("playersGrid");
+    if (!el) return;
 
-    return `
-      <div class="player ${r.cls}">
+    const roles = [
+      { key: "designer", label: "Designer", cls: "designer" },
+      { key: "developer", label: "Developer", cls: "developer" },
+      { key: "tester", label: "Test Engineer", cls: "tester" }
+    ];
 
-        <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+    el.innerHTML = roles.map(r => {
 
-        <div class="player-role">${r.label}</div>
+      const p = players[r.key];
 
-        <div class="player-name">${name}</div>
+      let statusText = "Waiting";
+      let statusClass = "waiting";
+      let name = "";
 
-        <div class="player-status ${statusClass}">
-          ${statusClass === "waiting" ? "WAITING..." : statusText}
+      if (p) {
+        name = p.name;
+
+        if (p.connected === false) {
+          statusText = "DISCONNECTED";
+          statusClass = "disconnected";
+        } else {
+          statusText = "CONNECTED";
+          statusClass = "connected";
+        }
+      }
+
+      return `
+        <div class="player ${r.cls}">
+
+          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
+
+          <div class="player-role">${r.label}</div>
+
+          <div class="player-name">${name}</div>
+
+          <div class="player-status ${statusClass}">
+            ${statusClass === "waiting" ? "WAITING..." : statusText}
+          </div>
         </div>
-      </div>
-    `;
-  }).join("");
+      `;
+    }).join("");
 
-  // 🔥 AUTOMAATTINEN SIIRTYMÄ
-  if (count === 3 && !movedToGame) {
-    movedToGame = true;
+    // 🔥 AUTOMAATTINEN SIIRTYMÄ
+    if (count === 3 && !movedToGame) {
+      movedToGame = true;
 
-    // pieni viive (näyttää hyvältä UX:ssa)
-    setTimeout(() => {
-      UI.show("game-screen");
-    }, 800);
+      setTimeout(() => {
+        show("game-screen"); // 🔥 käytetään suoraan show()
+      }, 800);
+    }
   }
-}
   
   /* ================= WAITING ANIMATION (STABLE) ================= */
 
