@@ -1,5 +1,5 @@
 // ui.js
-
+let movedToGame = false;
 export const UI = (() => {
 
   /* ================= SCREEN ================= */
@@ -84,6 +84,16 @@ function renderPlayers(players) {
       </div>
     `;
   }).join("");
+
+  // 🔥 AUTOMAATTINEN SIIRTYMÄ
+  if (count === 3 && !movedToGame) {
+    movedToGame = true;
+
+    // pieni viive (näyttää hyvältä UX:ssa)
+    setTimeout(() => {
+      UI.show("game-screen");
+    }, 800);
+  }
 }
   
   /* ================= WAITING ANIMATION (STABLE) ================= */
