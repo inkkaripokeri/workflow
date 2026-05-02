@@ -201,7 +201,13 @@ h1 {
   opacity: 0.8;
   margin-top: 20px;
 }
-  
+
+#waitingAnim {
+  height: 12vh;
+  max-height: 100px;
+  margin: 10px 0;
+  opacity: 0.9;
+}
 </style>
 </head>
 
@@ -265,6 +271,9 @@ h1 {
   <div class="role-card" id="waitingCard"></div>
 
   <div id="waitingName"></div>
+  <video id="waitingAnim" autoplay loop muted playsinline>
+  <source src="dots4.webm" type="video/webm">
+  </video>
   <div id="waitingText">Waiting for teammates...</div>
 </div>
   
