@@ -137,8 +137,8 @@ body {
   margin-top: 12px;
 }
 
-/* ================= GAME ID ================= */
-.game-id {
+/* =================  ID ================= */
+.-id {
   display: flex;
   gap: 12px;
   margin-top: 10px;
@@ -227,12 +227,16 @@ body {
   margin-top: 40px;
 }
 
-/* ================= GAME SCREEN ================= */
+/* ================= SCREEN ================= */
 
 #game-screen {
-  display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+/* 🔥 vain aktiivisena näkyy flexinä */
+#game-screen.active {
+  display: flex;
 }
 
 #game-screen .players {
