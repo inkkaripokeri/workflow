@@ -241,10 +241,11 @@ body {
   margin: 30px auto;
 
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
+
+  /* 🔥 tärkein fix: estää viimeisen laatikon leikkautuminen */
+  grid-template-columns: repeat(14, minmax(0, 1fr));
 
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* yksittäinen laatikko */
@@ -256,5 +257,5 @@ body {
 
   box-sizing: border-box;
 
-  min-width: 0; /* 🔥 TÄRKEIN: estää overflow */
+  min-width: 0; /* 🔥 sallii kutistumisen oikein */
 }
