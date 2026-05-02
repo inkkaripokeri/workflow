@@ -31,7 +31,7 @@ window.addEventListener("load", () => {
     const grid = document.getElementById("taskGrid");
 
     if (grid && grid.children.length === 0) {
-      grid.innerHTML = Array.from({ length: 14 })
+      grid.innerHTML = Array.from({ length: 10 })
         .map(() => `<div class="task-cell"></div>`)
         .join("");
     }
