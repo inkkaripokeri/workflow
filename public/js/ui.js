@@ -55,7 +55,6 @@ function renderPlayers(players) {
 
     let statusText = "Waiting";
     let statusClass = "waiting";
-   
     let name = "";
 
     if (p) {
@@ -64,17 +63,14 @@ function renderPlayers(players) {
       if (p.connected === false) {
         statusText = "DISCONNECTED";
         statusClass = "disconnected";
-        
       } else {
         statusText = "CONNECTED";
         statusClass = "connected";
-        
       }
     }
 
     return `
       <div class="player ${r.cls}">
-        ${icon}
 
         <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
 
