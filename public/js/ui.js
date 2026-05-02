@@ -80,10 +80,6 @@ function renderPlayers(players) {
 
         <div class="player-role">${r.label}</div>
 
-        ${statusClass === "waiting" ? `
-          <img class="player-anim" src="Spinner.gif">
-        ` : ""}
-
         <div class="player-name">${name}</div>
 
         <div class="player-status ${statusClass}">
