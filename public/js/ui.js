@@ -11,7 +11,7 @@ export const UI = (() => {
 
     document.getElementById(screen).classList.add("active");
 
-    // 🔥 FIX: reset scroll aina kun vaihdetaan screen
+    // 🔥 reset scroll aina kun vaihdetaan screen
     window.scrollTo(0, 0);
   }
 
@@ -39,14 +39,24 @@ export const UI = (() => {
     // 🔥 laske montako pelaajaa liittynyt
     const count = Object.values(players).filter(p => p !== null).length;
     
-    // 🔥 päivitä otsikko
+    // 🔥 päivitä otsikot (lobby + game)
     const title = document.getElementById("playersTitle");
     if (title) {
       title.textContent = `Players Joined ${count}/3`;
     }
-    
-    const el = document.getElementById("playersGrid");
-    if (!el) return;
+
+    const titleGame = document.getElementById("playersTitleGame");
+    if (titleGame) {
+      titleGame.textContent = `Players Joined ${count}/3`;
+    }
+
+    // 🔥 molemmat gridit
+    const grids = [
+      document.getElementById("playersGrid"),
+      document.getElementById("playersGridGame")
+    ].filter(Boolean);
+
+    if (grids.length === 0) return;
 
     const roles = [
       { key: "designer", label: "Designer", cls: "designer" },
@@ -54,7 +64,7 @@ export const UI = (() => {
       { key: "tester", label: "Test Engineer", cls: "tester" }
     ];
 
-    el.innerHTML = roles.map(r => {
+    const html = roles.map(r => {
 
       const p = players[r.key];
 
@@ -90,12 +100,17 @@ export const UI = (() => {
       `;
     }).join("");
 
+    // 🔥 renderöi kaikkiin grideihin
+    grids.forEach(el => {
+      el.innerHTML = html;
+    });
+
     // 🔥 AUTOMAATTINEN SIIRTYMÄ
     if (count === 3 && !movedToGame) {
       movedToGame = true;
 
       setTimeout(() => {
-        show("game-screen"); // 🔥 käytetään suoraan show()
+        show("game-screen");
       }, 800);
     }
   }
