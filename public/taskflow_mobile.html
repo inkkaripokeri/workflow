@@ -189,6 +189,12 @@ h1 {
   margin: 0;
 }
 
+#waitingName {
+  font-size: 18px;        /* sama kuin role select */
+  letter-spacing: 1px;
+  margin-top: 6px;
+}  
+  
 /* status teksti */
 #waitingText {
   font-size: 16px;
@@ -334,11 +340,11 @@ socket.on("joinResult", (res) => {
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
   // 🔥 MUUTETTU TÄMÄ KOHTA
-  const roleLabelMap = {
-    designer: "Designer",
-    developer: "Developer",
-    tester: "Test Engineer"
-  };
+const roleLabelMap = {
+  designer: "DESIGNER",
+  developer: "DEVELOPER",
+  tester: "TEST ENGINEER"
+};
 
   document.getElementById("waitingName").textContent = roleLabelMap[role];
 
