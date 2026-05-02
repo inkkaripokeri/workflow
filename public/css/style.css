@@ -234,22 +234,21 @@ body {
   margin-top: auto;
 }
 
-/* ================= TASK GRID ================= */
+/* ================= TASK ROW ================= */
 
 #taskGrid {
   width: 90%;
   margin: 30px auto;
 
-  display: grid;
-  grid-template-columns: repeat(14, 1fr);
+  display: flex;         /* 🔥 EI grid */
 }
 
 /* yksittäinen laatikko */
 .task-cell {
+  width: calc(100% / 14);  /* 🔥 aina mahtuu */
   height: 40px;
 
-  /* 🔥 VAIHDETAAN border → outline */
-  outline: 2px solid #444;
+  border: 2px solid #444;
   border-radius: 4px;
 
   box-sizing: border-box;
