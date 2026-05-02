@@ -31,6 +31,7 @@ body {
 
 /* ================= BUTTON ================= */
 .button {
+  padding: 18px 70px; /* 🔥 FIX */
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -54,6 +55,7 @@ body {
   text-align: center;
   margin-top: 20px;
 }
+
 .header img {
   width: 260px;
 }
@@ -137,9 +139,9 @@ body {
   margin-top: 12px;
 }
 
-/* =================  ID ================= */
-.-id {
-  display: flex;
+/* ================= GAME ID ================= */
+.game-id {
+  display: flex;   /* 🔥 FIX */
   gap: 12px;
   margin-top: 10px;
 }
@@ -187,10 +189,7 @@ body {
   border: 6px solid #00b894;
 }
 
-
-
 /* ================= STATUS ================= */
-
 .player-role {
   margin-top: 6px;
   font-size: 18px;
@@ -221,24 +220,16 @@ body {
   opacity: 0.6;
 }
 
-/* continue button */
-.continue-wrapper {
-  text-align: center;
-  margin-top: 40px;
-}
-
-/* ================= SCREEN ================= */
-
+/* ================= GAME SCREEN ================= */
 #game-screen {
   flex-direction: column;
   height: 100vh;
 }
 
-/* 🔥 vain aktiivisena näkyy flexinä */
 #game-screen.active {
   display: flex;
 }
 
 #game-screen .players {
-  margin-top: auto; /* 🔥 puskee alas */
+  margin-top: auto;
 }
