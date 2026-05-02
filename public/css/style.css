@@ -190,7 +190,13 @@ body {
 
 
 /* ================= STATUS ================= */
-
+.status-icon {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+}
 .player-role {
   margin-top: 6px;
   font-size: 18px;
