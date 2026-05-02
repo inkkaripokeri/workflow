@@ -233,3 +233,23 @@ body {
 #game-screen .players {
   margin-top: auto;
 }
+
+/* ================= TASK GRID ================= */
+
+#taskGrid {
+  width: 90%;
+  margin: 30px auto;
+
+  display: grid;
+  grid-template-columns: repeat(14, 1fr); /* 🔥 14 laatikkoa */
+}
+
+/* yksittäinen laatikko */
+.task-cell {
+  aspect-ratio: 1 / 1; /* 🔥 tekee neliön */
+
+  border: 2px solid #444;
+  border-radius: 4px;
+
+  box-sizing: border-box;
+}
