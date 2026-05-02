@@ -31,6 +31,15 @@ export const UI = (() => {
   /* ================= PLAYERS ================= */
   function renderPlayers(players) {
 
+    // 🔥 laske montako pelaajaa liittynyt
+    const count = Object.values(players).filter(p => p !== null).length;
+    
+    // 🔥 päivitä otsikko
+    const title = document.getElementById("playersTitle");
+    if (title) {
+      title.textContent = `Players Joined ${count}/3`;
+    }
+    
     const el = document.getElementById("playersGrid");
     if (!el) return;
 
