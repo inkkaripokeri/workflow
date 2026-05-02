@@ -8,15 +8,6 @@ body {
 /* ================= SCREEN ================= */
 .screen {
   display: none;
-
-  position: absolute;   /* 🔥 tärkein */
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100vh;
-
-  overflow: hidden;     /* estää scrollin */
 }
 
 .screen.active {
