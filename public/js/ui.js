@@ -53,9 +53,9 @@ function renderPlayers(players) {
 
     const p = players[r.key];
 
-    let statusText = "WAITING";
+    let statusText = "Waiting";
     let statusClass = "waiting";
-    let icon = "";
+   
     let name = "";
 
     if (p) {
@@ -64,11 +64,11 @@ function renderPlayers(players) {
       if (p.connected === false) {
         statusText = "DISCONNECTED";
         statusClass = "disconnected";
-        icon = `<img class="status-icon" src="Disconnected_Icon.png">`;
+        
       } else {
         statusText = "CONNECTED";
         statusClass = "connected";
-        icon = `<img class="status-icon" src="Connected_icon.png">`;
+        
       }
     }
 
