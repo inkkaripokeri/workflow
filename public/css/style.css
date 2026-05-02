@@ -244,6 +244,7 @@ body {
   grid-template-columns: repeat(14, 1fr);
 
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* yksittäinen laatikko */
