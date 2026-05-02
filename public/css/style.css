@@ -241,15 +241,19 @@ body {
   margin: 30px auto;
 
   display: grid;
-  grid-template-columns: repeat(14, 1fr); /* 🔥 14 tasaleveää */
+  grid-template-columns: repeat(14, 1fr);
+
+  box-sizing: border-box;
 }
 
 /* yksittäinen laatikko */
 .task-cell {
-  height: 40px; /* 🔥 kiinteä korkeus */
+  height: 40px;
 
   border: 2px solid #444;
   border-radius: 4px;
 
   box-sizing: border-box;
+
+  min-width: 0; /* 🔥 TÄRKEIN: estää overflow */
 }
