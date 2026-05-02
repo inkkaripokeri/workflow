@@ -81,9 +81,7 @@ function renderPlayers(players) {
         <div class="player-role">${r.label}</div>
 
         ${statusClass === "waiting" ? `
-        <video class="player-anim" autoplay loop muted playsinline>
-          <source src="Typing.webm" type="video/webm">
-        </video>
+          <img class="player-anim" src="GreyDots.gif">
         ` : ""}
 
         <div class="player-name">${name}</div>
