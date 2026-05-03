@@ -25,7 +25,7 @@ window.addEventListener("load", () => {
   if (startGameBtn) {
     startGameBtn.addEventListener("click", () => {
       console.log("GAME START CLICKED");
-      socket.emit("startGame");
+      socket.emit("start");
     });
   }
 
