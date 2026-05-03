@@ -184,6 +184,11 @@ body {
 
 /* ================= TASK ROW ================= */
 
+/* 🔥 TASK VÄRIT */
+.task-cell.red { background: #ff4d4d; }
+.task-cell.green { background: #00ff88; }
+.task-cell.blue { background: #4da6ff; }
+
 #taskGrid {
   width: 90%;
   margin: 30px auto;
