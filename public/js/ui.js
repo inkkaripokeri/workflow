@@ -1,13 +1,8 @@
 // ui.js
 let movedToGame = false;
 
-/* 🔥 GAME STEPS (14 päivää) */
-let steps = Array(14).fill(null);
-
-/* 🔥 TESTI (voit poistaa myöhemmin) */
-steps[2] = { type: "developer" };
-steps[5] = { type: "designer" };
-steps[8] = { type: "tester" };
+/* 🔥 GAME LEDS (näytetään vain alkuosa) */
+let leds = Array(14).fill(null);
 
 export const UI = (() => {
 
@@ -90,13 +85,9 @@ export const UI = (() => {
 
       return `
         <div class="player ${r.cls}">
-
           <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
-
           <div class="player-role">${r.label}</div>
-
           <div class="player-name">${name}</div>
-
           <div class="player-status ${statusClass}">
             ${statusClass === "waiting" ? "WAITING..." : statusText}
           </div>
@@ -117,14 +108,22 @@ export const UI = (() => {
     }
   }
 
-  /* ================= TASK GRID ================= */
+  /* ================= LEDS ================= */
+
+  function updateLeds(newLeds) {
+    if (!newLeds) return;
+
+    // 🔥 näytetään vain ensimmäiset 14 askelta
+    leds = newLeds.slice(0, 14);
+  }
+
   function renderSteps() {
     const grid = document.getElementById("taskGrid");
     if (!grid) return;
 
-    grid.innerHTML = steps.map(step => {
-      if (!step) return `<div class="task-cell"></div>`;
-      return `<div class="task-cell ${step.type}"></div>`;
+    grid.innerHTML = leds.map(l => {
+      if (!l) return `<div class="task-cell"></div>`;
+      return `<div class="task-cell ${l.color}"></div>`;
     }).join("");
   }
 
@@ -149,7 +148,8 @@ export const UI = (() => {
     animateToLobby,
     renderGameId,
     renderPlayers,
-    renderSteps   // 🔥 uusi
+    renderSteps,
+    updateLeds   // 🔥 uusi
   };
 
 })();
