@@ -8,9 +8,10 @@ const io = new Server(server);
 
 app.use(express.static("public"));
 
-const LED_COUNT = 50;
+const LED_COUNT = 14; // 🔥 FIX: vastaa UI:ta
 
 let leds, bullets, score, running, lastMove, spawnGap;
+let pendingGameOver = false; // 🔥 uusi
 
 const ROLES = ["designer", "developer", "tester"];
 const letters = ["A", "B", "C"];
@@ -36,6 +37,7 @@ function resetGame() {
   score = 0;
   running = false;
   spawnGap = 0;
+  pendingGameOver = false; // 🔥 reset
 }
 
 newLobby();
@@ -77,19 +79,30 @@ setInterval(() => {
   const now = Date.now();
 
   if (now - lastMove > 500) {
-    if (leds[LED_COUNT - 1]) {
+
+    // 🔥 jos viime tickillä jäi task viimeiseen → nyt peli loppuu
+    if (pendingGameOver) {
       running = false;
       gameState = "gameover";
-    }
+      pendingGameOver = false;
+    } else {
 
-    for (let i = LED_COUNT - 1; i > 0; i--) {
-      leds[i] = leds[i - 1];
-    }
+      // 🔥 siirretään ledit
+      for (let i = LED_COUNT - 1; i > 0; i--) {
+        leds[i] = leds[i - 1];
+      }
 
-    spawnTop();
-    lastMove = now;
+      spawnTop();
+      lastMove = now;
+
+      // 🔥 jos nyt tuli task viimeiseen → anna yksi tick aikaa
+      if (leds[LED_COUNT - 1]) {
+        pendingGameOver = true;
+      }
+    }
   }
 
+  // 🔥 bullets liike
   bullets.forEach(b => b.y -= 0.5);
 
   bullets = bullets.filter(b => {
@@ -125,13 +138,10 @@ io.on("connection", (socket) => {
   socket.on("join", ({ code, role, name }) => {
 
     if (!ROLES.includes(role)) return;
-
     if (code !== lobby.code) return;
-
     if (lobby.players[role]) return;
 
     lobby.players[role] = { id: socket.id, name };
-
     socket.data.role = role;
 
     const count = Object.values(lobby.players).filter(Boolean).length;
@@ -148,6 +158,7 @@ io.on("connection", (socket) => {
       running = true;
       gameState = "running";
       lastMove = Date.now();
+      pendingGameOver = false; // 🔥 varmistus
     }
   });
 
