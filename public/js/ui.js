@@ -1,6 +1,14 @@
 // ui.js
 let movedToGame = false;
 
+/* 🔥 GAME STEPS (14 päivää) */
+let steps = Array(14).fill(null);
+
+/* 🔥 TESTI (voit poistaa myöhemmin) */
+steps[2] = { type: "developer" };
+steps[5] = { type: "designer" };
+steps[8] = { type: "tester" };
+
 export const UI = (() => {
 
   /* ================= SCREEN ================= */
@@ -11,7 +19,6 @@ export const UI = (() => {
 
     document.getElementById(screen).classList.add("active");
 
-    // 🔥 reset scroll aina kun vaihdetaan screen
     window.scrollTo(0, 0);
   }
 
@@ -36,10 +43,8 @@ export const UI = (() => {
   /* ================= PLAYERS ================= */
   function renderPlayers(players) {
 
-    // 🔥 laske montako pelaajaa liittynyt
     const count = Object.values(players).filter(p => p !== null).length;
     
-    // 🔥 päivitä otsikot (lobby + game)
     const title = document.getElementById("playersTitle");
     if (title) {
       title.textContent = `Players Joined ${count}/3`;
@@ -50,7 +55,6 @@ export const UI = (() => {
       titleGame.textContent = `Players Joined ${count}/3`;
     }
 
-    // 🔥 molemmat gridit
     const grids = [
       document.getElementById("playersGrid"),
       document.getElementById("playersGridGame")
@@ -100,12 +104,10 @@ export const UI = (() => {
       `;
     }).join("");
 
-    // 🔥 renderöi kaikkiin grideihin
     grids.forEach(el => {
       el.innerHTML = html;
     });
 
-    // 🔥 AUTOMAATTINEN SIIRTYMÄ
     if (count === 3 && !movedToGame) {
       movedToGame = true;
 
@@ -114,8 +116,19 @@ export const UI = (() => {
       }, 800);
     }
   }
-  
-  /* ================= WAITING ANIMATION (STABLE) ================= */
+
+  /* ================= TASK GRID ================= */
+  function renderSteps() {
+    const grid = document.getElementById("taskGrid");
+    if (!grid) return;
+
+    grid.innerHTML = steps.map(step => {
+      if (!step) return `<div class="task-cell"></div>`;
+      return `<div class="task-cell ${step.type}"></div>`;
+    }).join("");
+  }
+
+  /* ================= WAITING ANIMATION ================= */
 
   const dotStates = new Map();
 
@@ -135,7 +148,8 @@ export const UI = (() => {
     show,
     animateToLobby,
     renderGameId,
-    renderPlayers
+    renderPlayers,
+    renderSteps   // 🔥 uusi
   };
 
 })();
