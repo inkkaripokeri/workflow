@@ -3,6 +3,7 @@ body {
   background: #05060c;
   color: #fff;
   font-family: "Roboto Condensed", Arial, sans-serif;
+  overflow-x: hidden; /* 🔥 estää viimeisen pikselin overflow */
 }
 
 /* ================= SCREEN ================= */
@@ -31,7 +32,7 @@ body {
 
 /* ================= BUTTON ================= */
 .button {
-  padding: 18px 70px; /* 🔥 FIX */
+  padding: 18px 70px;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -80,16 +81,11 @@ body {
 
 .step {
   text-align: left;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-/* HEADER */
 .step-header {
   display: flex;
   align-items: baseline;
@@ -97,43 +93,28 @@ body {
   margin-bottom: 12px;
 }
 
-/* indent */
 .step > *:not(.step-header) {
   margin-left: 45px;
 }
 
-/* divider */
 .step-divider {
-  height: auto;
-  align-self: stretch;
   border-left: 3px dashed rgba(255,255,255,0.2);
-  justify-self: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 
-/* number */
 .step-number {
   color: #ff8c00;
   font-size: 38px;
-  font-weight: 500;
-  line-height: 1;
 }
 
-/* title */
 .step-title {
   font-size: 24px;
-  font-weight: 500;
-  line-height: 1.2;
 }
 
-/* text */
 .step-text {
   font-size: 18px;
-  margin-top: 6px;
 }
 
-/* QR */
 .qr {
   width: 120px;
   margin-top: 12px;
@@ -141,7 +122,7 @@ body {
 
 /* ================= GAME ID ================= */
 .game-id {
-  display: flex;   /* 🔥 FIX */
+  display: flex;
   gap: 12px;
   margin-top: 10px;
 }
@@ -157,7 +138,6 @@ body {
   justify-content: center;
 
   font-size: 34px;
-  font-weight: 500;
 }
 
 /* ================= PLAYERS ================= */
@@ -169,56 +149,24 @@ body {
   text-align: center;
 }
 
-.player {
-  position: relative;
-}
-
 .player img {
   width: 180px;
   border-radius: 12px;
 }
 
 /* role borders */
-.player.designer img {
-  border: 6px solid #f39c12;
-}
-.player.developer img {
-  border: 6px solid #6c5ce7;
-}
-.player.tester img {
-  border: 6px solid #00b894;
-}
+.player.designer img { border: 6px solid #f39c12; }
+.player.developer img { border: 6px solid #6c5ce7; }
+.player.tester img { border: 6px solid #00b894; }
 
 /* ================= STATUS ================= */
-.player-role {
-  margin-top: 6px;
-  font-size: 18px;
-  opacity: 1;
-}
+.player-role { font-size: 18px; }
+.player-name { font-size: 24px; margin-top: 6px; }
+.player-status { font-size: 18px; opacity: 0.6; margin-top: 6px; }
 
-.player-name {
-  font-size: 24px;
-  font-weight: 500;
-  margin-top: 6px;
-}
-
-.player-status {
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 6px;
-  opacity: 0.6;
-}
-
-/* colors */
-.connected {
-  color: #00ff88;
-}
-.disconnected {
-  color: #ff4d4d;
-}
-.waiting {
-  opacity: 0.6;
-}
+.connected { color: #00ff88; }
+.disconnected { color: #ff4d4d; }
+.waiting { opacity: 0.6; }
 
 /* ================= GAME SCREEN ================= */
 #game-screen {
@@ -245,7 +193,7 @@ body {
 
 /* yksittäinen laatikko */
 .task-cell {
-  width: calc(100% / 14);  /* 🔥 14 askelta */
+  flex: 1;                 /* 🔥 TÄRKEIN FIX */
   height: 40px;
 
   border: 2px solid #444;
@@ -253,3 +201,8 @@ body {
 
   box-sizing: border-box;
 }
+
+/* 🔥 TASK VÄRIT */
+.task-cell.developer { background: #6c5ce7; }
+.task-cell.designer { background: #f39c12; }
+.task-cell.tester { background: #00b894; }
