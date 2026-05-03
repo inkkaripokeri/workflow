@@ -30,20 +30,22 @@ window.addEventListener("load", () => {
   }
 
   socket.on("state", (s) => {
-
-    if (!s || !s.lobby) return;
-
-    UI.renderGameId(s.lobby.code);
-    UI.renderPlayers(s.lobby.players);
-
-    // 🔥 renderöi task grid oikein
-    UI.renderSteps();
-
+  
+    if (!s) return;
+  
+    if (s.lobby) {
+      UI.renderGameId(s.lobby.code);
+      UI.renderPlayers(s.lobby.players);
+    }
+  
+    // 🔥 TÄRKEIN LISÄYS
+    if (s.leds) {
+      UI.updateLeds(s.leds);
+      UI.renderSteps();
+    }
+  
   });
 
-  if (s.leds) {
-    UI.updateLeds(s.leds);
-    UI.renderSteps();
-  }
+
 
 });
