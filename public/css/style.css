@@ -240,12 +240,12 @@ body {
   width: 90%;
   margin: 30px auto;
 
-  display: flex;         /* 🔥 EI grid */
+  display: flex;
 }
 
 /* yksittäinen laatikko */
 .task-cell {
-  width: calc(100% / 10);  /* 🔥 aina mahtuu */
+  width: calc(100% / 14);  /* 🔥 14 askelta */
   height: 40px;
 
   border: 2px solid #444;
