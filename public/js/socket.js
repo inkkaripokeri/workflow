@@ -7,6 +7,7 @@ window.addEventListener("load", () => {
   console.log("DOM READY");
 
   const startBtn = document.getElementById("startBtn");
+  const startGameBtn = document.getElementById("startGameBtn"); // 🔥 LISÄTTY
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
@@ -20,6 +21,14 @@ window.addEventListener("load", () => {
     socket.emit("resetLobby");
   });
 
+  // 🔥 START GAME NAPPI
+  if (startGameBtn) {
+    startGameBtn.addEventListener("click", () => {
+      console.log("GAME START CLICKED");
+      socket.emit("startGame");
+    });
+  }
+
   socket.on("state", (s) => {
 
     if (!s || !s.lobby) return;
@@ -27,7 +36,7 @@ window.addEventListener("load", () => {
     UI.renderGameId(s.lobby.code);
     UI.renderPlayers(s.lobby.players);
 
-    // 🔥 UUSI: renderöi task grid oikein
+    // 🔥 renderöi task grid oikein
     UI.renderSteps();
 
   });
