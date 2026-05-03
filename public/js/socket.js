@@ -27,14 +27,8 @@ window.addEventListener("load", () => {
     UI.renderGameId(s.lobby.code);
     UI.renderPlayers(s.lobby.players);
 
-    // 🔥 TASK GRID LUONTI (vain kerran)
-    const grid = document.getElementById("taskGrid");
-
-    if (grid && grid.children.length === 0) {
-      grid.innerHTML = Array.from({ length: 10 })
-        .map(() => `<div class="task-cell"></div>`)
-        .join("");
-    }
+    // 🔥 UUSI: renderöi task grid oikein
+    UI.renderSteps();
 
   });
 
