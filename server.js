@@ -11,7 +11,10 @@ app.use(express.static("public"));
 const LED_COUNT = 14; // 🔥 FIX: vastaa UI:ta
 
 let leds, bullets, score, running, lastMove, spawnGap;
-let pendingGameOver = false; // 🔥 uusi
+let pendingGameOver = false;
+
+// 🔥 UUSI: säädettävä nopeus (ms)
+let moveInterval = 750;
 
 const ROLES = ["designer", "developer", "tester"];
 const letters = ["A", "B", "C"];
@@ -37,7 +40,7 @@ function resetGame() {
   score = 0;
   running = false;
   spawnGap = 0;
-  pendingGameOver = false; // 🔥 reset
+  pendingGameOver = false;
 }
 
 newLobby();
@@ -78,7 +81,8 @@ setInterval(() => {
 
   const now = Date.now();
 
-  if (now - lastMove > 500) {
+  // 🔥 KÄYTETÄÄN MUUTTUJAA (ei hardkoodattua arvoa)
+  if (now - lastMove > moveInterval) {
 
     // 🔥 jos viime tickillä jäi task viimeiseen → nyt peli loppuu
     if (pendingGameOver) {
@@ -158,7 +162,7 @@ io.on("connection", (socket) => {
       running = true;
       gameState = "running";
       lastMove = Date.now();
-      pendingGameOver = false; // 🔥 varmistus
+      pendingGameOver = false;
     }
   });
 
