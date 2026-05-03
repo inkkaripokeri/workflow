@@ -41,4 +41,9 @@ window.addEventListener("load", () => {
 
   });
 
+  if (s.leds) {
+    UI.updateLeds(s.leds);
+    UI.renderSteps();
+  }
+
 });
