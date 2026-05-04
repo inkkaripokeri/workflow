@@ -248,6 +248,13 @@ export const UI = (() => {
     }
   }
 
+  function hideGameOver() {
+    const overlay = document.getElementById("gameOverOverlay");
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
+  }
+
   /* ================= WAITING ANIMATION ================= */
 
   const dotStates = new Map();
@@ -274,7 +281,8 @@ export const UI = (() => {
     renderBullets,
     renderScore,
     showHitEffect,
-    showGameOver   // 🔥 LISÄTTY
+    showGameOver,
+    hideGameOver   // 🔥 LISÄTTY
   };
 
 })();
