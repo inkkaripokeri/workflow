@@ -255,6 +255,41 @@ export const UI = (() => {
     }
   }
 
+  /* ========== COUNTDOWN START ============ */
+
+  function showStartCountdown() {
+
+  const overlay = document.getElementById("startOverlay");
+  const counter = document.getElementById("startCounter");
+
+  if (!overlay || !counter) return;
+
+  overlay.classList.add("active");
+
+  let steps = ["3", "2", "1", "GO!"];
+  let i = 0;
+
+  counter.textContent = steps[i];
+
+  const interval = setInterval(() => {
+    i++;
+
+    if (i >= steps.length) {
+      clearInterval(interval);
+
+      setTimeout(() => {
+        overlay.classList.remove("active");
+      }, 400);
+
+      return;
+    }
+
+    counter.textContent = steps[i];
+
+  }, 700);
+}
+  
+  
   /* ================= WAITING ANIMATION ================= */
 
   const dotStates = new Map();
@@ -282,7 +317,8 @@ export const UI = (() => {
     renderScore,
     showHitEffect,
     showGameOver,
-    hideGameOver   // 🔥 LISÄTTY
+    hideGameOver,   // 🔥 LISÄTTY
+    showStartCountdown
   };
 
 })();
