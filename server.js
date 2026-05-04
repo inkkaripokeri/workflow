@@ -98,7 +98,7 @@ setInterval(() => {
 
   const now = Date.now();
 
-  // 🔥 liike
+  // 🔥 LED liike
   if (now - lastMove > moveInterval) {
 
     if (pendingGameOver) {
@@ -127,12 +127,10 @@ setInterval(() => {
 
     const target = getFirstBlockingIndex();
 
-    // 🔥 ei targettia → poista bullet
     if (target === -1) return false;
 
     const led = leds[target];
 
-    // 🔥 turvallisuus (estää crashin)
     if (!led) return false;
 
     // 🔥 OSUMA
@@ -144,8 +142,21 @@ setInterval(() => {
       ) {
         leds[target] = null;
         score++;
+
+        // ✅ OIKEA OSUMA
+        io.emit("hit", {
+          index: target,
+          success: true
+        });
+
       } else {
         score = Math.max(0, score - 1);
+
+        // ❌ VÄÄRÄ OSUMA
+        io.emit("hit", {
+          index: target,
+          success: false
+        });
       }
 
       return false;
@@ -200,11 +211,10 @@ io.on("connection", (socket) => {
     if (!running) return;
 
     bullets.push({
-      y: LED_COUNT - 1, // 🔥 alkaa oikealta
+      y: LED_COUNT - 1,
       role,
       task
     });
-
   });
 
   socket.on("disconnect", () => {
