@@ -1,5 +1,6 @@
 // ui.js
 let movedToGame = false;
+let startPopupShown = false;
 
 /* 🔥 GAME LEDS (näytetään vain alkuosa) */
 let leds = Array(14).fill(null);
@@ -25,6 +26,9 @@ export const UI = (() => {
 
   function animateToLobby() {
     document.body.classList.add("start-to-lobby");
+
+    startPopupShown = false;
+    
     setTimeout(() => show("lobby-screen"), 200);
   }
 
@@ -105,17 +109,20 @@ export const UI = (() => {
       el.innerHTML = html;
     });
 
-    if (count === 3 && !movedToGame) {
-      movedToGame = true;
+if (count === 3 && !movedToGame) {
+  movedToGame = true;
 
-      setTimeout(() => {
-        show("game-screen");
+  setTimeout(() => {
+    show("game-screen");
 
-        // 🔥 NÄYTÄ START POPUP TÄSSÄ (OIKEA PAIKKA)
-        showStartPopup();
-
-      }, 800);
+    // 🔥 NÄYTÄ VAIN KERRAN
+    if (!startPopupShown) {
+      showStartPopup();
+      startPopupShown = true;
     }
+
+  }, 800);
+}
   }
 
   /* ================= LEDS ================= */
