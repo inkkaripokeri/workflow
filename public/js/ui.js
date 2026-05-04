@@ -4,6 +4,12 @@ let movedToGame = false;
 /* 🔥 GAME LEDS (näytetään vain alkuosa) */
 let leds = Array(14).fill(null);
 
+const hitSound = new Audio("hit.mp3");
+const failSound = new Audio("fail.mp3");
+
+hitSound.volume = 0.6;
+failSound.volume = 0.6;
+
 export const UI = (() => {
 
   /* ================= SCREEN ================= */
@@ -177,24 +183,33 @@ export const UI = (() => {
 
   /* ================= HIT EFFECT ================= */
 
-  function showHitEffect(index, success) {
+function showHitEffect(index, success) {
 
-    const wrapper = document.getElementById("taskGridWrapper");
-    if (!wrapper) return;
+  const wrapper = document.getElementById("taskGridWrapper");
+  if (!wrapper) return;
 
-    const el = document.createElement("div");
-
-    el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
-
-    const percent = (index / 13) * 100;
-    el.style.left = percent + "%";
-
-    wrapper.appendChild(el);
-
-    setTimeout(() => {
-      el.remove();
-    }, 300);
+  // 🔊 SOUNDIT
+  if (success) {
+    hitSound.currentTime = 0;
+    hitSound.play();
+  } else {
+    failSound.currentTime = 0;
+    failSound.play();
   }
+
+  const el = document.createElement("div");
+
+  el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
+
+  const percent = (index / 13) * 100;
+  el.style.left = percent + "%";
+
+  wrapper.appendChild(el);
+
+  setTimeout(() => {
+    el.remove();
+  }, 300);
+}
 
   /* ================= WAITING ANIMATION ================= */
 
