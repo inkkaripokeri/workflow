@@ -184,45 +184,60 @@ body {
 
 /* ================= TASK GRID ================= */
 
-/* 🔥 WRAPPER */
+/* 🔥 WRAPPER (korjattu korkeus että mahtuu päivät + grid) */
 #taskGridWrapper {
   position: relative;
   width: 90%;
   margin: 30px auto;
-  height: 40px;
+  height: 60px;
+}
+
+/* 🔥 WEEK DAYS */
+#weekDays {
+  display: flex;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.day-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.6;
+  white-space: nowrap;
 }
 
 /* grid */
 #taskGrid {
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 40px;
 }
 
 /* bullets layer */
 #bulletsLayer {
   position: absolute;
-  top: 0;
+  top: 20px; /* 🔥 siirretty alemmas koska päivät ylhäällä */
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 40px;
   pointer-events: none;
 }
 
-/* 🔥 MUUTOS: bullet ei ole enää pallo */
+/* 🔥 bullet pois */
 .bullet {
   display: none;
 }
 
-/* 🔥 TÄRKEIN LISÄYS: bullet-taskit */
+/* 🔥 bullet-task */
 #bulletsLayer .task-cell {
   position: absolute;
   top: 0;
   height: 40px;
-  width: calc(100% / 14); /* 🔥 sama leveys kuin gridissä */
+  width: calc(100% / 14);
 }
 
-/* yksittäinen laatikko */
+/* task */
 .task-cell {
   flex: 1;
   height: 40px;
@@ -254,7 +269,7 @@ body {
 
 .hit-effect {
   position: absolute;
-  top: 0;
+  top: 20px; /* 🔥 sama offset kuin grid */
   width: calc(100% / 14);
   height: 40px;
 
@@ -286,4 +301,3 @@ body {
 #scoreValue {
   color: #ff8c00;
 }
-
