@@ -123,7 +123,11 @@ export const UI = (() => {
 
     grid.innerHTML = leds.map(l => {
       if (!l) return `<div class="task-cell"></div>`;
-      return `<div class="task-cell ${l.color}"></div>`;
+      return `
+    <div class="task-cell" style="background:${l.color}">
+      <div class="task-text">${l.task}</div>
+    </div>
+`;
     }).join("");
   }
 
