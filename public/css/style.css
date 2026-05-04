@@ -184,13 +184,11 @@ body {
 
 /* ================= TASK GRID ================= */
 
-/* 🔥 WRAPPER (KORJATTU) */
+/* 🔥 WRAPPER */
 #taskGridWrapper {
   position: relative;
   width: 90%;
   margin: 30px auto;
-
-  /* 🔥 TÄMÄ FIXAA BULLETIN */
   height: 40px;
 }
 
@@ -198,7 +196,7 @@ body {
 #taskGrid {
   display: flex;
   width: 100%;
-  height: 100%; /* 🔥 varmistus */
+  height: 100%;
 }
 
 /* bullets layer */
@@ -211,16 +209,17 @@ body {
   pointer-events: none;
 }
 
-/* bullet */
+/* 🔥 MUUTOS: bullet ei ole enää pallo */
 .bullet {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  display: none;
+}
 
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  z-index: 999;
+/* 🔥 TÄRKEIN LISÄYS: bullet-taskit */
+#bulletsLayer .task-cell {
+  position: absolute;
+  top: 0;
+  height: 40px;
+  width: calc(100% / 14); /* 🔥 sama leveys kuin gridissä */
 }
 
 /* yksittäinen laatikko */
