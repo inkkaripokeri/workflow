@@ -87,21 +87,22 @@
 
   <div class="section-title">Game</div>
 
-  <!-- 🔥 TASK GRID -->
+<!-- 🔥 TASK GRID -->
+<div id="taskGridWrapper">
   <div id="taskGrid"></div>
+  <div id="bulletsLayer"></div>
+</div>
 
-  <div class="continue-wrapper">
-    <button id="startGameBtn" class="button">START</button>
+<div class="continue-wrapper">
+  <button id="startGameBtn" class="button">START</button>
+</div>
+
+<div class="players">
+  <div id="playersTitleGame" class="section-title">
+    Players Joined 0/3
   </div>
 
-  <div class="players">
-    <div id="playersTitleGame" class="section-title">
-      Players Joined 0/3
-    </div>
-
-    <div id="playersGridGame" class="player-grid"></div>
-  </div>
-
+  <div id="playersGridGame" class="player-grid"></div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
