@@ -110,6 +110,10 @@ export const UI = (() => {
 
       setTimeout(() => {
         show("game-screen");
+
+        // 🔥 NÄYTÄ START POPUP TÄSSÄ (OIKEA PAIKKA)
+        showStartPopup();
+
       }, 800);
     }
   }
