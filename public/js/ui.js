@@ -143,15 +143,12 @@ export const UI = (() => {
 
       const el = document.createElement("div");
 
-      // 🔥 sama ulkoasu kuin taskilla
       el.className = `task-cell`;
 
       el.innerHTML = `<div class="task-text">${b.task}</div>`;
 
-      // 🔥 väri
       el.style.background = getRoleColor(b.role);
 
-      // 🔥 sijainti
       const percent = (b.y / 13) * 100;
       el.style.left = percent + "%";
 
@@ -167,6 +164,15 @@ export const UI = (() => {
     if (role === "developer") return "#6c5ce7";
     if (role === "tester") return "#00b894";
     return "#fff";
+  }
+
+  /* ================= SCORE ================= */
+
+  function renderScore(score) {
+    const el = document.getElementById("scoreValue");
+    if (!el) return;
+
+    el.textContent = score ?? 0;
   }
 
   /* ================= HIT EFFECT ================= */
@@ -214,7 +220,8 @@ export const UI = (() => {
     renderSteps,
     updateLeds,
     renderBullets,
-    showHitEffect // 🔥 UUSI
+    renderScore,   // 🔥 LISÄTTY
+    showHitEffect
   };
 
 })();
