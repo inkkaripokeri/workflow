@@ -6,8 +6,8 @@ const socket = io();
 const gameOverSound = new Audio("gameover.mp3");
 gameOverSound.volume = 0.7;
 
-/* 🔥 estetään jatkuva trigger */
-let gameOverShown = false;
+/* 🔥 seurataan state-muutosta */
+let prevGameState = null;
 
 window.addEventListener("load", () => {
 
@@ -27,8 +27,6 @@ window.addEventListener("load", () => {
 
     UI.animateToLobby();
     socket.emit("resetLobby");
-
-    gameOverShown = false;
   });
 
   // 🔥 START GAME
@@ -36,22 +34,15 @@ window.addEventListener("load", () => {
     startGameBtn.addEventListener("click", () => {
       console.log("GAME START CLICKED");
       socket.emit("start");
-
-      gameOverShown = false;
     });
   }
 
-  // 🔥 REPLAY NAPPI
+  // 🔥 REPLAY
   if (replayBtn) {
     replayBtn.addEventListener("click", () => {
       console.log("🔄 REPLAY CLICKED");
 
       socket.emit("restartGame");
-
-      // ❌ EI piiloteta täällä enää!
-      // UI.hideGameOver();
-
-      gameOverShown = false;
     });
   }
 
@@ -61,31 +52,35 @@ window.addEventListener("load", () => {
 
     if (!s) return;
 
-    // 🔥 kun peli käynnissä → oikea paikka piilottaa popup
-    if (s.gameState === "running") {
+    // 🔥 reagoi vain state-muutokseen
+    if (s.gameState !== prevGameState) {
 
-      gameOverShown = false;
+      // ▶️ RUNNING
+      if (s.gameState === "running") {
 
-      // ✅ PIILOTUS TÄÄLLÄ (FIX)
-      UI.hideGameOver();
+        console.log("▶️ RUNNING");
 
-      if (startGameBtn) {
-        startGameBtn.style.display = "none";
+        UI.hideGameOver();
+
+        if (startGameBtn) {
+          startGameBtn.style.display = "none";
+        }
+      }
+
+      // 💀 GAME OVER
+      if (s.gameState === "gameover") {
+
+        console.log("💀 GAME OVER");
+
+        gameOverSound.currentTime = 0;
+        gameOverSound.play();
+
+        UI.showGameOver(s.score);
       }
     }
 
-    // 🔥 GAME OVER (vain kerran)
-    if (s.gameState === "gameover" && !gameOverShown) {
-
-      console.log("💀 GAME OVER");
-
-      gameOverShown = true;
-
-      gameOverSound.currentTime = 0;
-      gameOverSound.play();
-
-      UI.showGameOver(s.score);
-    }
+    // 🔥 päivitä state
+    prevGameState = s.gameState;
 
     // 🔥 LOBBY
     if (s.lobby) {
