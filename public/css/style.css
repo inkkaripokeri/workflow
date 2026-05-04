@@ -353,6 +353,7 @@ body {
 
 .gameover-score {
   font-size: 28px;
+  margin-bottom: 40px;
 }
 
 @keyframes popIn {
