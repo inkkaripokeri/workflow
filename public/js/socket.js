@@ -15,7 +15,7 @@ window.addEventListener("load", () => {
 
   const startBtn = document.getElementById("startBtn");
   const startGameBtn = document.getElementById("startGameBtn");
-  const replayBtn = document.getElementById("replayBtn"); // 🔥 UUSI
+  const replayBtn = document.getElementById("replayBtn");
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
@@ -48,7 +48,8 @@ window.addEventListener("load", () => {
 
       socket.emit("restartGame");
 
-      UI.hideGameOver();
+      // ❌ EI piiloteta täällä enää!
+      // UI.hideGameOver();
 
       gameOverShown = false;
     });
@@ -60,10 +61,13 @@ window.addEventListener("load", () => {
 
     if (!s) return;
 
-    // 🔥 kun peli käynnissä → varmistetaan reset
+    // 🔥 kun peli käynnissä → oikea paikka piilottaa popup
     if (s.gameState === "running") {
 
       gameOverShown = false;
+
+      // ✅ PIILOTUS TÄÄLLÄ (FIX)
+      UI.hideGameOver();
 
       if (startGameBtn) {
         startGameBtn.style.display = "none";
