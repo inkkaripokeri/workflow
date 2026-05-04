@@ -35,6 +35,13 @@ window.addEventListener("load", () => {
 
     if (!s) return;
 
+    // 🔥 PIILOTA START NAPPI KUN PELI ALKAA
+    if (s.gameState === "running") {
+      if (startGameBtn) {
+        startGameBtn.style.display = "none";
+      }
+    }
+
     // 🔥 LOBBY
     if (s.lobby) {
       UI.renderGameId(s.lobby.code);
@@ -56,7 +63,7 @@ window.addEventListener("load", () => {
       }
     }
 
-    // 🔥 UUSI: SCORE
+    // 🔥 SCORE
     if (typeof s.score !== "undefined") {
       UI.renderScore(s.score);
     }
