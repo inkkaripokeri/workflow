@@ -56,6 +56,11 @@ window.addEventListener("load", () => {
       }
     }
 
+    // 🔥 UUSI: SCORE
+    if (typeof s.score !== "undefined") {
+      UI.renderScore(s.score);
+    }
+
   });
 
   /* ================= HIT EFFECT ================= */
