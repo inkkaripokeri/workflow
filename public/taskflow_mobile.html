@@ -141,11 +141,128 @@ h1 {
   border-radius: 12px;
   border: none;
   color: #fff;
+  transition: 0.1s;
 }
 
-/* 🔥 TÄRKEIN LISÄYS */
+.task-btn:active {
+  transform: scale(0.97);
+}
+
+.task-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* 🔥 spacing */
 #gameTitle {
   margin-top: 40px;
 }
 </style>
 </head>
+
+<body>
+
+<div id="waiting-screen" class="screen active">
+  <h1 id="waitingTitle"></h1>
+
+  <div class="role-card" id="waitingCard"></div>
+
+  <div id="waitingName"></div>
+
+  <video id="waitingAnim" autoplay loop muted playsinline>
+    <source src="Typing.webm" type="video/webm">
+  </video>
+
+  <div id="gameControls" style="display:none; width:100%;">
+    <div id="gameTitle" class="input-title">Your Tasks</div>
+    <div id="taskButtons"></div>
+  </div>
+
+  <div id="waitingText">Waiting for teammates...</div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+const socket = io();
+
+let role = null;
+let playerName = null;
+let canShoot = true;
+let gameRunning = false;
+
+/* 🔊 SOUND */
+const shootSound = new Audio("shoot.mp3");
+shootSound.volume = 0.5;
+
+const ROLE_TASKS = {
+  designer: ["WIREFRAME", "PROTOTYPE", "USER RESEARCH"],
+  developer: ["NEW FEATURE", "BUGFIX", "REFACTOR"],
+  tester: ["SMOKE TEST", "UNIT TEST", "BUG REPORT"]
+};
+
+/* STATE */
+socket.on("state", (s) => {
+
+  if (!s.gameState) return;
+
+  if (s.gameState === "running") {
+    gameRunning = true;
+
+    document.getElementById("waitingText").style.display = "none";
+    document.getElementById("waitingAnim").style.display = "none";
+    document.getElementById("gameControls").style.display = "block";
+
+    renderGameControls();
+  } else {
+    gameRunning = false;
+  }
+
+  if (s.gameState === "gameover") {
+    document.getElementById("waitingText").textContent = "GAME OVER";
+  }
+});
+
+/* 🔥 GAME BUTTONS */
+function renderGameControls() {
+  const container = document.getElementById("taskButtons");
+  container.innerHTML = "";
+
+  ROLE_TASKS[role].forEach(task => {
+
+    const btn = document.createElement("button");
+    btn.className = "task-btn";
+    btn.textContent = task;
+
+    if (role === "designer") btn.style.background = "#f39c12";
+    if (role === "developer") btn.style.background = "#6c5ce7";
+    if (role === "tester") btn.style.background = "#00b894";
+
+    btn.onclick = () => {
+
+      if (!canShoot || !gameRunning) return;
+
+      canShoot = false;
+
+      // 🔊 sound
+      shootSound.currentTime = 0;
+      shootSound.play();
+
+      // 🔥 visual feedback
+      btn.style.opacity = "0.5";
+
+      socket.emit("shoot", { role, task });
+
+      setTimeout(() => {
+        canShoot = true;
+        btn.style.opacity = "1";
+      }, 300);
+    };
+
+    container.appendChild(btn);
+  });
+}
+</script>
+
+</body>
+</html>
