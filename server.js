@@ -8,16 +8,38 @@ const io = new Server(server);
 
 app.use(express.static("public"));
 
-const LED_COUNT = 14; // 🔥 FIX: vastaa UI:ta
+const LED_COUNT = 14;
 
 let leds, bullets, score, running, lastMove, spawnGap;
 let pendingGameOver = false;
 
-// 🔥 UUSI: säädettävä nopeus (ms)
+// 🔥 säädettävä nopeus
 let moveInterval = 750;
 
 const ROLES = ["designer", "developer", "tester"];
-const letters = ["A", "B", "C"];
+
+// 🔥 UUSI: kaikki taskit (9 kpl)
+const TASKS = [
+  // Designer
+  { role: "designer", color: "#f39c12", task: "WIREFRAME" },
+  { role: "designer", color: "#f39c12", task: "PROTOTYPE" },
+  { role: "designer", color: "#f39c12", task: "USER RESEARCH" },
+
+  // Developer
+  { role: "developer", color: "#6c5ce7", task: "NEW FEATURE" },
+  { role: "developer", color: "#6c5ce7", task: "BUGFIX" },
+  { role: "developer", color: "#6c5ce7", task: "REFACTOR" },
+
+  // Tester
+  { role: "tester", color: "#00b894", task: "SMOKE TEST" },
+  { role: "tester", color: "#00b894", task: "UNIT TEST" },
+  { role: "tester", color: "#00b894", task: "BUG REPORT" }
+];
+
+// 🔥 random task
+function randomTask() {
+  return TASKS[Math.floor(Math.random() * TASKS.length)];
+}
 
 let lobby = {};
 let gameState = "waiting";
@@ -46,14 +68,6 @@ function resetGame() {
 newLobby();
 resetGame();
 
-function randomLetter() {
-  return letters[Math.floor(Math.random() * letters.length)];
-}
-
-function randomColor() {
-  return ["red", "green", "blue"][Math.floor(Math.random() * 3)];
-}
-
 function spawnTop() {
   if (spawnGap > 0) {
     leds[0] = null;
@@ -61,7 +75,15 @@ function spawnTop() {
     return;
   }
 
-  leds[0] = { color: randomColor(), letter: randomLetter() };
+  // 🔥 UUSI: käytetään taskeja
+  const t = randomTask();
+
+  leds[0] = {
+    role: t.role,
+    color: t.color,
+    task: t.task
+  };
+
   spawnGap = Math.floor(Math.random() * 3) + 1;
 }
 
@@ -81,17 +103,14 @@ setInterval(() => {
 
   const now = Date.now();
 
-  // 🔥 KÄYTETÄÄN MUUTTUJAA (ei hardkoodattua arvoa)
   if (now - lastMove > moveInterval) {
 
-    // 🔥 jos viime tickillä jäi task viimeiseen → nyt peli loppuu
     if (pendingGameOver) {
       running = false;
       gameState = "gameover";
       pendingGameOver = false;
     } else {
 
-      // 🔥 siirretään ledit
       for (let i = LED_COUNT - 1; i > 0; i--) {
         leds[i] = leds[i - 1];
       }
@@ -99,14 +118,12 @@ setInterval(() => {
       spawnTop();
       lastMove = now;
 
-      // 🔥 jos nyt tuli task viimeiseen → anna yksi tick aikaa
       if (leds[LED_COUNT - 1]) {
         pendingGameOver = true;
       }
     }
   }
 
-  // 🔥 bullets liike
   bullets.forEach(b => b.y -= 0.5);
 
   bullets = bullets.filter(b => {
