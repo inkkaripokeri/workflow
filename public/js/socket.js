@@ -22,9 +22,9 @@ window.addEventListener("load", () => {
 
       console.log("▶️ START FROM POPUP");
 
-      socket.emit("start");
-
-      UI.startCountdown();
+      UI.startCountdown(() => {
+        socket.emit("start");
+      });
     });
   }
 
