@@ -276,3 +276,13 @@ body {
   0%   { transform: scale(1); opacity: 1; }
   100% { transform: scale(1.2); opacity: 0; }
 }
+
+.points-header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#scoreValue {
+  color: #ff8c00;
+}
