@@ -45,9 +45,9 @@ window.addEventListener("load", () => {
     }
 
     // 🔥 UUSI: BULLETIT
-    if (s.bullets) {
-      UI.renderBullets(s.bullets);
-    }
+  if (s.bullets && s.bullets.length > 0) {
+    console.log("🔥 HOST BULLETS:", s.bullets);
+  }
   
   });
 
