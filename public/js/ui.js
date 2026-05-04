@@ -118,11 +118,14 @@ export const UI = (() => {
 
   function updateLeds(newLeds) {
     if (!newLeds) return;
-
     leds = newLeds.slice(0, 14);
   }
 
   function renderSteps() {
+
+    // 🔥 LISÄTTY TÄHÄN
+    renderWeekDays();
+
     const grid = document.getElementById("taskGrid");
     if (!grid) return;
 
@@ -183,33 +186,52 @@ export const UI = (() => {
 
   /* ================= HIT EFFECT ================= */
 
-function showHitEffect(index, success) {
+  function showHitEffect(index, success) {
 
-  const wrapper = document.getElementById("taskGridWrapper");
-  if (!wrapper) return;
+    const wrapper = document.getElementById("taskGridWrapper");
+    if (!wrapper) return;
 
-  // 🔊 SOUNDIT
-  if (success) {
-    hitSound.currentTime = 0;
-    hitSound.play();
-  } else {
-    failSound.currentTime = 0;
-    failSound.play();
+    if (success) {
+      hitSound.currentTime = 0;
+      hitSound.play();
+    } else {
+      failSound.currentTime = 0;
+      failSound.play();
+    }
+
+    const el = document.createElement("div");
+
+    el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
+
+    const percent = (index / 13) * 100;
+    el.style.left = percent + "%";
+
+    wrapper.appendChild(el);
+
+    setTimeout(() => {
+      el.remove();
+    }, 300);
   }
 
-  const el = document.createElement("div");
+  /* ======= DAYS ====== */
 
-  el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
+  function renderWeekDays() {
 
-  const percent = (index / 13) * 100;
-  el.style.left = percent + "%";
+    const el = document.getElementById("weekDays");
+    if (!el) return;
 
-  wrapper.appendChild(el);
+    const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-  setTimeout(() => {
-    el.remove();
-  }, 300);
-}
+    const full = [];
+
+    for (let i = 0; i < 14; i++) {
+      full.push(days[i % 7]);
+    }
+
+    el.innerHTML = full
+      .map(d => `<div class="day-cell">${d}</div>`)
+      .join("");
+  }
 
   /* ================= WAITING ANIMATION ================= */
 
@@ -235,7 +257,7 @@ function showHitEffect(index, success) {
     renderSteps,
     updateLeds,
     renderBullets,
-    renderScore,   // 🔥 LISÄTTY
+    renderScore,
     showHitEffect
   };
 
