@@ -7,7 +7,7 @@ window.addEventListener("load", () => {
   console.log("DOM READY");
 
   const startBtn = document.getElementById("startBtn");
-  const startGameBtn = document.getElementById("startGameBtn"); // 🔥 LISÄTTY
+  const startGameBtn = document.getElementById("startGameBtn");
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
@@ -38,14 +38,17 @@ window.addEventListener("load", () => {
       UI.renderPlayers(s.lobby.players);
     }
   
-    // 🔥 TÄRKEIN LISÄYS
+    // 🔥 LEDIT
     if (s.leds) {
       UI.updateLeds(s.leds);
       UI.renderSteps();
     }
+
+    // 🔥 UUSI: BULLETIT
+    if (s.bullets) {
+      UI.renderBullets(s.bullets);
+    }
   
   });
-
-
 
 });
