@@ -135,27 +135,27 @@ export const UI = (() => {
 function renderBullets(bullets) {
 
   const layer = document.getElementById("bulletsLayer");
-  if (!layer) {
-    console.error("❌ bulletsLayer PUUTTUU");
-    return;
-  }
+  if (!layer) return;
 
   layer.innerHTML = "";
 
   bullets.forEach(b => {
 
     const el = document.createElement("div");
-    el.className = "bullet";
 
-    // värit
-    if (b.role === "designer") el.style.background = "#f39c12";
-    if (b.role === "developer") el.style.background = "#6c5ce7";
-    if (b.role === "tester") el.style.background = "#00b894";
+    // 🔥 sama class kuin taskeilla
+    el.className = `task-cell ${b.role}`;
 
-    // 🔥 TÄMÄ ON KRIITTINEN
-    const percent = (b.y / 14) * 100;
+    // 🔥 teksti mukaan
+    el.innerHTML = `<div class="task-text">${b.task}</div>`;
 
+    // 🔥 sijainti
+    const percent = (b.y / 13) * 100;
     el.style.left = percent + "%";
+
+    // 🔥 tärkeä: absolute positioning
+    el.style.position = "absolute";
+    el.style.top = "0";
 
     layer.appendChild(el);
   });
