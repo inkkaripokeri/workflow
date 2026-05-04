@@ -189,7 +189,7 @@ io.on("connection", (socket) => {
 
   // 🔥 SHOOT EVENT (TÄRKEIN)
   socket.on("shoot", ({ role, task }) => {
-
+      console.log("🔥 SHOOT RECEIVED:", data);
     if (!running) return;
 
     bullets.push({
