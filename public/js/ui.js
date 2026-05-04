@@ -109,20 +109,19 @@ export const UI = (() => {
       el.innerHTML = html;
     });
 
-if (count === 3 && !movedToGame) {
-  movedToGame = true;
+    if (count === 3 && !movedToGame) {
+      movedToGame = true;
 
-  setTimeout(() => {
-    show("game-screen");
+      setTimeout(() => {
+        show("game-screen");
 
-    // 🔥 NÄYTÄ VAIN KERRAN
-    if (!startPopupShown) {
-      showStartPopup();
-      startPopupShown = true;
+        if (!startPopupShown) {
+          showStartPopup();
+          startPopupShown = true;
+        }
+
+      }, 800);
     }
-
-  }, 800);
-}
   }
 
   /* ================= LEDS ================= */
@@ -163,9 +162,7 @@ if (count === 3 && !movedToGame) {
       const el = document.createElement("div");
 
       el.className = `task-cell`;
-
       el.innerHTML = `<div class="task-text">${b.task}</div>`;
-
       el.style.background = getRoleColor(b.role);
 
       const percent = (b.y / 13) * 100;
@@ -269,70 +266,56 @@ if (count === 3 && !movedToGame) {
   /* ========== SHOW START POPUP ============ */
 
   function showStartPopup() {
-  const overlay = document.getElementById("startOverlay");
-  const content = document.getElementById("startContent");
-  const counter = document.getElementById("startCounter");
+    const overlay = document.getElementById("startOverlay");
+    const content = document.getElementById("startContent");
+    const counter = document.getElementById("startCounter");
 
-  if (!overlay) return;
+    if (!overlay) return;
 
-  overlay.classList.add("active");
+    overlay.classList.add("active");
 
-  if (content) content.style.display = "block";
-  if (counter) counter.style.display = "none";
-}
+    if (content) content.style.display = "block";
+    if (counter) counter.style.display = "none";
+  }
   
-  /* ========== COUNTDOWN START ============ */
+  /* ========== COUNTDOWN START (🔥 KORJATTU) ============ */
 
-function startCountdown() {
+  function startCountdown(onDone) {
 
-  const content = document.getElementById("startContent");
-  const counter = document.getElementById("startCounter");
-  const overlay = document.getElementById("startOverlay");
+    const content = document.getElementById("startContent");
+    const counter = document.getElementById("startCounter");
+    const overlay = document.getElementById("startOverlay");
 
-  if (!counter || !overlay) return;
+    if (!counter || !overlay) return;
 
-  if (content) content.style.display = "none";
-  counter.style.display = "block";
+    if (content) content.style.display = "none";
+    counter.style.display = "block";
 
-  let steps = ["3", "2", "1", "GO!"];
-  let i = 0;
-
-  counter.textContent = steps[i];
-
-  const interval = setInterval(() => {
-    i++;
-
-    if (i >= steps.length) {
-      clearInterval(interval);
-
-      setTimeout(() => {
-        overlay.classList.remove("active");
-      }, 400);
-
-      return;
-    }
+    let steps = ["3", "2", "1", "GO!"];
+    let i = 0;
 
     counter.textContent = steps[i];
 
-  }, 700);
-}
-  
-  
-  /* ================= WAITING ANIMATION ================= */
+    const interval = setInterval(() => {
+      i++;
 
-  const dotStates = new Map();
+      if (i >= steps.length) {
+        clearInterval(interval);
 
-  setInterval(() => {
-    document.querySelectorAll(".player-status.waiting .dots")
-      .forEach(el => {
+        // 🔥 KÄYNNISTÄ PELI TÄSSÄ
+        if (onDone) onDone();
 
-        let count = dotStates.get(el) || 1;
-        count = count >= 3 ? 1 : count + 1;
+        setTimeout(() => {
+          overlay.classList.remove("active");
+        }, 400);
 
-        dotStates.set(el, count);
-        el.textContent = ".".repeat(count);
-      });
-  }, 500);
+        return;
+      }
+
+      counter.textContent = steps[i];
+
+    }, 700);
+  }
 
   return {
     show,
@@ -345,7 +328,7 @@ function startCountdown() {
     renderScore,
     showHitEffect,
     showGameOver,
-    hideGameOver,   // 🔥 LISÄTTY
+    hideGameOver,
     showStartPopup,
     startCountdown
   };
