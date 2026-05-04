@@ -184,16 +184,21 @@ body {
 
 /* ================= TASK GRID ================= */
 
-/* 🔥 WRAPPER (UUSI) */
+/* 🔥 WRAPPER (KORJATTU) */
 #taskGridWrapper {
   position: relative;
   width: 90%;
   margin: 30px auto;
+
+  /* 🔥 TÄMÄ FIXAA BULLETIN */
+  height: 40px;
 }
 
 /* grid */
 #taskGrid {
   display: flex;
+  width: 100%;
+  height: 100%; /* 🔥 varmistus */
 }
 
 /* bullets layer */
