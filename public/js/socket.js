@@ -14,7 +14,6 @@ window.addEventListener("load", () => {
   console.log("DOM READY");
 
   const startBtn = document.getElementById("startBtn");
-  const startGameBtn = document.getElementById("startGameBtn");
   const replayBtn = document.getElementById("replayBtn");
   const startGamePopupBtn = document.getElementById("startGamePopupBtn");
 
@@ -44,13 +43,6 @@ window.addEventListener("load", () => {
     socket.emit("resetLobby");
   });
 
-  // 🔥 START GAME
-  if (startGameBtn) {
-    startGameBtn.addEventListener("click", () => {
-      console.log("GAME START CLICKED");
-      socket.emit("start");
-    });
-  }
 
   // 🔥 REPLAY
   if (replayBtn) {
@@ -78,10 +70,6 @@ window.addEventListener("load", () => {
     // 🔥 NÄYTÄ POPUP KUN SIIRRYTÄÄN GAMEEN
     if (prevGameState !== "running") {
       UI.showStartPopup();
-    }
-
-    if (startGameBtn) {
-      startGameBtn.style.display = "none";
     }
   }
 
