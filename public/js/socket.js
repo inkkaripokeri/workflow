@@ -30,25 +30,30 @@ window.addEventListener("load", () => {
   }
 
   socket.on("state", (s) => {
-    console.log("HOST BULLETS:", s.bullets);
+
     if (!s) return;
-  
+
+    // 🔥 LOBBY
     if (s.lobby) {
       UI.renderGameId(s.lobby.code);
       UI.renderPlayers(s.lobby.players);
     }
-  
+
     // 🔥 LEDIT
     if (s.leds) {
       UI.updateLeds(s.leds);
       UI.renderSteps();
     }
 
-    // 🔥 UUSI: BULLETIT
-  if (s.bullets && s.bullets.length > 0) {
-    console.log("🔥 HOST BULLETS:", s.bullets);
-  }
-  
+    // 🔥 BULLETIT (render + debug vain tarvittaessa)
+    if (s.bullets) {
+      UI.renderBullets(s.bullets);
+
+      if (s.bullets.length > 0) {
+        console.log("🔥 HOST BULLETS:", s.bullets);
+      }
+    }
+
   });
 
 });
