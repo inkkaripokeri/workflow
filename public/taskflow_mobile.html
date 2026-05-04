@@ -417,16 +417,28 @@ socket.on("state", (s) => {
       "Waiting for the game to start...";
   }
 
-  if (s.gameState === "running") {
+if (s.gameState === "running") {
 
-    gameRunning = true;
+  // 🔥 aseta aina ensin
+  gameRunning = true;
 
-    document.getElementById("waitingText").style.display = "none";
-    document.getElementById("waitingAnim").style.display = "none";
-    document.getElementById("gameControls").style.display = "block";
+  // 🔥 tee UI-muutokset vain kerran
+  if (!document.getElementById("gameControls").dataset.started) {
+
+    document.getElementById("gameControls").dataset.started = "true";
+
+    const text = document.getElementById("waitingText");
+    if (text) text.style.display = "none";
+
+    const anim = document.getElementById("waitingAnim");
+    if (anim) anim.style.display = "none";
+
+    const controls = document.getElementById("gameControls");
+    if (controls) controls.style.display = "block";
 
     renderGameControls();
   }
+}
 
   if (s.gameState === "gameover") {
     gameRunning = false;
