@@ -29,6 +29,8 @@ window.addEventListener("load", () => {
     });
   }
 
+  /* ================= STATE ================= */
+
   socket.on("state", (s) => {
 
     if (!s) return;
@@ -45,7 +47,7 @@ window.addEventListener("load", () => {
       UI.renderSteps();
     }
 
-    // 🔥 BULLETIT (render + debug vain tarvittaessa)
+    // 🔥 BULLETIT
     if (s.bullets) {
       UI.renderBullets(s.bullets);
 
@@ -54,6 +56,17 @@ window.addEventListener("load", () => {
       }
     }
 
+  });
+
+  /* ================= HIT EFFECT ================= */
+
+  socket.on("hit", (data) => {
+
+    if (!data) return;
+
+    console.log("💥 HIT EVENT:", data);
+
+    UI.showHitEffect(data.index, data.success);
   });
 
 });
