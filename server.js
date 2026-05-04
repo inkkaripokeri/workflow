@@ -120,43 +120,30 @@ setInterval(() => {
     }
   }
 
-  // 🔥 BULLET MOVEMENT (oikealta vasemmalle)
+  // 🔥 BULLET MOVEMENT
   bullets.forEach(b => b.y -= 0.5);
 
   bullets = bullets.filter(b => {
 
     const target = getFirstBlockingIndex();
-
     if (target === -1) return false;
 
     const led = leds[target];
-
     if (!led) return false;
 
     // 🔥 OSUMA
     if (Math.abs(b.y - target) < 0.5) {
 
-      if (
-        led.role === b.role &&
-        led.task === b.task
-      ) {
+      if (led.role === b.role && led.task === b.task) {
         leds[target] = null;
         score++;
 
-        // ✅ OIKEA OSUMA
-        io.emit("hit", {
-          index: target,
-          success: true
-        });
+        io.emit("hit", { index: target, success: true });
 
       } else {
         score = Math.max(0, score - 1);
 
-        // ❌ VÄÄRÄ OSUMA
-        io.emit("hit", {
-          index: target,
-          success: false
-        });
+        io.emit("hit", { index: target, success: false });
       }
 
       return false;
@@ -203,7 +190,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🔥 SHOOT EVENT
+  // 🔥 SHOOT
   socket.on("shoot", ({ role, task }) => {
 
     console.log("🔥 SHOOT RECEIVED:", role, task);
@@ -215,6 +202,23 @@ io.on("connection", (socket) => {
       role,
       task
     });
+  });
+
+  // 🔥 REPLAY / RESTART GAME
+  socket.on("restartGame", () => {
+
+    const count = Object.values(lobby.players).filter(Boolean).length;
+
+    if (count === 3) {
+      console.log("🔄 RESTART GAME");
+
+      resetGame();
+
+      running = true;
+      gameState = "running";
+      lastMove = Date.now();
+      pendingGameOver = false;
+    }
   });
 
   socket.on("disconnect", () => {
