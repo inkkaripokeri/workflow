@@ -9,6 +9,9 @@ gameOverSound.volume = 0.7;
 /* 🔥 seurataan state-muutosta */
 let prevGameState = null;
 
+/* 🔥 estetään tuplaklikki */
+let gameStarting = false;
+
 window.addEventListener("load", () => {
 
   console.log("DOM READY");
@@ -17,19 +20,29 @@ window.addEventListener("load", () => {
   const replayBtn = document.getElementById("replayBtn");
   const startGamePopupBtn = document.getElementById("startGamePopupBtn");
 
+  console.log("REPLAY BTN:", replayBtn);
+  console.log("POPUP START BTN:", startGamePopupBtn);
+
+  /* ================= START POPUP ================= */
+
   if (startGamePopupBtn) {
     startGamePopupBtn.addEventListener("click", () => {
+
+      if (gameStarting) return; // 🔥 estää spam
+      gameStarting = true;
 
       console.log("▶️ START FROM POPUP");
 
       UI.startCountdown(() => {
+
+        console.log("🚀 EMIT START");
+
         socket.emit("start");
       });
     });
   }
 
-  
-  console.log("REPLAY BTN:", replayBtn);
+  /* ================= LOBBY START ================= */
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
@@ -41,15 +54,19 @@ window.addEventListener("load", () => {
 
     UI.animateToLobby();
     socket.emit("resetLobby");
+
+    gameStarting = false; // 🔄 reset
   });
 
+  /* ================= REPLAY ================= */
 
-  // 🔥 REPLAY
   if (replayBtn) {
     replayBtn.addEventListener("click", () => {
       console.log("🔄 REPLAY CLICKED");
 
       socket.emit("restartGame");
+
+      gameStarting = false; // 🔄 reset
     });
   }
 
@@ -59,15 +76,20 @@ window.addEventListener("load", () => {
 
     if (!s) return;
 
-    // 🔥 reagoi vain state-muutokseen
+    // 🔥 reagoi vain muutoksiin
     if (s.gameState !== prevGameState) {
 
+      console.log("STATE CHANGE:", prevGameState, "→", s.gameState);
+
       // ▶️ RUNNING
-    if (s.gameState === "running") {
+      if (s.gameState === "running") {
 
-    UI.hideGameOver();
+        console.log("✅ GAME STARTED");
 
-  }
+        UI.hideGameOver();
+
+        gameStarting = false; // 🔄 reset
+      }
 
       // 💀 GAME OVER
       if (s.gameState === "gameover") {
@@ -81,38 +103,31 @@ window.addEventListener("load", () => {
       }
     }
 
-    // 🔥 päivitä state
     prevGameState = s.gameState;
 
-    // 🔥 LOBBY
+    /* ================= UI ================= */
+
     if (s.lobby) {
       UI.renderGameId(s.lobby.code);
       UI.renderPlayers(s.lobby.players);
     }
 
-    // 🔥 LEDIT
     if (s.leds) {
       UI.updateLeds(s.leds);
       UI.renderSteps();
     }
 
-    // 🔥 BULLETIT
     if (s.bullets) {
       UI.renderBullets(s.bullets);
-
-      if (s.bullets.length > 0) {
-        console.log("🔥 HOST BULLETS:", s.bullets);
-      }
     }
 
-    // 🔥 SCORE
     if (typeof s.score !== "undefined") {
       UI.renderScore(s.score);
     }
 
   });
 
-  /* ================= HIT EFFECT ================= */
+  /* ================= HIT ================= */
 
   socket.on("hit", (data) => {
 
