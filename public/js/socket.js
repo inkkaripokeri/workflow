@@ -67,10 +67,6 @@ window.addEventListener("load", () => {
 
     UI.hideGameOver();
 
-    // 🔥 NÄYTÄ POPUP KUN SIIRRYTÄÄN GAMEEN
-    if (prevGameState !== "running") {
-      UI.showStartPopup();
-    }
   }
 
       // 💀 GAME OVER
