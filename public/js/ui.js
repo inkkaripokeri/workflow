@@ -132,34 +132,63 @@ export const UI = (() => {
 
   /* ================= BULLETS ================= */
 
-function renderBullets(bullets) {
+  function renderBullets(bullets) {
 
-  const layer = document.getElementById("bulletsLayer");
-  if (!layer) return;
+    const layer = document.getElementById("bulletsLayer");
+    if (!layer) return;
 
-  layer.innerHTML = "";
+    layer.innerHTML = "";
 
-  bullets.forEach(b => {
+    bullets.forEach(b => {
+
+      const el = document.createElement("div");
+
+      // 🔥 sama ulkoasu kuin taskilla
+      el.className = `task-cell`;
+
+      el.innerHTML = `<div class="task-text">${b.task}</div>`;
+
+      // 🔥 väri
+      el.style.background = getRoleColor(b.role);
+
+      // 🔥 sijainti
+      const percent = (b.y / 13) * 100;
+      el.style.left = percent + "%";
+
+      el.style.position = "absolute";
+      el.style.top = "0";
+
+      layer.appendChild(el);
+    });
+  }
+
+  function getRoleColor(role) {
+    if (role === "designer") return "#f39c12";
+    if (role === "developer") return "#6c5ce7";
+    if (role === "tester") return "#00b894";
+    return "#fff";
+  }
+
+  /* ================= HIT EFFECT ================= */
+
+  function showHitEffect(index, success) {
+
+    const wrapper = document.getElementById("taskGridWrapper");
+    if (!wrapper) return;
 
     const el = document.createElement("div");
 
-    // 🔥 sama class kuin taskeilla
-    el.className = `task-cell ${b.role}`;
+    el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
 
-    // 🔥 teksti mukaan
-    el.innerHTML = `<div class="task-text">${b.task}</div>`;
-
-    // 🔥 sijainti
-    const percent = (b.y / 13) * 100;
+    const percent = (index / 13) * 100;
     el.style.left = percent + "%";
 
-    // 🔥 tärkeä: absolute positioning
-    el.style.position = "absolute";
-    el.style.top = "0";
+    wrapper.appendChild(el);
 
-    layer.appendChild(el);
-  });
-}
+    setTimeout(() => {
+      el.remove();
+    }, 300);
+  }
 
   /* ================= WAITING ANIMATION ================= */
 
@@ -184,7 +213,8 @@ function renderBullets(bullets) {
     renderPlayers,
     renderSteps,
     updateLeds,
-    renderBullets // 🔥 uusi export
+    renderBullets,
+    showHitEffect // 🔥 UUSI
   };
 
 })();
