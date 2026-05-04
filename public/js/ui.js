@@ -280,42 +280,46 @@ export const UI = (() => {
   
   /* ========== COUNTDOWN START (🔥 KORJATTU) ============ */
 
-  function startCountdown(onDone) {
+function startCountdown(onDone) {
 
-    const content = document.getElementById("startContent");
-    const counter = document.getElementById("startCounter");
-    const overlay = document.getElementById("startOverlay");
+  const content = document.getElementById("startContent");
+  const counter = document.getElementById("startCounter");
+  const overlay = document.getElementById("startOverlay");
 
-    if (!counter || !overlay) return;
+  if (!counter || !overlay) return;
 
-    if (content) content.style.display = "none";
-    counter.style.display = "block";
+  if (content) content.style.display = "none";
+  counter.style.display = "block";
 
-    let steps = ["3", "2", "1", "GO!"];
-    let i = 0;
+  const steps = ["3", "2", "1", "GO!"];
+  let i = 0;
+
+  counter.textContent = steps[i];
+
+  const interval = setInterval(() => {
+    i++;
+
+    if (i >= steps.length) {
+      clearInterval(interval);
+
+      console.log("COUNTDOWN DONE");
+
+      // 🔥 TÄMÄ ON TÄRKEIN
+      if (typeof onDone === "function") {
+        onDone();
+      }
+
+      setTimeout(() => {
+        overlay.classList.remove("active");
+      }, 400);
+
+      return;
+    }
 
     counter.textContent = steps[i];
 
-    const interval = setInterval(() => {
-      i++;
-
-      if (i >= steps.length) {
-        clearInterval(interval);
-
-        // 🔥 KÄYNNISTÄ PELI TÄSSÄ
-        if (onDone) onDone();
-
-        setTimeout(() => {
-          overlay.classList.remove("active");
-        }, 400);
-
-        return;
-      }
-
-      counter.textContent = steps[i];
-
-    }, 700);
-  }
+  }, 700);
+}
 
   return {
     show,
