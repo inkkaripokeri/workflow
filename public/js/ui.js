@@ -132,29 +132,34 @@ export const UI = (() => {
 
   /* ================= BULLETS ================= */
 
-  function renderBullets(bullets) {
-    const layer = document.getElementById("bulletsLayer");
-    if (!layer) return;
+function renderBullets(bullets) {
 
-    layer.innerHTML = "";
-
-    bullets.forEach(b => {
-
-      const el = document.createElement("div");
-      el.className = "bullet";
-
-      // 🔥 väri roolin mukaan
-      if (b.role === "designer") el.style.background = "#f39c12";
-      if (b.role === "developer") el.style.background = "#6c5ce7";
-      if (b.role === "tester") el.style.background = "#00b894";
-
-      // 🔥 sijainti (14 = LED_COUNT)
-      const percent = (b.x / 14) * 100;
-      el.style.left = percent + "%";
-
-      layer.appendChild(el);
-    });
+  const layer = document.getElementById("bulletsLayer");
+  if (!layer) {
+    console.error("❌ bulletsLayer PUUTTUU");
+    return;
   }
+
+  layer.innerHTML = "";
+
+  bullets.forEach(b => {
+
+    const el = document.createElement("div");
+    el.className = "bullet";
+
+    // värit
+    if (b.role === "designer") el.style.background = "#f39c12";
+    if (b.role === "developer") el.style.background = "#6c5ce7";
+    if (b.role === "tester") el.style.background = "#00b894";
+
+    // 🔥 TÄMÄ ON KRIITTINEN
+    const percent = (b.y / 14) * 100;
+
+    el.style.left = percent + "%";
+
+    layer.appendChild(el);
+  });
+}
 
   /* ================= WAITING ANIMATION ================= */
 
