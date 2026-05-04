@@ -435,7 +435,7 @@ socket.on("state", (s) => {
   }
 });
 
-/* GAME ID INPUT LOGIC (unchanged) */
+/* GAME ID INPUT LOGIC */
 const inputs = document.querySelectorAll(".digit-input");
 
 inputs.forEach((input, i) => {
@@ -477,6 +477,14 @@ function renderGameControls() {
     if (role === "tester") btn.style.background = "#00b894";
 
     btn.onclick = () => {
+
+      /* 🔥 DEBUG (TÄRKEIN) */
+      console.log("CLICK DEBUG", {
+        canShoot,
+        gameRunning,
+        role,
+        task
+      });
 
       /* 🔥 ESTÄ VIRHEET */
       if (!canShoot || !gameRunning) return;
