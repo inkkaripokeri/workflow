@@ -30,7 +30,7 @@ window.addEventListener("load", () => {
   }
 
   socket.on("state", (s) => {
-  
+    console.log("HOST BULLETS:", s.bullets);
     if (!s) return;
   
     if (s.lobby) {
