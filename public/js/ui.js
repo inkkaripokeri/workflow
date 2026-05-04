@@ -255,16 +255,33 @@ export const UI = (() => {
     }
   }
 
-  /* ========== COUNTDOWN START ============ */
+  /* ========== SHOW START POPUP ============ */
 
-  function showStartCountdown() {
-
+  function showStartPopup() {
   const overlay = document.getElementById("startOverlay");
+  const content = document.getElementById("startContent");
   const counter = document.getElementById("startCounter");
 
-  if (!overlay || !counter) return;
+  if (!overlay) return;
 
   overlay.classList.add("active");
+
+  if (content) content.style.display = "block";
+  if (counter) counter.style.display = "none";
+}
+  
+  /* ========== COUNTDOWN START ============ */
+
+function startCountdown() {
+
+  const content = document.getElementById("startContent");
+  const counter = document.getElementById("startCounter");
+  const overlay = document.getElementById("startOverlay");
+
+  if (!counter || !overlay) return;
+
+  if (content) content.style.display = "none";
+  counter.style.display = "block";
 
   let steps = ["3", "2", "1", "GO!"];
   let i = 0;
@@ -318,7 +335,8 @@ export const UI = (() => {
     showHitEffect,
     showGameOver,
     hideGameOver,   // 🔥 LISÄTTY
-    showStartCountdown
+    showStartPopup,
+    startCountdown
   };
 
 })();
