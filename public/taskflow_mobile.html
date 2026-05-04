@@ -17,6 +17,7 @@ body {
   text-align: center;
 }
 
+/* ================= SCREEN ================= */
 .screen {
   display: none;
   padding: 20px;
@@ -31,41 +32,80 @@ body {
   align-items: center;
 }
 
-h1 {
-  font-size: 24px;
-}
-
+/* ================= ROLE SELECT ================= */
 .role {
-  margin: 10px;
+  margin-bottom: 12px;
   cursor: pointer;
 }
 
+.role-title {
+  font-size: 18px;
+  margin-top: 6px;
+}
+
 .role img {
-  height: 120px;
+  height: 18vh;
+  max-height: 160px;
   border-radius: 20px;
 }
 
+/* COLORS */
 .role.designer img { border: 6px solid #f39c12; }
 .role.developer img { border: 6px solid #6c5ce7; }
 .role.tester img { border: 6px solid #00b894; }
 
-.input {
-  padding: 10px;
-  margin: 10px;
-  width: 80%;
+/* ================= JOIN ================= */
+.role-card img {
+  height: 120px;
+  border-radius: 20px;
 }
 
-.button {
-  padding: 12px 40px;
+.input-title {
+  font-size: 16px;
   margin-top: 10px;
 }
 
-/* GAME */
+.game-id-inputs {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.digit-input {
+  width: 30px;
+  height: 50px;
+  font-size: 24px;
+  text-align: center;
+  border-radius: 8px;
+  border: none;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.input {
+  padding: 12px;
+  width: 80%;
+  max-width: 280px;
+  border-radius: 8px;
+  border: none;
+}
+
+.button {
+  margin-top: 15px;
+  padding: 14px 40px;
+  border-radius: 10px;
+  border: 2px solid #ff8c00;
+  background: transparent;
+  color: white;
+}
+
+/* ================= GAME ================= */
 #taskButtons {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 80%;
+  max-width: 300px;
 }
 
 .task-btn {
@@ -74,6 +114,11 @@ h1 {
   border-radius: 10px;
   border: none;
   color: white;
+  transition: 0.1s;
+}
+
+.task-btn:active {
+  transform: scale(0.96);
 }
 
 #gameTitle {
@@ -84,63 +129,51 @@ h1 {
 
 <body>
 
-
 <!-- ROLE SELECT -->
 <div id="role-screen" class="screen active">
-
   <h1>Select Your Role</h1>
-  
+
   <div class="role designer" onclick="selectRole('designer')">
-    
     <img src="designer.png">
     <div class="role-title">DESIGNER</div>
-    
   </div>
-  
+
   <div class="role developer" onclick="selectRole('developer')">
-    
     <img src="developer.png">
     <div class="role-title">DEVELOPER</div>
-    
   </div>
 
   <div class="role tester" onclick="selectRole('tester')">
-    
     <img src="testengineer.png">
     <div class="role-title">TEST ENGINEER</div>
-    
   </div>
-
 </div>
 
 <!-- JOIN -->
 <div id="join-screen" class="screen">
-
   <h1 id="roleTitle">JOIN GAME</h1>
 
-  <div class="role-card" id="roleCard"></div>
+  <div id="roleCard"></div>
 
   <div class="input-title">Game ID</div>
-  <div id="gameIdInputs" class="game-id-inputs">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  <div class="game-id-inputs">
+    <input class="digit-input">
+    <input class="digit-input">
+    <input class="digit-input">
+    <input class="digit-input">
   </div>
-  <br>
+
   <div class="input-title">Your name</div>
-  <input class="input" id="nameInput" placeholder="">
-  <br>
+  <input class="input" id="nameInput">
 
   <button class="button" onclick="joinGame()">JOIN</button>
-
 </div>
 
 <!-- WAITING / GAME -->
 <div id="waiting-screen" class="screen">
   <h1 id="waitingTitle"></h1>
 
-  <div id="waitingText">Waiting...</div>
+  <div id="waitingText">Waiting for teammates...</div>
 
   <div id="gameControls" style="display:none;">
     <div id="gameTitle">Your Tasks</div>
@@ -171,15 +204,23 @@ function showScreen(id) {
   document.getElementById(id).classList.add("active");
 }
 
-/* ROLE */
+/* ROLE SELECT */
 function selectRole(r) {
   role = r;
+
+  document.getElementById("roleCard").innerHTML =
+    `<img src="${r === "tester" ? "testengineer.png" : r + ".png"}">`;
+
   showScreen("join-screen");
 }
 
 /* JOIN */
 function joinGame() {
-  const code = document.getElementById("gameId").value;
+
+  const code = Array.from(document.querySelectorAll(".digit-input"))
+    .map(i => i.value)
+    .join("");
+
   const name = document.getElementById("nameInput").value;
 
   socket.emit("join", { code, role, name });
@@ -188,7 +229,6 @@ function joinGame() {
 /* JOIN RESULT */
 socket.on("joinResult", (res) => {
   if (!res.ok) return;
-
   showScreen("waiting-screen");
 });
 
