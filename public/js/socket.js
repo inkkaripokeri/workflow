@@ -63,6 +63,10 @@ window.addEventListener("load", () => {
 
         UI.hideGameOver();
 
+        if (prevGameState !== "running") {
+          UI.showStartCountdown();
+        }
+        
         if (startGameBtn) {
           startGameBtn.style.display = "none";
         }
