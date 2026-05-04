@@ -1,317 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taskflow Mobile</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet"
-href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
-
-<style>
-body {
-  margin: 0;
-  background: #05060c;
-  color: #fff;
-  font-family: "Roboto Condensed", Arial, sans-serif;
-  text-align: center;
-}
-
-/* ================= SCREEN ================= */
-.screen {
-  display: none;
-  padding: 20px;
-  height: 100vh;              /* 🔥 täyttää ruudun */
-  box-sizing: border-box;
-}
-
-.active {
-  display: flex;              /* 🔥 flex layout */
-  flex-direction: column;
-  justify-content: space-between; /* 🔥 jakaa tilan */
-  align-items: center;
-}
-
-/* ================= TITLE ================= */
-h1 {
-  font-size: 24px;            /* 🔥 pienempi että mahtuu */
-  margin-bottom: 12px;
-  letter-spacing: 2px;
-}
-
-/* ================= ROLE CARD ================= */
-.role-card {
-  width: 200px;
-  max-width: 90%;
-  margin: 10px auto 20px auto;
-  border-radius: 24px;
-  overflow: visible;
-}
-
-.role-card img {
-  height: 20vh;
-  max-height: 180px;
-  width: auto;
-
-  border-radius: 24px;
-  display: block;
-  margin: 0 auto;
-}
-
-/* ================= ROLE SELECT ================= */
-.role {
-  margin-bottom: 10px;        /* 🔥 pienempi väli */
-  cursor: pointer;
-}
-
-.role-title {
-  font-size: 18px;            /* 🔥 vähän pienempi */
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-}
-
-/* 🔥 TÄRKEIN: skaalaa korkeuden mukaan */
-.role img {
-  height: 18vh;               /* 🔥 skaalaa ruudun mukaan */
-  max-height: 180px;
-  width: auto;
-
-  border-radius: 24px;
-  transition: 0.2s;
-}
-
-/* ROLE COLORS (match lobby) */
-.role.designer img {
-  border: 6px solid #f39c12;
-}
-
-.role.developer img {
-  border: 6px solid #6c5ce7;
-}
-
-.role.tester img {
-  border: 6px solid #00b894;
-}
-
-.role:hover img {
-  transform: scale(1.05);
-}
-
-.role-card.designer img {
-  border: 6px solid #f39c12;
-}
-
-.role-card.developer img {
-  border: 6px solid #6c5ce7;
-}
-
-.role-card.tester img {
-  border: 6px solid #00b894;
-}
-
-/* ================= INPUT ================= */
-.input {
-  width: 80%;
-  max-width: 300px;
-  padding: 14px;
-  margin: 12px 0;
-  font-size: 18px;
-  border-radius: 10px;
-  border: none;
-  text-align: center;
-}
-
-/* ================= BUTTON ================= */
-.button {
-  margin-top: 20px;
-  padding: 16px 50px;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  background: transparent;
-  color: #fff;
-  border: 2px solid #ff8c00;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-/* ================= GAME ID BOXES ================= */
-.game-id-inputs {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 16px 0;
-}
-
-.input-title {
-  font-size: 18px;
-  letter-spacing: 2px;
-  margin-top: 10px;
-  margin-bottom: 1px;
-  opacity: 1.0;
-}  
-  
-.digit-input {
-  width: 30px;
-  height: 50px;
-
-  text-align: center;
-  font-size: 34px;
-  font-weight: 500;
-
-  border-radius: 10px;
-  border: none;
-
-  background: #2a2a2a;
-  color: #fff;
-}
-  
-.button:hover {
-  background: rgba(255,140,0,0.2);
-}
-
-/* ================= WAITING SCREEN ================= */
-#waiting-screen {
-  justify-content: flex-start; /* 🔥 alkaa ylhäältä */
-  align-items: center;
-  gap: 10px;
-  padding-top: 40px; /* 🔥 sama kuin muissa */
-}
-
-/* nimi (title) */
-#waitingTitle {
-  margin: 0;
-}
-
-/* roolikortti */
-#waitingCard {
-  margin: 0;
-}
-
-#waitingName {
-  font-size: 18px;        /* sama kuin role select */
-  letter-spacing: 1px;
-  margin-top: 2px;
-}  
-  
-/* status teksti */
-#waitingText {
-  font-size: 24px;
-  opacity: 0.6;
-  margin-top: 10px;
-}
-
-#waitingAnim {
-  height: 12vh;
-  max-height: 100px;
-  margin: 10px 0;
-  opacity: 0.9;
-  margin-top: 20px;
-}
-
-#taskButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 80%;
-  max-width: 300px;
-  margin: 20px auto;
-}
-
-.task-btn {
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-}
-  
-</style>
-</head>
-
-<body>
-
-<!-- ROLE SELECT -->
-<div id="role-screen" class="screen active">
-
-  <h1>Select Your Role</h1>
-  
-  <div class="role designer" onclick="selectRole('designer')">
-    
-    <img src="designer.png">
-    <div class="role-title">DESIGNER</div>
-    
-  </div>
-  
-  <div class="role developer" onclick="selectRole('developer')">
-    
-    <img src="developer.png">
-    <div class="role-title">DEVELOPER</div>
-    
-  </div>
-
-  <div class="role tester" onclick="selectRole('tester')">
-    
-    <img src="testengineer.png">
-    <div class="role-title">TEST ENGINEER</div>
-    
-  </div>
-
-</div>
-
-<!-- JOIN -->
-<div id="join-screen" class="screen">
-
-  <h1 id="roleTitle">JOIN GAME</h1>
-
-  <div class="role-card" id="roleCard"></div>
-
-  <div class="input-title">Game ID</div>
-  <div id="gameIdInputs" class="game-id-inputs">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
-  </div>
-  <br>
-  <div class="input-title">Your name</div>
-  <input class="input" id="nameInput" placeholder="">
-  <br>
-
-  <button class="button" onclick="joinGame()">JOIN</button>
-
-</div>
-
-<!-- WAITING / READY -->
-<div id="waiting-screen" class="screen">
-  <h1 id="waitingTitle"></h1>
-
-  <div class="role-card" id="waitingCard"></div>
-
-  <div id="waitingName"></div>
-  <video id="waitingAnim" autoplay loop muted playsinline>
-  <source src="Typing.webm" type="video/webm">
-  </video>
-  <div id="gameControls" style="display:none; width:100%;">
-
-  <div id="gameTitle" class="input-title">Your Tasks</div>
-
-  <div id="taskButtons"></div>
-
-</div>
-  <div id="waitingText">Waiting for teammates...</div>
-</div>
-  
-<script src="/socket.io/socket.io.js"></script>
 <script>
 
 const socket = io();
 
 let role = null;
 let playerName = null;
+
+/* 🔥 LISÄTTY */
+let canShoot = true;
+let gameRunning = false;
+const shootSound = new Audio("shoot.mp3");
+shootSound.volume = 0.5;
 
 const ROLE_TASKS = {
   designer: ["WIREFRAME", "PROTOTYPE", "USER RESEARCH"],
@@ -349,7 +47,6 @@ function selectRole(selectedRole) {
 /* JOIN */
 function joinGame() {
 
-  // 🔥 MUUTETTU: haetaan 4 inputista
   const gameId = Array.from(document.querySelectorAll(".digit-input"))
     .map(i => i.value)
     .join("");
@@ -383,16 +80,13 @@ socket.on("joinResult", (res) => {
   document.getElementById("waitingCard").innerHTML =
     `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
-  // 🔥 MUUTETTU TÄMÄ KOHTA
-const roleLabelMap = {
-  designer: "DESIGNER",
-  developer: "DEVELOPER",
-  tester: "TEST ENGINEER"
-};
+  const roleLabelMap = {
+    designer: "DESIGNER",
+    developer: "DEVELOPER",
+    tester: "TEST ENGINEER"
+  };
 
   document.getElementById("waitingName").textContent = roleLabelMap[role];
-
-  // otsikko = pelaajan nimi
   document.getElementById("waitingTitle").textContent = playerName;
 
   showScreen("waiting-screen");
@@ -404,51 +98,51 @@ socket.on("state", (s) => {
   if (!s.gameState) return;
 
   if (s.gameState === "waiting") {
+    gameRunning = false;
     document.getElementById("waitingText").textContent =
       "Waiting for teammates...";
   }
 
   if (s.gameState === "ready") {
+    gameRunning = false;
     document.getElementById("waitingText").textContent =
       "Waiting for the game to start...";
   }
 
-if (s.gameState === "running") {
+  if (s.gameState === "running") {
 
-  // piilotetaan waiting UI
-  document.getElementById("waitingText").style.display = "none";
-  document.getElementById("waitingAnim").style.display = "none";
+    gameRunning = true;
 
-  // näytetään pelinappi UI
-  document.getElementById("gameControls").style.display = "block";
+    document.getElementById("waitingText").style.display = "none";
+    document.getElementById("waitingAnim").style.display = "none";
+    document.getElementById("gameControls").style.display = "block";
 
-  renderGameControls();
-}
+    renderGameControls();
+  }
 
   if (s.gameState === "gameover") {
+    gameRunning = false;
     document.getElementById("waitingText").textContent =
       "GAME OVER";
   }
 });
 
-/* ================= GAME ID INPUT LOGIC ================= */
-
+/* GAME ID INPUT LOGIC (unchanged) */
 const inputs = document.querySelectorAll(".digit-input");
 
 inputs.forEach((input, i) => {
 
-input.addEventListener("input", (e) => {
-  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+  input.addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
 
-  if (e.target.value) {
-    if (i < inputs.length - 1) {
-      inputs[i + 1].focus();
-    } else {
-      // 🔥 viimeinen numero → siirry name inputtiin
-      document.getElementById("nameInput").focus();
+    if (e.target.value) {
+      if (i < inputs.length - 1) {
+        inputs[i + 1].focus();
+      } else {
+        document.getElementById("nameInput").focus();
+      }
     }
-  }
-});
+  });
 
   input.addEventListener("keydown", (e) => {
     if (e.key === "Backspace" && !input.value && i > 0) {
@@ -470,21 +164,34 @@ function renderGameControls() {
     btn.className = "task-btn";
     btn.textContent = task;
 
-    // 🔥 väri roolin mukaan
     if (role === "designer") btn.style.background = "#f39c12";
     if (role === "developer") btn.style.background = "#6c5ce7";
     if (role === "tester") btn.style.background = "#00b894";
 
-    // 🔥 SHOOT EVENT
     btn.onclick = () => {
+
+      /* 🔥 ESTÄ VIRHEET */
+      if (!canShoot || !gameRunning) return;
+
+      canShoot = false;
+
+      /* 🔊 ÄÄNI */
+      shootSound.currentTime = 0;
+      shootSound.play();
+
+      /* 🎯 VISUAALINEN PALAUTE */
+      btn.style.opacity = "0.5";
+
       socket.emit("shoot", { role, task });
+
+      setTimeout(() => {
+        canShoot = true;
+        btn.style.opacity = "1";
+      }, 300);
     };
 
     container.appendChild(btn);
   });
 }
-  
-</script>
 
-</body>
-</html>
+</script>
