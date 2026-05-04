@@ -18,25 +18,21 @@ let moveInterval = 750;
 
 const ROLES = ["designer", "developer", "tester"];
 
-// 🔥 UUSI: kaikki taskit (9 kpl)
+// 🔥 kaikki taskit
 const TASKS = [
-  // Designer
   { role: "designer", color: "#f39c12", task: "WIREFRAME" },
   { role: "designer", color: "#f39c12", task: "PROTOTYPE" },
   { role: "designer", color: "#f39c12", task: "USER RESEARCH" },
 
-  // Developer
   { role: "developer", color: "#6c5ce7", task: "NEW FEATURE" },
   { role: "developer", color: "#6c5ce7", task: "BUGFIX" },
   { role: "developer", color: "#6c5ce7", task: "REFACTOR" },
 
-  // Tester
   { role: "tester", color: "#00b894", task: "SMOKE TEST" },
   { role: "tester", color: "#00b894", task: "UNIT TEST" },
   { role: "tester", color: "#00b894", task: "BUG REPORT" }
 ];
 
-// 🔥 random task
 function randomTask() {
   return TASKS[Math.floor(Math.random() * TASKS.length)];
 }
@@ -75,7 +71,6 @@ function spawnTop() {
     return;
   }
 
-  // 🔥 UUSI: käytetään taskeja
   const t = randomTask();
 
   leds[0] = {
@@ -103,6 +98,7 @@ setInterval(() => {
 
   const now = Date.now();
 
+  // 🔥 LIKE
   if (now - lastMove > moveInterval) {
 
     if (pendingGameOver) {
@@ -124,25 +120,33 @@ setInterval(() => {
     }
   }
 
-  bullets.forEach(b => b.y -= 0.5);
+  // 🔥 BULLET MOVEMENT (oikealta vasemmalle)
+  bullets.forEach(b => b.x -= 0.5);
 
   bullets = bullets.filter(b => {
+
     const target = getFirstBlockingIndex();
     if (target === -1) return false;
 
     const led = leds[target];
 
-    if (Math.abs(b.y - target) < 0.5) {
-      if (led.color === b.color && led.letter === b.letter) {
+    // 🔥 OSUMA
+    if (Math.abs(b.x - target) < 0.5) {
+
+      if (
+        led.role === b.role &&
+        led.task === b.task
+      ) {
         leds[target] = null;
         score++;
       } else {
         score = Math.max(0, score - 1);
       }
+
       return false;
     }
 
-    return b.y >= 0;
+    return b.x >= 0;
   });
 
   io.emit("state", { leds, bullets, score, running, lobby, gameState });
@@ -181,6 +185,19 @@ io.on("connection", (socket) => {
       lastMove = Date.now();
       pendingGameOver = false;
     }
+  });
+
+  // 🔥 SHOOT EVENT (TÄRKEIN)
+  socket.on("shoot", ({ role, task }) => {
+
+    if (!running) return;
+
+    bullets.push({
+      x: LED_COUNT - 1, // 🔥 alkaa oikealta
+      role,
+      task
+    });
+
   });
 
   socket.on("disconnect", () => {
