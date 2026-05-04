@@ -1,141 +1,251 @@
-import { UI } from "./ui.js";
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
-const socket = io();
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-/* 🔊 GAME OVER SOUND */
-const gameOverSound = new Audio("gameover.mp3");
-gameOverSound.volume = 0.7;
+app.use(express.static("public"));
 
-/* 🔥 seurataan state-muutosta */
-let prevGameState = null;
+const LED_COUNT = 14;
 
-/* 🔥 estetään tuplaklikki */
-let gameStarting = false;
+let leds, bullets, score, running, lastMove, spawnGap;
+let pendingGameOver = false;
 
-window.addEventListener("load", () => {
+// 🔥 säädettävä nopeus
+let moveInterval = 750;
 
-  console.log("DOM READY");
+const ROLES = ["designer", "developer", "tester"];
 
-  const startBtn = document.getElementById("startBtn");
-  const replayBtn = document.getElementById("replayBtn");
-  const startGamePopupBtn = document.getElementById("startGamePopupBtn");
+// 🔥 kaikki taskit
+const TASKS = [
+{ role: "designer", color: "#f39c12", task: "WIREFRAME" },
+{ role: "designer", color: "#f39c12", task: "PROTOTYPE" },
+{ role: "designer", color: "#f39c12", task: "USER RESEARCH" },
 
-  console.log("REPLAY BTN:", replayBtn);
-  console.log("POPUP START BTN:", startGamePopupBtn);
+{ role: "developer", color: "#6c5ce7", task: "NEW FEATURE" },
+{ role: "developer", color: "#6c5ce7", task: "BUGFIX" },
+{ role: "developer", color: "#6c5ce7", task: "REFACTOR" },
 
-  /* ================= START POPUP ================= */
+{ role: "tester", color: "#00b894", task: "SMOKE TEST" },
+{ role: "tester", color: "#00b894", task: "UNIT TEST" },
+{ role: "tester", color: "#00b894", task: "BUG REPORT" }
+];
 
-  if (startGamePopupBtn) {
-    startGamePopupBtn.addEventListener("click", () => {
+function randomTask() {
+return TASKS[Math.floor(Math.random() * TASKS.length)];
+}
 
-      if (gameStarting) return; // 🔥 estää spam
-      gameStarting = true;
+let lobby = {};
+let gameState = "waiting";
 
-      console.log("▶️ START FROM POPUP");
+function newLobby() {
+lobby = {
+code: Math.floor(Math.random() * 10000).toString().padStart(4, "0"),
+players: {
+designer: null,
+developer: null,
+tester: null
+}
+};
+gameState = "waiting";
+}
 
-      UI.startCountdown(() => {
+function resetGame() {
+leds = Array(LED_COUNT).fill(null);
+bullets = [];
+score = 0;
+running = false;
+spawnGap = 0;
+pendingGameOver = false;
+}
 
-        console.log("🚀 EMIT START");
+newLobby();
+resetGame();
 
-        socket.emit("start");
-      });
-    });
-  }
+function spawnTop() {
+if (spawnGap > 0) {
+leds[0] = null;
+spawnGap--;
+return;
+}
 
-  /* ================= LOBBY START ================= */
+const t = randomTask();
 
-  if (!startBtn) {
-    console.error("startBtn NOT FOUND");
-    return;
-  }
+leds[0] = {
+role: t.role,
+color: t.color,
+task: t.task
+};
 
-  startBtn.addEventListener("click", () => {
-    console.log("START CLICKED");
+spawnGap = Math.floor(Math.random() * 3) + 1;
+}
 
-    UI.animateToLobby();
-    socket.emit("resetLobby");
+function getFirstBlockingIndex() {
+for (let i = LED_COUNT - 1; i >= 0; i--) {
+if (leds[i]) return i;
+}
+return -1;
+}
 
-    gameStarting = false; // 🔄 reset
+setInterval(() => {
+
+if (!running) {
+io.emit("state", { leds, bullets, score, running, lobby, gameState });
+return;
+}
+
+const now = Date.now();
+
+// 🔥 LED liike
+if (now - lastMove > moveInterval) {
+
+if (pendingGameOver) {
+running = false;
+gameState = "gameover";
+pendingGameOver = false;
+} else {
+
+for (let i = LED_COUNT - 1; i > 0; i--) {
+leds[i] = leds[i - 1];
+}
+
+spawnTop();
+lastMove = now;
+
+if (leds[LED_COUNT - 1]) {
+pendingGameOver = true;
+}
+}
+}
+
+  // 🔥 BULLET MOVEMENT (oikealta vasemmalle)
+  // 🔥 BULLET MOVEMENT
+bullets.forEach(b => b.y -= 0.5);
+
+bullets = bullets.filter(b => {
+
+const target = getFirstBlockingIndex();
+
+if (target === -1) return false;
+
+const led = leds[target];
+
+if (!led) return false;
+
+// 🔥 OSUMA
+if (Math.abs(b.y - target) < 0.5) {
+
+      if (
+        led.role === b.role &&
+        led.task === b.task
+      ) {
+      if (led.role === b.role && led.task === b.task) {
+leds[target] = null;
+score++;
+
+        // ✅ OIKEA OSUMA
+        io.emit("hit", {
+          index: target,
+          success: true
+        });
+        io.emit("hit", { index: target, success: true });
+
+} else {
+score = Math.max(0, score - 1);
+
+        // ❌ VÄÄRÄ OSUMA
+        io.emit("hit", {
+          index: target,
+          success: false
+        });
+        io.emit("hit", { index: target, success: false });
+}
+
+return false;
+}
+
+return b.y >= 0;
+});
+
+io.emit("state", { leds, bullets, score, running, lobby, gameState });
+
+}, 1000 / 60);
+
+io.on("connection", (socket) => {
+
+socket.on("resetLobby", () => {
+newLobby();
+resetGame();
+});
+
+socket.on("join", ({ code, role, name }) => {
+
+if (!ROLES.includes(role)) return;
+if (code !== lobby.code) return;
+if (lobby.players[role]) return;
+
+lobby.players[role] = { id: socket.id, name };
+socket.data.role = role;
+
+const count = Object.values(lobby.players).filter(Boolean).length;
+
+if (count === 3) gameState = "ready";
+
+socket.emit("joinResult", { ok: true });
+});
+
+socket.on("start", () => {
+const count = Object.values(lobby.players).filter(Boolean).length;
+
+if (count === 3) {
+running = true;
+gameState = "running";
+lastMove = Date.now();
+pendingGameOver = false;
+}
+});
+
+  // 🔥 SHOOT EVENT
+  // 🔥 SHOOT
+socket.on("shoot", ({ role, task }) => {
+
+console.log("🔥 SHOOT RECEIVED:", role, task);
+
+if (!running) return;
+
+bullets.push({
+y: LED_COUNT - 1,
+role,
+task
+});
+});
+
+  // 🔥 REPLAY / RESTART GAME
+  socket.on("restartGame", () => {
+
+    const count = Object.values(lobby.players).filter(Boolean).length;
+
+    if (count === 3) {
+      console.log("🔄 RESTART GAME");
+
+      resetGame();
+
+      running = true;
+      gameState = "running";
+      lastMove = Date.now();
+      pendingGameOver = false;
+    }
   });
 
-  /* ================= REPLAY ================= */
-
-  if (replayBtn) {
-    replayBtn.addEventListener("click", () => {
-      console.log("🔄 REPLAY CLICKED");
-
-      socket.emit("restartGame");
-
-      gameStarting = false; // 🔄 reset
-    });
-  }
-
-  /* ================= STATE ================= */
-
-  socket.on("state", (s) => {
-
-    if (!s) return;
-
-    // 🔥 reagoi vain muutoksiin
-    if (s.gameState !== prevGameState) {
-
-      console.log("STATE CHANGE:", prevGameState, "→", s.gameState);
-
-      // ▶️ RUNNING
-      if (s.gameState === "running") {
-
-        console.log("✅ GAME STARTED");
-
-        UI.hideGameOver();
-
-        gameStarting = false; // 🔄 reset
-      }
-
-      // 💀 GAME OVER
-      if (s.gameState === "gameover") {
-
-        console.log("💀 GAME OVER");
-
-        gameOverSound.currentTime = 0;
-        gameOverSound.play();
-
-        UI.showGameOver(s.score);
-      }
-    }
-
-    prevGameState = s.gameState;
-
-    /* ================= UI ================= */
-
-    if (s.lobby) {
-      UI.renderGameId(s.lobby.code);
-      UI.renderPlayers(s.lobby.players);
-    }
-
-    if (s.leds) {
-      UI.updateLeds(s.leds);
-      UI.renderSteps();
-    }
-
-    if (s.bullets) {
-      UI.renderBullets(s.bullets);
-    }
-
-    if (typeof s.score !== "undefined") {
-      UI.renderScore(s.score);
-    }
-
-  });
-
-  /* ================= HIT ================= */
-
-  socket.on("hit", (data) => {
-
-    if (!data) return;
-
-    console.log("💥 HIT EVENT:", data);
-
-    UI.showHitEffect(data.index, data.success);
-  });
+socket.on("disconnect", () => {
+const role = socket.data.role;
+if (role && lobby.players[role]?.id === socket.id) {
+lobby.players[role] = null;
+}
+});
 
 });
+
+server.listen(3000, () => console.log("Server running"));
