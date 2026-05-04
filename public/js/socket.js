@@ -16,6 +16,7 @@ window.addEventListener("load", () => {
   const startBtn = document.getElementById("startBtn");
   const startGameBtn = document.getElementById("startGameBtn");
   const replayBtn = document.getElementById("replayBtn");
+  console.log("REPLAY BTN:", replayBtn);
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
