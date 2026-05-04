@@ -98,7 +98,7 @@ setInterval(() => {
 
   const now = Date.now();
 
-  // 🔥 LIKE
+  // 🔥 liike
   if (now - lastMove > moveInterval) {
 
     if (pendingGameOver) {
@@ -121,17 +121,22 @@ setInterval(() => {
   }
 
   // 🔥 BULLET MOVEMENT (oikealta vasemmalle)
-  bullets.forEach(b => b.x -= 0.5);
+  bullets.forEach(b => b.y -= 0.5);
 
   bullets = bullets.filter(b => {
 
     const target = getFirstBlockingIndex();
+
+    // 🔥 ei targettia → poista bullet
     if (target === -1) return false;
 
     const led = leds[target];
 
+    // 🔥 turvallisuus (estää crashin)
+    if (!led) return false;
+
     // 🔥 OSUMA
-    if (Math.abs(b.x - target) < 0.5) {
+    if (Math.abs(b.y - target) < 0.5) {
 
       if (
         led.role === b.role &&
@@ -146,12 +151,12 @@ setInterval(() => {
       return false;
     }
 
-    return b.x >= 0;
+    return b.y >= 0;
   });
 
   io.emit("state", { leds, bullets, score, running, lobby, gameState });
 
-}, 1000/60);
+}, 1000 / 60);
 
 io.on("connection", (socket) => {
 
@@ -187,13 +192,15 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🔥 SHOOT EVENT (TÄRKEIN)
+  // 🔥 SHOOT EVENT
   socket.on("shoot", ({ role, task }) => {
-      console.log("🔥 SHOOT RECEIVED:", data);
+
+    console.log("🔥 SHOOT RECEIVED:", role, task);
+
     if (!running) return;
 
     bullets.push({
-      x: LED_COUNT - 1, // 🔥 alkaa oikealta
+      y: LED_COUNT - 1, // 🔥 alkaa oikealta
       role,
       task
     });
