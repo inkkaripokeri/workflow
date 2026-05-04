@@ -215,6 +215,7 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  z-index: 999;
 }
 
 /* yksittäinen laatikko */
