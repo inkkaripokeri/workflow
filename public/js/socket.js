@@ -15,6 +15,7 @@ window.addEventListener("load", () => {
 
   const startBtn = document.getElementById("startBtn");
   const startGameBtn = document.getElementById("startGameBtn");
+  const replayBtn = document.getElementById("replayBtn"); // 🔥 UUSI
 
   if (!startBtn) {
     console.error("startBtn NOT FOUND");
@@ -27,17 +28,28 @@ window.addEventListener("load", () => {
     UI.animateToLobby();
     socket.emit("resetLobby");
 
-    // 🔄 reset myös gameover state
     gameOverShown = false;
   });
 
-  // 🔥 START GAME NAPPI
+  // 🔥 START GAME
   if (startGameBtn) {
     startGameBtn.addEventListener("click", () => {
       console.log("GAME START CLICKED");
       socket.emit("start");
 
-      // 🔄 reset varmuuden vuoksi
+      gameOverShown = false;
+    });
+  }
+
+  // 🔥 REPLAY NAPPI
+  if (replayBtn) {
+    replayBtn.addEventListener("click", () => {
+      console.log("🔄 REPLAY CLICKED");
+
+      socket.emit("restartGame");
+
+      UI.hideGameOver();
+
       gameOverShown = false;
     });
   }
@@ -48,25 +60,26 @@ window.addEventListener("load", () => {
 
     if (!s) return;
 
-    // 🔥 PIILOTA START NAPPI KUN PELI ALKAA
+    // 🔥 kun peli käynnissä → varmistetaan reset
     if (s.gameState === "running") {
+
+      gameOverShown = false;
+
       if (startGameBtn) {
         startGameBtn.style.display = "none";
       }
     }
 
-    // 🔥 GAME OVER (vain kerran!)
+    // 🔥 GAME OVER (vain kerran)
     if (s.gameState === "gameover" && !gameOverShown) {
 
       console.log("💀 GAME OVER");
 
       gameOverShown = true;
 
-      // 🔊 ääni
       gameOverSound.currentTime = 0;
       gameOverSound.play();
 
-      // 🟥 popup
       UI.showGameOver(s.score);
     }
 
