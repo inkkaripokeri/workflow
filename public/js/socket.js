@@ -16,6 +16,20 @@ window.addEventListener("load", () => {
   const startBtn = document.getElementById("startBtn");
   const startGameBtn = document.getElementById("startGameBtn");
   const replayBtn = document.getElementById("replayBtn");
+  const startGamePopupBtn = document.getElementById("startGamePopupBtn");
+
+  if (startGamePopupBtn) {
+    startGamePopupBtn.addEventListener("click", () => {
+
+      console.log("▶️ START FROM POPUP");
+
+      socket.emit("start");
+
+      UI.startCountdown();
+    });
+  }
+
+  
   console.log("REPLAY BTN:", replayBtn);
 
   if (!startBtn) {
@@ -57,20 +71,19 @@ window.addEventListener("load", () => {
     if (s.gameState !== prevGameState) {
 
       // ▶️ RUNNING
-      if (s.gameState === "running") {
+    if (s.gameState === "running") {
 
-        console.log("▶️ RUNNING");
+    UI.hideGameOver();
 
-        UI.hideGameOver();
+    // 🔥 NÄYTÄ POPUP KUN SIIRRYTÄÄN GAMEEN
+    if (prevGameState !== "running") {
+      UI.showStartPopup();
+    }
 
-        if (prevGameState !== "running") {
-          UI.showStartCountdown();
-        }
-        
-        if (startGameBtn) {
-          startGameBtn.style.display = "none";
-        }
-      }
+    if (startGameBtn) {
+      startGameBtn.style.display = "none";
+    }
+  }
 
       // 💀 GAME OVER
       if (s.gameState === "gameover") {
