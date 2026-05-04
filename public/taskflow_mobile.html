@@ -84,31 +84,56 @@ h1 {
 
 <body>
 
+
 <!-- ROLE SELECT -->
 <div id="role-screen" class="screen active">
-  <h1>Select Role</h1>
 
+  <h1>Select Your Role</h1>
+  
   <div class="role designer" onclick="selectRole('designer')">
+    
     <img src="designer.png">
+    <div class="role-title">DESIGNER</div>
+    
   </div>
-
+  
   <div class="role developer" onclick="selectRole('developer')">
+    
     <img src="developer.png">
+    <div class="role-title">DEVELOPER</div>
+    
   </div>
 
   <div class="role tester" onclick="selectRole('tester')">
+    
     <img src="testengineer.png">
+    <div class="role-title">TEST ENGINEER</div>
+    
   </div>
+
 </div>
 
 <!-- JOIN -->
 <div id="join-screen" class="screen">
-  <h1>Join Game</h1>
 
-  <input id="gameId" class="input" placeholder="Game ID">
-  <input id="nameInput" class="input" placeholder="Your name">
+  <h1 id="roleTitle">JOIN GAME</h1>
+
+  <div class="role-card" id="roleCard"></div>
+
+  <div class="input-title">Game ID</div>
+  <div id="gameIdInputs" class="game-id-inputs">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+    <input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+  </div>
+  <br>
+  <div class="input-title">Your name</div>
+  <input class="input" id="nameInput" placeholder="">
+  <br>
 
   <button class="button" onclick="joinGame()">JOIN</button>
+
 </div>
 
 <!-- WAITING / GAME -->
