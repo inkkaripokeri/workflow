@@ -301,3 +301,9 @@ body {
 #scoreValue {
   color: #ff8c00;
 }
+
+#playersTitleGame {
+  font-size: 24px;   /* pienempi kuin section-title */
+  margin-bottom: 10px;
+  opacity: 1.0;
+}
