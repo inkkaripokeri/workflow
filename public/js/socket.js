@@ -2,6 +2,13 @@ import { UI } from "./ui.js";
 
 const socket = io();
 
+/* 🔊 GAME OVER SOUND */
+const gameOverSound = new Audio("gameover.mp3");
+gameOverSound.volume = 0.7;
+
+/* 🔥 estetään jatkuva trigger */
+let gameOverShown = false;
+
 window.addEventListener("load", () => {
 
   console.log("DOM READY");
@@ -19,6 +26,9 @@ window.addEventListener("load", () => {
 
     UI.animateToLobby();
     socket.emit("resetLobby");
+
+    // 🔄 reset myös gameover state
+    gameOverShown = false;
   });
 
   // 🔥 START GAME NAPPI
@@ -26,6 +36,9 @@ window.addEventListener("load", () => {
     startGameBtn.addEventListener("click", () => {
       console.log("GAME START CLICKED");
       socket.emit("start");
+
+      // 🔄 reset varmuuden vuoksi
+      gameOverShown = false;
     });
   }
 
@@ -40,6 +53,21 @@ window.addEventListener("load", () => {
       if (startGameBtn) {
         startGameBtn.style.display = "none";
       }
+    }
+
+    // 🔥 GAME OVER (vain kerran!)
+    if (s.gameState === "gameover" && !gameOverShown) {
+
+      console.log("💀 GAME OVER");
+
+      gameOverShown = true;
+
+      // 🔊 ääni
+      gameOverSound.currentTime = 0;
+      gameOverSound.play();
+
+      // 🟥 popup
+      UI.showGameOver(s.score);
     }
 
     // 🔥 LOBBY
