@@ -53,7 +53,7 @@ export const UI = (() => {
 
     const titleGame = document.getElementById("playersTitleGame");
     if (titleGame) {
-      titleGame.textContent = `Players Joined ${count}/3`;
+      titleGame.textContent = "Players";
     }
 
     const grids = [
