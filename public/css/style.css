@@ -184,6 +184,20 @@ body {
 
 /* ================= TASK ROW ================= */
 
+.task-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px;
+}
+
+.task-text {
+  pointer-events: none;
+}
+
 /* 🔥 TASK VÄRIT */
 .task-cell.red { background: #ff4d4d; }
 .task-cell.green { background: #00ff88; }
