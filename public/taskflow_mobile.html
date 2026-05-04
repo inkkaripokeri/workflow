@@ -209,6 +209,26 @@ h1 {
   opacity: 0.9;
   margin-top: 20px;
 }
+
+#taskButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80%;
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+.task-btn {
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+  
 </style>
 </head>
 
@@ -275,6 +295,13 @@ h1 {
   <video id="waitingAnim" autoplay loop muted playsinline>
   <source src="Typing.webm" type="video/webm">
   </video>
+  <div id="gameControls" style="display:none; width:100%;">
+
+  <div id="gameTitle" class="input-title">Your Tasks</div>
+
+  <div id="taskButtons"></div>
+
+</div>
   <div id="waitingText">Waiting for teammates...</div>
 </div>
   
@@ -286,6 +313,12 @@ const socket = io();
 let role = null;
 let playerName = null;
 
+const ROLE_TASKS = {
+  designer: ["WIREFRAME", "PROTOTYPE", "USER RESEARCH"],
+  developer: ["NEW FEATURE", "BUGFIX", "REFACTOR"],
+  tester: ["SMOKE TEST", "UNIT TEST", "BUG REPORT"]
+};
+  
 /* SCREEN SWITCH */
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -380,10 +413,17 @@ socket.on("state", (s) => {
       "Waiting for the game to start...";
   }
 
-  if (s.gameState === "running") {
-    document.getElementById("waitingText").textContent =
-      "Game starting...";
-  }
+if (s.gameState === "running") {
+
+  // piilotetaan waiting UI
+  document.getElementById("waitingText").style.display = "none";
+  document.getElementById("waitingAnim").style.display = "none";
+
+  // näytetään pelinappi UI
+  document.getElementById("gameControls").style.display = "block";
+
+  renderGameControls();
+}
 
   if (s.gameState === "gameover") {
     document.getElementById("waitingText").textContent =
@@ -418,6 +458,32 @@ input.addEventListener("input", (e) => {
 
 });
 
+/* ========== GAME NAPPIEN LUONTI ============ */
+
+function renderGameControls() {
+  const container = document.getElementById("taskButtons");
+  container.innerHTML = "";
+
+  ROLE_TASKS[role].forEach(task => {
+
+    const btn = document.createElement("button");
+    btn.className = "task-btn";
+    btn.textContent = task;
+
+    // 🔥 väri roolin mukaan
+    if (role === "designer") btn.style.background = "#f39c12";
+    if (role === "developer") btn.style.background = "#6c5ce7";
+    if (role === "tester") btn.style.background = "#00b894";
+
+    // 🔥 SHOOT EVENT
+    btn.onclick = () => {
+      socket.emit("shoot", { role, task });
+    };
+
+    container.appendChild(btn);
+  });
+}
+  
 </script>
 
 </body>
