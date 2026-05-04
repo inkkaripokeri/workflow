@@ -89,11 +89,21 @@
   <span>Points:</span>
   <span id="scoreValue">0</span>
 
-  <div id="startOverlay" class="start-overlay">
-    <div class="start-box">
-      <div id="startCounter" class="start-counter">3</div>
+<div id="startOverlay" class="start-overlay">
+  <div class="start-box">
+
+    <!-- 🔹 SISÄLTÖ -->
+    <div id="startContent">
+      <div class="start-title">READY?</div>
+      <div class="start-text">Complete tasks before they reach the end</div>
+      <button id="startGamePopupBtn" class="button">START</button>
     </div>
+
+    <!-- 🔹 COUNTDOWN -->
+    <div id="startCounter" class="start-counter" style="display:none;">3</div>
+
   </div>
+</div>
     
   <div id="gameOverOverlay" class="gameover-overlay">
     <div class="gameover-box">
