@@ -123,7 +123,6 @@ export const UI = (() => {
 
   function renderSteps() {
 
-    // 🔥 LISÄTTY TÄHÄN
     renderWeekDays();
 
     const grid = document.getElementById("taskGrid");
@@ -233,6 +232,22 @@ export const UI = (() => {
       .join("");
   }
 
+  /* ================= GAME OVER ================= */
+
+  function showGameOver(score) {
+
+    const overlay = document.getElementById("gameOverOverlay");
+    const scoreEl = document.getElementById("finalScore");
+
+    if (scoreEl) {
+      scoreEl.textContent = score ?? 0;
+    }
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+  }
+
   /* ================= WAITING ANIMATION ================= */
 
   const dotStates = new Map();
@@ -258,7 +273,8 @@ export const UI = (() => {
     updateLeds,
     renderBullets,
     renderScore,
-    showHitEffect
+    showHitEffect,
+    showGameOver   // 🔥 LISÄTTY
   };
 
 })();
