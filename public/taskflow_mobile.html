@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taskflow Mobile</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet"
 href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
 
@@ -18,7 +17,6 @@ body {
   text-align: center;
 }
 
-/* ================= SCREEN ================= */
 .screen {
   display: none;
   padding: 20px;
@@ -33,127 +31,51 @@ body {
   align-items: center;
 }
 
-/* ================= TITLE ================= */
 h1 {
   font-size: 24px;
-  margin-bottom: 12px;
-  letter-spacing: 2px;
 }
 
-/* ================= ROLE CARD ================= */
-.role-card {
-  width: 200px;
-  max-width: 90%;
-  margin: 10px auto 20px auto;
-  border-radius: 24px;
-}
-
-.role-card img {
-  height: 20vh;
-  max-height: 180px;
-  border-radius: 24px;
-}
-
-/* ================= ROLE SELECT ================= */
 .role {
-  margin-bottom: 10px;
+  margin: 10px;
   cursor: pointer;
 }
 
-.role-title {
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
 .role img {
-  height: 18vh;
-  max-height: 180px;
-  border-radius: 24px;
+  height: 120px;
+  border-radius: 20px;
 }
 
-/* ROLE COLORS */
 .role.designer img { border: 6px solid #f39c12; }
 .role.developer img { border: 6px solid #6c5ce7; }
 .role.tester img { border: 6px solid #00b894; }
 
-.role-card.designer img { border: 6px solid #f39c12; }
-.role-card.developer img { border: 6px solid #6c5ce7; }
-.role-card.tester img { border: 6px solid #00b894; }
-
-/* ================= INPUT ================= */
 .input {
+  padding: 10px;
+  margin: 10px;
   width: 80%;
-  max-width: 300px;
-  padding: 14px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: none;
-  text-align: center;
 }
 
-/* ================= BUTTON ================= */
 .button {
-  margin-top: 20px;
-  padding: 16px 50px;
-  font-size: 20px;
-  font-weight: 700;
-  border: 2px solid #ff8c00;
-  border-radius: 12px;
-  background: transparent;
-  color: #fff;
+  padding: 12px 40px;
+  margin-top: 10px;
 }
 
-/* ================= WAITING ================= */
-#waiting-screen {
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  padding-top: 40px;
-}
-
-#waitingName {
-  font-size: 18px;
-}
-
-#waitingText {
-  font-size: 24px;
-  opacity: 0.6;
-}
-
-#waitingAnim {
-  height: 12vh;
-}
-
-/* ================= GAME BUTTONS ================= */
+/* GAME */
 #taskButtons {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 80%;
-  max-width: 300px;
-  margin: 20px auto;
 }
 
 .task-btn {
   padding: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 12px;
+  font-weight: bold;
+  border-radius: 10px;
   border: none;
-  color: #fff;
-  transition: 0.1s;
+  color: white;
 }
 
-.task-btn:active {
-  transform: scale(0.97);
-}
-
-.task-btn.disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* 🔥 spacing */
 #gameTitle {
   margin-top: 40px;
 }
@@ -162,23 +84,43 @@ h1 {
 
 <body>
 
-<div id="waiting-screen" class="screen active">
-  <h1 id="waitingTitle"></h1>
+<!-- ROLE SELECT -->
+<div id="role-screen" class="screen active">
+  <h1>Select Role</h1>
 
-  <div class="role-card" id="waitingCard"></div>
-
-  <div id="waitingName"></div>
-
-  <video id="waitingAnim" autoplay loop muted playsinline>
-    <source src="Typing.webm" type="video/webm">
-  </video>
-
-  <div id="gameControls" style="display:none; width:100%;">
-    <div id="gameTitle" class="input-title">Your Tasks</div>
-    <div id="taskButtons"></div>
+  <div class="role designer" onclick="selectRole('designer')">
+    <img src="designer.png">
   </div>
 
-  <div id="waitingText">Waiting for teammates...</div>
+  <div class="role developer" onclick="selectRole('developer')">
+    <img src="developer.png">
+  </div>
+
+  <div class="role tester" onclick="selectRole('tester')">
+    <img src="testengineer.png">
+  </div>
+</div>
+
+<!-- JOIN -->
+<div id="join-screen" class="screen">
+  <h1>Join Game</h1>
+
+  <input id="gameId" class="input" placeholder="Game ID">
+  <input id="nameInput" class="input" placeholder="Your name">
+
+  <button class="button" onclick="joinGame()">JOIN</button>
+</div>
+
+<!-- WAITING / GAME -->
+<div id="waiting-screen" class="screen">
+  <h1 id="waitingTitle"></h1>
+
+  <div id="waitingText">Waiting...</div>
+
+  <div id="gameControls" style="display:none;">
+    <div id="gameTitle">Your Tasks</div>
+    <div id="taskButtons"></div>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -187,13 +129,10 @@ h1 {
 const socket = io();
 
 let role = null;
-let playerName = null;
 let canShoot = true;
 let gameRunning = false;
 
-/* 🔊 SOUND */
 const shootSound = new Audio("shoot.mp3");
-shootSound.volume = 0.5;
 
 const ROLE_TASKS = {
   designer: ["WIREFRAME", "PROTOTYPE", "USER RESEARCH"],
@@ -201,21 +140,43 @@ const ROLE_TASKS = {
   tester: ["SMOKE TEST", "UNIT TEST", "BUG REPORT"]
 };
 
+/* SCREEN SWITCH */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ROLE */
+function selectRole(r) {
+  role = r;
+  showScreen("join-screen");
+}
+
+/* JOIN */
+function joinGame() {
+  const code = document.getElementById("gameId").value;
+  const name = document.getElementById("nameInput").value;
+
+  socket.emit("join", { code, role, name });
+}
+
+/* JOIN RESULT */
+socket.on("joinResult", (res) => {
+  if (!res.ok) return;
+
+  showScreen("waiting-screen");
+});
+
 /* STATE */
 socket.on("state", (s) => {
-
-  if (!s.gameState) return;
 
   if (s.gameState === "running") {
     gameRunning = true;
 
     document.getElementById("waitingText").style.display = "none";
-    document.getElementById("waitingAnim").style.display = "none";
     document.getElementById("gameControls").style.display = "block";
 
     renderGameControls();
-  } else {
-    gameRunning = false;
   }
 
   if (s.gameState === "gameover") {
@@ -223,7 +184,7 @@ socket.on("state", (s) => {
   }
 });
 
-/* 🔥 GAME BUTTONS */
+/* GAME BUTTONS */
 function renderGameControls() {
   const container = document.getElementById("taskButtons");
   container.innerHTML = "";
@@ -244,11 +205,9 @@ function renderGameControls() {
 
       canShoot = false;
 
-      // 🔊 sound
       shootSound.currentTime = 0;
       shootSound.play();
 
-      // 🔥 visual feedback
       btn.style.opacity = "0.5";
 
       socket.emit("shoot", { role, task });
@@ -262,6 +221,7 @@ function renderGameControls() {
     container.appendChild(btn);
   });
 }
+
 </script>
 
 </body>
