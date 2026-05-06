@@ -10,46 +10,227 @@
 href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap">
 
 <style>
-/* (CSS unchanged) */
 body {
-  margin: 0;
-  background: #05060c;
-  color: #fff;
-  font-family: "Roboto Condensed", Arial, sans-serif;
-  text-align: center;
+margin: 0;
+background: #05060c;
+color: #fff;
+font-family: "Roboto Condensed", Arial, sans-serif;
+text-align: center;
 }
 
-.screen { display: none; padding: 20px; height: 100vh; box-sizing: border-box; }
-.active { display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+/* ================= SCREEN ================= */
+.screen {
+display: none;
+padding: 20px;
+height: 100vh;              /* 🔥 täyttää ruudun */
+box-sizing: border-box;
+}
 
-h1 { font-size: 24px; margin-bottom: 12px; letter-spacing: 2px; }
+.active {
+display: flex;              /* 🔥 flex layout */
+flex-direction: column;
+justify-content: space-between; /* 🔥 jakaa tilan */
+align-items: center;
+}
 
-.role-card { width: 200px; max-width: 90%; margin: 10px auto 20px auto; border-radius: 24px; overflow: visible; }
-.role-card img { height: 20vh; max-height: 180px; width: auto; border-radius: 24px; display: block; margin: 0 auto; }
+/* ================= TITLE ================= */
+h1 {
+font-size: 24px;            /* 🔥 pienempi että mahtuu */
+margin-bottom: 12px;
+letter-spacing: 2px;
+}
 
-.role { margin-bottom: 10px; cursor: pointer; }
-.role-title { font-size: 18px; margin-bottom: 6px; letter-spacing: 1px; }
+/* ================= ROLE CARD ================= */
+.role-card {
+width: 200px;
+max-width: 90%;
+margin: 10px auto 20px auto;
+border-radius: 24px;
+overflow: visible;
+}
 
-.role img { height: 18vh; max-height: 180px; width: auto; border-radius: 24px; transition: 0.2s; }
+.role-card img {
+height: 20vh;
+max-height: 180px;
+width: auto;
 
-.role.designer img { border: 6px solid #f39c12; }
-.role.developer img { border: 6px solid #6c5ce7; }
-.role.tester img { border: 6px solid #00b894; }
+border-radius: 24px;
+display: block;
+margin: 0 auto;
+}
 
-.role:hover img { transform: scale(1.05); }
+/* ================= ROLE SELECT ================= */
+.role {
+margin-bottom: 10px;        /* 🔥 pienempi väli */
+cursor: pointer;
+}
 
-.input { width: 80%; max-width: 300px; padding: 14px; margin: 12px 0; font-size: 18px; border-radius: 10px; border: none; text-align: center; }
+.role-title {
+font-size: 18px;            /* 🔥 vähän pienempi */
+margin-bottom: 6px;
+letter-spacing: 1px;
+}
 
-.button { margin-top: 20px; padding: 16px 50px; font-size: 20px; font-weight: 700; letter-spacing: 2px; background: transparent; color: #fff; border: 2px solid #ff8c00; border-radius: 12px; cursor: pointer; }
+/* 🔥 TÄRKEIN: skaalaa korkeuden mukaan */
+.role img {
+height: 18vh;               /* 🔥 skaalaa ruudun mukaan */
+max-height: 180px;
+width: auto;
 
-.game-id-inputs { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
+border-radius: 24px;
+transition: 0.2s;
+}
 
-.input-title { font-size: 18px; letter-spacing: 2px; margin-top: 10px; margin-bottom: 1px; }
+/* ROLE COLORS (match lobby) */
+.role.designer img {
+border: 6px solid #f39c12;
+}
 
-.digit-input { width: 30px; height: 50px; text-align: center; font-size: 34px; border-radius: 10px; border: none; background: #2a2a2a; color: #fff; }
+.role.developer img {
+border: 6px solid #6c5ce7;
+}
 
-#taskButtons { display: flex; flex-direction: column; gap: 10px; width: 80%; max-width: 300px; margin: 40px auto; }
-.task-btn { padding: 14px; font-size: 16px; border-radius: 12px; border: none; color: #fff; cursor: pointer; }
+.role.tester img {
+border: 6px solid #00b894;
+}
+
+.role:hover img {
+transform: scale(1.05);
+}
+
+.role-card.designer img {
+border: 6px solid #f39c12;
+}
+
+.role-card.developer img {
+border: 6px solid #6c5ce7;
+}
+
+.role-card.tester img {
+border: 6px solid #00b894;
+}
+
+/* ================= INPUT ================= */
+.input {
+width: 80%;
+max-width: 300px;
+padding: 14px;
+margin: 12px 0;
+font-size: 18px;
+border-radius: 10px;
+border: none;
+text-align: center;
+}
+
+/* ================= BUTTON ================= */
+.button {
+margin-top: 20px;
+padding: 16px 50px;
+font-size: 20px;
+font-weight: 700;
+letter-spacing: 2px;
+background: transparent;
+color: #fff;
+border: 2px solid #ff8c00;
+border-radius: 12px;
+cursor: pointer;
+}
+
+/* ================= GAME ID BOXES ================= */
+.game-id-inputs {
+display: flex;
+justify-content: center;
+gap: 10px;
+margin: 16px 0;
+}
+
+.input-title {
+font-size: 18px;
+letter-spacing: 2px;
+margin-top: 10px;
+margin-bottom: 1px;
+opacity: 1.0;
+}  
+
+.digit-input {
+width: 30px;
+height: 50px;
+
+text-align: center;
+font-size: 34px;
+font-weight: 500;
+
+border-radius: 10px;
+border: none;
+
+background: #2a2a2a;
+color: #fff;
+}
+
+.button:hover {
+background: rgba(255,140,0,0.2);
+}
+
+/* ================= WAITING SCREEN ================= */
+#waiting-screen {
+justify-content: flex-start; /* 🔥 alkaa ylhäältä */
+align-items: center;
+gap: 10px;
+padding-top: 40px; /* 🔥 sama kuin muissa */
+}
+
+/* nimi (title) */
+#waitingTitle {
+margin: 0;
+}
+
+/* roolikortti */
+#waitingCard {
+margin: 0;
+}
+
+#waitingName {
+font-size: 18px;        /* sama kuin role select */
+letter-spacing: 1px;
+margin-top: 2px;
+}  
+
+/* status teksti */
+#waitingText {
+font-size: 24px;
+opacity: 0.6;
+margin-top: 10px;
+}
+
+#waitingAnim {
+height: 12vh;
+max-height: 100px;
+margin: 10px 0;
+opacity: 0.9;
+margin-top: 20px;
+}
+
+#taskButtons {
+display: flex;
+flex-direction: column;
+gap: 10px;
+width: 80%;
+max-width: 300px;
+  margin: 20px auto;
+  margin: 40px auto;
+}
+
+.task-btn {
+  padding: 16px;
+  padding: 14px;
+font-size: 16px;
+  font-weight: 700;
+  font-weight: 500;
+border-radius: 12px;
+border: none;
+color: #fff;
+cursor: pointer;
+}
 
 </style>
 </head>
@@ -58,57 +239,73 @@ h1 { font-size: 24px; margin-bottom: 12px; letter-spacing: 2px; }
 
 <!-- ROLE SELECT -->
 <div id="role-screen" class="screen active">
-  <h1>Select Your Role</h1>
 
-  <div class="role designer" onclick="selectRole('designer')">
-    <img src="designer.png">
-    <div class="role-title">DESIGNER</div>
-  </div>
+<h1>Select Your Role</h1>
 
-  <div class="role developer" onclick="selectRole('developer')">
-    <img src="developer.png">
-    <div class="role-title">DEVELOPER</div>
-  </div>
+<div class="role designer" onclick="selectRole('designer')">
 
-  <div class="role tester" onclick="selectRole('tester')">
-    <img src="testengineer.png">
-    <div class="role-title">TEST ENGINEER</div>
-  </div>
+<img src="designer.png">
+<div class="role-title">DESIGNER</div>
+
+</div>
+
+<div class="role developer" onclick="selectRole('developer')">
+
+<img src="developer.png">
+<div class="role-title">DEVELOPER</div>
+
+</div>
+
+<div class="role tester" onclick="selectRole('tester')">
+
+<img src="testengineer.png">
+<div class="role-title">TEST ENGINEER</div>
+
+</div>
+
 </div>
 
 <!-- JOIN -->
 <div id="join-screen" class="screen">
-  <h1 id="roleTitle">JOIN GAME</h1>
 
-  <div class="role-card" id="roleCard"></div>
+<h1 id="roleTitle">JOIN GAME</h1>
 
-  <div class="input-title">Game ID</div>
-  <div class="game-id-inputs">
-    <input class="digit-input" maxlength="1">
-    <input class="digit-input" maxlength="1">
-    <input class="digit-input" maxlength="1">
-    <input class="digit-input" maxlength="1">
-  </div>
+<div class="role-card" id="roleCard"></div>
 
-  <div class="input-title">Your name</div>
-  <input class="input" id="nameInput">
+<div class="input-title">Game ID</div>
+<div id="gameIdInputs" class="game-id-inputs">
+<input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+<input class="digit-input" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+</div>
+<br>
+<div class="input-title">Your name</div>
+<input class="input" id="nameInput" placeholder="">
+<br>
 
-  <button class="button" onclick="joinGame()">JOIN</button>
+<button class="button" onclick="joinGame()">JOIN</button>
+
 </div>
 
-<!-- WAITING -->
+<!-- WAITING / READY -->
 <div id="waiting-screen" class="screen">
-  <h1 id="waitingTitle"></h1>
+<h1 id="waitingTitle"></h1>
 
-  <div class="role-card" id="waitingCard"></div>
-  <div id="waitingName"></div>
+<div class="role-card" id="waitingCard"></div>
 
-  <div id="gameControls" style="display:none; width:100%;">
-    <div class="input-title">Your Tasks</div>
-    <div id="taskButtons"></div>
-  </div>
+<div id="waitingName"></div>
+<video id="waitingAnim" autoplay loop muted playsinline>
+<source src="Typing.webm" type="video/webm">
+</video>
+<div id="gameControls" style="display:none; width:100%;">
 
-  <div id="waitingText">Waiting for teammates...</div>
+<div id="gameTitle" class="input-title">Your Tasks</div>
+
+<div id="taskButtons"></div>
+
+</div>
+<div id="waitingText">Waiting for teammates...</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -118,110 +315,214 @@ const socket = io();
 
 let role = null;
 let playerName = null;
+
+/* 🔥 LISÄTTY */
 let canShoot = true;
 let gameRunning = false;
+const shootSound = new Audio("shoot.mp3");
+shootSound.volume = 0.5;
 
-/* 🔥 UUSI: FORCE LEAVE HANDLER */
-socket.on("forceLeave", () => {
-  console.log("🚪 FORCED OUT BY SERVER");
-
-  alert("Host restarted the game.\nPlease join again.");
-
-  // 🔥 reset kaikki state
-  role = null;
-  playerName = null;
-  gameRunning = false;
-  canShoot = true;
-
-  document.getElementById("taskButtons").innerHTML = "";
-  document.getElementById("gameControls").style.display = "none";
-  document.getElementById("waitingText").style.display = "block";
-
-  // 🔥 takaisin alkuun
-  showScreen("role-screen");
-});
+const ROLE_TASKS = {
+designer: ["WIREFRAME", "PROTOTYPE", "USER RESEARCH"],
+developer: ["NEW FEATURE", "BUGFIX", "REFACTOR"],
+tester: ["SMOKE TEST", "UNIT TEST", "BUG REPORT"]
+};
 
 /* SCREEN SWITCH */
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
 /* ROLE SELECT */
 function selectRole(selectedRole) {
-  role = selectedRole;
+role = selectedRole;
 
-  document.getElementById("roleTitle").textContent = "Join as " + role;
-  document.getElementById("roleCard").innerHTML =
-    `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
+const roleTitleMap = {
+designer: "Designer",
+developer: "Developer",
+tester: "Test Engineer"
+};
 
-  showScreen("join-screen");
+document.getElementById("roleTitle").textContent =
+"Join as " + roleTitleMap[role];
+
+document.getElementById("roleCard").className = `role-card ${role}`;
+
+document.getElementById("roleCard").innerHTML =
+`<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
+
+showScreen("join-screen");
 }
 
 /* JOIN */
 function joinGame() {
-  const gameId = Array.from(document.querySelectorAll(".digit-input"))
-    .map(i => i.value)
-    .join("");
 
-  const name = document.getElementById("nameInput").value;
+const gameId = Array.from(document.querySelectorAll(".digit-input"))
+.map(i => i.value)
+.join("");
 
-  if (!role || gameId.length !== 4 || !name) {
-    alert("Fill all fields correctly");
-    return;
-  }
+const name = document.getElementById("nameInput").value;
 
-  playerName = name;
+if (!role || gameId.length !== 4 || !name) {
+alert("Fill all fields correctly");
+return;
+}
 
-  socket.emit("join", { code: gameId, role, name });
+playerName = name;
+
+socket.emit("join", {
+code: gameId,
+role,
+name
+});
 }
 
 /* JOIN RESULT */
-socket.on("joinResult", () => {
-  showScreen("waiting-screen");
+socket.on("joinResult", (res) => {
+
+if (!res.ok) {
+alert(res.msg);
+return;
+}
+
+document.getElementById("waitingCard").className = `role-card ${role}`;
+
+document.getElementById("waitingCard").innerHTML =
+`<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
+
+const roleLabelMap = {
+designer: "DESIGNER",
+developer: "DEVELOPER",
+tester: "TEST ENGINEER"
+};
+
+document.getElementById("waitingName").textContent = roleLabelMap[role];
+document.getElementById("waitingTitle").textContent = playerName;
+
+showScreen("waiting-screen");
 });
 
-/* STATE */
+/* STATE FROM SERVER */
 socket.on("state", (s) => {
 
-  if (!s.gameState) return;
+if (!s.gameState) return;
 
-  if (s.gameState === "running") {
-    gameRunning = true;
+if (s.gameState === "waiting") {
+gameRunning = false;
+document.getElementById("waitingText").textContent =
+"Waiting for teammates...";
+}
 
-    document.getElementById("waitingText").style.display = "none";
-    document.getElementById("gameControls").style.display = "block";
+if (s.gameState === "ready") {
+gameRunning = false;
+document.getElementById("waitingText").textContent =
+"Waiting for the game to start...";
+}
 
-    renderGameControls();
-  }
+if (s.gameState === "running") {
 
-  if (s.gameState === "gameover") {
-    gameRunning = false;
-    document.getElementById("waitingText").textContent = "GAME OVER";
-  }
+// 🔥 aseta aina ensin
+gameRunning = true;
+
+// 🔥 tee UI-muutokset vain kerran
+if (!document.getElementById("gameControls").dataset.started) {
+
+document.getElementById("gameControls").dataset.started = "true";
+
+const text = document.getElementById("waitingText");
+if (text) text.style.display = "none";
+
+const anim = document.getElementById("waitingAnim");
+if (anim) anim.style.display = "none";
+
+const controls = document.getElementById("gameControls");
+if (controls) controls.style.display = "block";
+
+renderGameControls();
+}
+}
+
+if (s.gameState === "gameover") {
+gameRunning = false;
+document.getElementById("waitingText").textContent =
+"GAME OVER";
+}
 });
 
-/* BUTTONS */
+/* GAME ID INPUT LOGIC */
+const inputs = document.querySelectorAll(".digit-input");
+
+inputs.forEach((input, i) => {
+
+input.addEventListener("input", (e) => {
+e.target.value = e.target.value.replace(/[^0-9]/g, "");
+
+if (e.target.value) {
+if (i < inputs.length - 1) {
+inputs[i + 1].focus();
+} else {
+document.getElementById("nameInput").focus();
+}
+}
+});
+
+input.addEventListener("keydown", (e) => {
+if (e.key === "Backspace" && !input.value && i > 0) {
+inputs[i - 1].focus();
+}
+});
+
+});
+
+/* ========== GAME NAPPIEN LUONTI ============ */
+
 function renderGameControls() {
-  const container = document.getElementById("taskButtons");
-  container.innerHTML = "";
+const container = document.getElementById("taskButtons");
+container.innerHTML = "";
 
-  ROLE_TASKS[role].forEach(task => {
-    const btn = document.createElement("button");
-    btn.className = "task-btn";
-    btn.textContent = task;
+ROLE_TASKS[role].forEach(task => {
 
-    btn.onclick = () => {
-      if (!canShoot || !gameRunning) return;
+const btn = document.createElement("button");
+btn.className = "task-btn";
+btn.textContent = task;
 
-      canShoot = false;
-      socket.emit("shoot", { role, task });
+if (role === "designer") btn.style.background = "#f39c12";
+if (role === "developer") btn.style.background = "#6c5ce7";
+if (role === "tester") btn.style.background = "#00b894";
 
-      setTimeout(() => canShoot = true, 300);
-    };
+btn.onclick = () => {
 
-    container.appendChild(btn);
-  });
+/* 🔥 DEBUG (TÄRKEIN) */
+console.log("CLICK DEBUG", {
+canShoot,
+gameRunning,
+role,
+task
+});
+
+/* 🔥 ESTÄ VIRHEET */
+if (!canShoot || !gameRunning) return;
+
+canShoot = false;
+
+/* 🔊 ÄÄNI */
+shootSound.currentTime = 0;
+shootSound.play();
+
+/* 🎯 VISUAALINEN PALAUTE */
+btn.style.opacity = "0.5";
+
+socket.emit("shoot", { role, task });
+
+setTimeout(() => {
+canShoot = true;
+btn.style.opacity = "1";
+}, 300);
+};
+
+container.appendChild(btn);
+});
 }
 
 </script>
