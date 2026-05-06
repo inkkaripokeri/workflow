@@ -440,3 +440,29 @@ color: #ff8c00;
 .start-instructions li {
   margin-bottom: 8px;
 }
+
+#leftDecoration {
+  position: absolute;
+
+  left: -180px;   /* 🔥 vie gridin ulkopuolelle */
+  top: -100px;    /* 🔥 päivien yläpuolelle */
+
+  width: 160px;
+  height: 160px;
+
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+#rightDecoration {
+  position: absolute;
+
+  right: -180px;
+  top: -100px;
+
+  width: 160px;
+  height: 160px;
+
+  pointer-events: none;
+  opacity: 0.9;
+}
