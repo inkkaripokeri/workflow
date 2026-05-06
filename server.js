@@ -158,20 +158,14 @@ setInterval(() => {
 
 io.on("connection", (socket) => {
 
-  // 🔥 TÄRKEIN FIX
+  /* 🔥 KORJATTU RESET (EI forceLeavea) */
   socket.on("resetLobby", () => {
 
     console.log("🔄 RESET LOBBY");
 
-    // 🚪 potki kaikki ulos
-    Object.values(lobby.players).forEach(p => {
-      if (p?.id) {
-        io.to(p.id).emit("forceLeave");
-      }
-    });
-
-    newLobby();
+    newLobby();   // 🔥 uusi game ID
     resetGame();
+
   });
 
   socket.on("join", ({ code, role, name }) => {
@@ -182,6 +176,7 @@ io.on("connection", (socket) => {
 
     lobby.players[role] = { id: socket.id, name };
     socket.data.role = role;
+    socket.data.code = code; // 🔥 TALLENNETAAN
 
     const count = Object.values(lobby.players).filter(Boolean).length;
 
@@ -208,6 +203,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("shoot", ({ role, task }) => {
+
+    // 🔥 ESTÄ VANHAT CLIENTIT
+    if (socket.data.code !== lobby.code) return;
 
     if (!running) return;
 
