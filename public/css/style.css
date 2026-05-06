@@ -445,7 +445,7 @@ color: #ff8c00;
   position: absolute;
 
   left: 0px;   /* 🔥 vie gridin ulkopuolelle */
-  top: -180px;    /* 🔥 päivien yläpuolelle */
+  top: -160px;    /* 🔥 päivien yläpuolelle */
 
   width: 160px;
   height: 160px;
@@ -458,7 +458,7 @@ color: #ff8c00;
   position: absolute;
 
   right: 0px;
-  top: -180px;
+  top: -160px;
 
   width: 160px;
   height: 160px;
