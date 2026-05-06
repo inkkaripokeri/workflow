@@ -24,14 +24,17 @@ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* 🔥 INPUT SETUP (FIX) */
+/* 🔥 INPUT SETUP (BULLETPROOF FIX) */
 function setupGameIdInputs() {
 
 const inputs = document.querySelectorAll(".digit-input");
 
+/* 🔥 RESET KENTÄT */
+inputs.forEach(i => i.value = "");
+
 inputs.forEach((input, i) => {
 
-input.addEventListener("input", (e) => {
+input.oninput = (e) => {
 
 e.target.value = e.target.value.replace(/[^0-9]/g, "");
 
@@ -42,17 +45,17 @@ inputs[i + 1].focus();
 document.getElementById("nameInput").focus();
 }
 }
-});
+};
 
-input.addEventListener("keydown", (e) => {
+input.onkeydown = (e) => {
 if (e.key === "Backspace" && !input.value && i > 0) {
 inputs[i - 1].focus();
 }
-});
+};
 
 });
 
-// fokus ekaan kenttään
+/* 🔥 fokus ekaan */
 if (inputs[0]) inputs[0].focus();
 }
 
@@ -77,8 +80,8 @@ document.getElementById("roleCard").innerHTML =
 
 showScreen("join-screen");
 
-/* 🔥 TÄRKEIN FIX */
-setTimeout(setupGameIdInputs, 50);
+/* 🔥 VARMA INIT */
+setTimeout(setupGameIdInputs, 30);
 }
 
 /* JOIN */
