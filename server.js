@@ -91,7 +91,6 @@ function getFirstBlockingIndex() {
 
 setInterval(() => {
 
-  // 🔥 ÄLÄ pyöritä peliä ennen starttia
   if (!running) {
     io.emit("state", { leds, bullets, score, running, lobby, gameState });
     return;
@@ -99,7 +98,6 @@ setInterval(() => {
 
   const now = Date.now();
 
-  // 🔥 LED liike
   if (now - lastMove > moveInterval) {
 
     if (pendingGameOver) {
@@ -132,7 +130,6 @@ setInterval(() => {
     const led = leds[target];
     if (!led) return b.y >= 0;
 
-    // 🔥 OSUMA
     if (Math.abs(b.y - target) < 0.5) {
 
       if (led.role === b.role && led.task === b.task) {
@@ -140,19 +137,13 @@ setInterval(() => {
         leds[target] = null;
         score++;
 
-        io.emit("hit", {
-          index: target,
-          success: true
-        });
+        io.emit("hit", { index: target, success: true });
 
       } else {
 
         score = Math.max(0, score - 1);
 
-        io.emit("hit", {
-          index: target,
-          success: false
-        });
+        io.emit("hit", { index: target, success: false });
       }
 
       return false;
@@ -167,7 +158,18 @@ setInterval(() => {
 
 io.on("connection", (socket) => {
 
+  // 🔥 TÄRKEIN FIX
   socket.on("resetLobby", () => {
+
+    console.log("🔄 RESET LOBBY");
+
+    // 🚪 potki kaikki ulos
+    Object.values(lobby.players).forEach(p => {
+      if (p?.id) {
+        io.to(p.id).emit("forceLeave");
+      }
+    });
+
     newLobby();
     resetGame();
   });
@@ -188,7 +190,6 @@ io.on("connection", (socket) => {
     socket.emit("joinResult", { ok: true });
   });
 
-  // 🔥 START (FIXED)
   socket.on("start", () => {
 
     console.log("🔥 START RECEIVED");
@@ -197,7 +198,6 @@ io.on("connection", (socket) => {
 
     if (count === 3) {
 
-      // 🔥 TÄRKEIN FIX
       resetGame();
 
       running = true;
@@ -207,7 +207,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 🔥 SHOOT
   socket.on("shoot", ({ role, task }) => {
 
     if (!running) return;
@@ -219,7 +218,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  // 🔥 RESTART GAME
   socket.on("restartGame", () => {
 
     const count = Object.values(lobby.players).filter(Boolean).length;
