@@ -55,6 +55,13 @@ function updateLevelSpeed() {
 
 }
 
+function getLevel() {
+  if (score >= 30) return "Q4";
+  if (score >= 20) return "Q3";
+  if (score >= 10) return "Q2";
+  return "Q1";
+}
+
 function newLobby() {
   lobby = {
     code: Math.floor(Math.random() * 10000).toString().padStart(4, "0"),
@@ -109,7 +116,15 @@ function getFirstBlockingIndex() {
 setInterval(() => {
 
   if (!running) {
-    io.emit("state", { leds, bullets, score, running, lobby, gameState });
+    io.emit("state", {
+      leds,
+      bullets,
+      score,
+      level: getLevel(), // 🔥 LISÄTTY
+      running,
+      lobby,
+      gameState
+    });
     return;
   }
 
