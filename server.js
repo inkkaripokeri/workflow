@@ -188,7 +188,15 @@ setInterval(() => {
     return b.y >= 0;
   });
 
-  io.emit("state", { leds, bullets, score, running, lobby, gameState });
+  io.emit("state", {
+    leds,
+    bullets,
+    score,
+    level: getLevel(), // 🔥 TÄMÄ PUUTTUU
+    running,
+    lobby,
+    gameState
+  });
 
 }, 1000 / 60);
 
