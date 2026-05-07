@@ -13,8 +13,8 @@ const LED_COUNT = 14;
 let leds, bullets, score, running, lastMove, spawnGap;
 let pendingGameOver = false;
 
-// 🔥 säädettävä nopeus
-let moveInterval = 750;
+// 🔥 LEVEL SPEED (Q1 default)
+let moveInterval = 1000;
 
 const ROLES = ["designer", "developer", "tester"];
 
@@ -40,6 +40,21 @@ function randomTask() {
 let lobby = {};
 let gameState = "waiting";
 
+/* 🔥 LEVEL LOGIC */
+function updateLevelSpeed() {
+
+  if (score >= 30) {
+    moveInterval = 250; // Q4
+  } else if (score >= 20) {
+    moveInterval = 500; // Q3
+  } else if (score >= 10) {
+    moveInterval = 750; // Q2
+  } else {
+    moveInterval = 1000; // Q1
+  }
+
+}
+
 function newLobby() {
   lobby = {
     code: Math.floor(Math.random() * 10000).toString().padStart(4, "0"),
@@ -59,6 +74,8 @@ function resetGame() {
   running = false;
   spawnGap = 0;
   pendingGameOver = false;
+
+  moveInterval = 1000; // 🔥 takaisin Q1
 }
 
 newLobby();
@@ -137,11 +154,15 @@ setInterval(() => {
         leds[target] = null;
         score++;
 
+        updateLevelSpeed(); // 🔥 LISÄTTY
+
         io.emit("hit", { index: target, success: true });
 
       } else {
 
         score = Math.max(0, score - 1);
+
+        updateLevelSpeed(); // 🔥 LISÄTTY
 
         io.emit("hit", { index: target, success: false });
       }
@@ -183,7 +204,7 @@ io.on("connection", (socket) => {
 
     lobby.players[role] = { id: socket.id, name };
     socket.data.role = role;
-    socket.data.code = code; // 🔥 TALLENNETAAN
+    socket.data.code = code;
 
     const count = Object.values(lobby.players).filter(Boolean).length;
 
@@ -211,9 +232,7 @@ io.on("connection", (socket) => {
 
   socket.on("shoot", ({ role, task }) => {
 
-    // 🔥 ESTÄ VANHAT CLIENTIT
     if (socket.data.code !== lobby.code) return;
-
     if (!running) return;
 
     bullets.push({
