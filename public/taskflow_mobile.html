@@ -313,6 +313,9 @@ cursor: pointer;
 
 const socket = io();
 
+let gameCode = null;
+let playerName = null;
+
 let role = null;
 let playerName = null;
 
@@ -336,46 +339,52 @@ document.getElementById(id).classList.add("active");
 
 /* ROLE SELECT */
 function selectRole(selectedRole) {
-role = selectedRole;
+  role = selectedRole;
 
-const roleTitleMap = {
-designer: "Designer",
-developer: "Developer",
-tester: "Test Engineer"
-};
+  // 🔥 JOIN TAPAHTUU TÄÄLLÄ
+  socket.emit("join", {
+    code: gameCode,
+    role,
+    name: playerName
+  });
+  
+  const roleTitleMap = {
+    designer: "Designer",
+    developer: "Developer",
+    tester: "Test Engineer"
+  };
 
-document.getElementById("roleTitle").textContent =
-"Join as " + roleTitleMap[role];
+  document.getElementById("roleTitle").textContent =
+  "Join as " + roleTitleMap[role];
 
-document.getElementById("roleCard").className = `role-card ${role}`;
+  document.getElementById("roleCard").className = `role-card ${role}`;
 
-document.getElementById("roleCard").innerHTML =
-`<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
+  document.getElementById("roleCard").innerHTML =
+  `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
-showScreen("join-screen");
+  showScreen("join-screen");
 }
 
 /* JOIN */
 function joinGame() {
 
-const gameId = Array.from(document.querySelectorAll(".digit-input"))
-.map(i => i.value)
-.join("");
+  const gameId = Array.from(document.querySelectorAll(".digit-input"))
+    .map(i => i.value)
+    .join("");
 
-const name = document.getElementById("nameInput").value;
+  const name = document.getElementById("nameInput").value;
 
-if (!role || gameId.length !== 4 || !name) {
-alert("Fill all fields correctly");
-return;
-}
+  if (gameId.length !== 4 || !name) {
+    alert("Fill all fields correctly");
+    return;
+  }
 
-playerName = name;
+  // 🔥 TALLENNETAAN
+  gameCode = gameId;
+  playerName = name;
 
-socket.emit("join", {
-code: gameId,
-role,
-name
-});
+  // 🔥 SIIRRYTÄÄN ROOLIIN
+  showScreen("role-screen");
 }
 
 /* JOIN RESULT */
