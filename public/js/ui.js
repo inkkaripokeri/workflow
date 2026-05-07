@@ -191,6 +191,15 @@ export const UI = (() => {
     el.textContent = score ?? 0;
   }
 
+  /* ================= LEVEL ================= */
+
+  function renderLevel(level) {
+    const el = document.getElementById("levelValue");
+    if (!el) return;
+
+    el.textContent = level ?? "Q1";
+  }
+  
   /* ================= HIT EFFECT ================= */
 
   function showHitEffect(index, success) {
@@ -334,6 +343,7 @@ function startCountdown(onDone) {
     showGameOver,
     hideGameOver,
     showStartPopup,
+    renderLevel,
     startCountdown
   };
 
