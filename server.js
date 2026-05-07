@@ -158,12 +158,19 @@ setInterval(() => {
 
 io.on("connection", (socket) => {
 
-  /* 🔥 KORJATTU RESET (EI forceLeavea) */
+  // 🔥 AUTO RESET (refresh bug fix)
+  if (!running && gameState === "gameover") {
+    console.log("🧼 AUTO RESET AFTER GAMEOVER");
+    newLobby();
+    resetGame();
+  }
+
+  // 🔥 HOSTIN RESET NAPPI
   socket.on("resetLobby", () => {
 
     console.log("🔄 RESET LOBBY");
 
-    newLobby();   // 🔥 uusi game ID
+    newLobby();
     resetGame();
 
   });
