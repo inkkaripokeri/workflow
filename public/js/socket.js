@@ -124,6 +124,9 @@ window.addEventListener("load", () => {
     if (typeof s.score !== "undefined") {
       UI.renderScore(s.score);
     }
+    if (s.level) {
+      UI.renderLevel(s.level);
+    }
 
   });
 
