@@ -238,7 +238,7 @@ cursor: pointer;
 <body>
 
 <!-- ROLE SELECT -->
-<div id="role-screen" class="screen active">
+<div id="role-screen" class="screen">
 
 <h1>Select Your Role</h1>
 
@@ -266,7 +266,7 @@ cursor: pointer;
 </div>
 
 <!-- JOIN -->
-<div id="join-screen" class="screen">
+<div id="join-screen" class="screen active">
 
 <h1 id="roleTitle">JOIN GAME</h1>
 
@@ -315,9 +315,8 @@ const socket = io();
 
 let gameCode = null;
 let playerName = null;
-
 let role = null;
-let playerName = null;
+
 
 /* 🔥 LISÄTTY */
 let canShoot = true;
@@ -362,7 +361,7 @@ function selectRole(selectedRole) {
   document.getElementById("roleCard").innerHTML =
   `<img src="${role === "tester" ? "testengineer.png" : role + ".png"}">`;
 
-  showScreen("join-screen");
+  //showScreen("join-screen");
 }
 
 /* JOIN */
