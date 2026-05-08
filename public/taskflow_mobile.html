@@ -232,6 +232,13 @@ color: #fff;
 cursor: pointer;
 }
 
+.taken-label {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #ff4d4d;
+  font-weight: 700;
+}
+
 </style>
 </head>
 
@@ -417,6 +424,10 @@ showScreen("waiting-screen");
 /* STATE FROM SERVER */
 socket.on("state", (s) => {
 
+if (s.lobby) {
+  updateRoleAvailability(s.lobby.players);
+}
+  
 if (!s.gameState) return;
 
 if (s.gameState === "waiting") {
@@ -536,6 +547,37 @@ container.appendChild(btn);
 });
 }
 
+function updateRoleAvailability(players) {
+
+  ["designer", "developer", "tester"].forEach(role => {
+
+    const el = document.querySelector(`.role.${role}`);
+    if (!el) return;
+
+    if (players[role]) {
+      // 🔴 VARATTU
+      el.style.opacity = "0.3";
+      el.style.pointerEvents = "none";
+
+      if (!el.querySelector(".taken-label")) {
+        const label = document.createElement("div");
+        label.className = "taken-label";
+        label.textContent = "TAKEN";
+        el.appendChild(label);
+      }
+
+    } else {
+      // 🟢 VAPAA
+      el.style.opacity = "1";
+      el.style.pointerEvents = "auto";
+
+      const label = el.querySelector(".taken-label");
+      if (label) label.remove();
+    }
+
+  });
+}
+  
 </script>
 
 </body>
