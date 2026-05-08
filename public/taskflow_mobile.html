@@ -338,6 +338,9 @@ document.getElementById(id).classList.add("active");
 
 /* ROLE SELECT */
 function selectRole(selectedRole) {
+
+  if (!gameCode || !playerName) return; // 🔥 tärkeä
+  
   role = selectedRole;
 
   // 🔥 JOIN TAPAHTUU TÄÄLLÄ
