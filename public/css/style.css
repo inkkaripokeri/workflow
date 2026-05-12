@@ -479,8 +479,9 @@ color: #ff8c00;
 
 #backlogRefinement {
   position: absolute;
+
   left: 53%;
-  top: 72px;
+  top: 115px;
 
   transform: translateX(-50%);
 
