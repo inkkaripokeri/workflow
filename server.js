@@ -43,12 +43,14 @@ let gameState = "waiting";
 /* 🔥 LEVEL LOGIC */
 function updateLevelSpeed() {
 
-  if (score >= 30) {
-    moveInterval = 250; // Q4
+  if (score >= 40) {
+    moveInterval = 200; // Q5
+  } else if (score >= 30) {
+    moveInterval = 400; // Q4
   } else if (score >= 20) {
-    moveInterval = 500; // Q3
+    moveInterval = 600; // Q3
   } else if (score >= 10) {
-    moveInterval = 750; // Q2
+    moveInterval = 800; // Q2
   } else {
     moveInterval = 1000; // Q1
   }
@@ -56,6 +58,7 @@ function updateLevelSpeed() {
 }
 
 function getLevel() {
+  if (score >= 40) return "Q5";
   if (score >= 30) return "Q4";
   if (score >= 20) return "Q3";
   if (score >= 10) return "Q2";
