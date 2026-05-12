@@ -233,6 +233,21 @@ setInterval(() => {
 
     if (Math.abs(b.y - target) < 0.5) {
 
+        // 🔥 DEBUG LOGS
+      console.log(
+        "🎯 TARGET:",
+        led.role,
+        led.task,
+        "| mystery:",
+        led.mystery
+      );
+
+      console.log(
+        "💥 SHOT:",
+        b.role,
+        b.task
+      );
+      
       // 🔥 OIKEA ROLE + OIKEA TASK
       if (led.role === b.role && led.task === b.task) {
 
