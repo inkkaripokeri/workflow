@@ -10,6 +10,9 @@ app.use(express.static("public"));
 
 const LED_COUNT = 14;
 
+// 🔥 BACKLOG REFINEMENT POSITION
+const REFINEMENT_POSITION = 7;
+
 let leds, bullets, score, running, lastMove, spawnGap;
 let pendingGameOver = false;
 
@@ -33,8 +36,44 @@ const TASKS = [
   { role: "tester", color: "#00b894", task: "BUG REPORT" }
 ];
 
+// 🔥 TASKS BY ROLE (BACKLOG REFINEMENT)
+const TASKS_BY_ROLE = {
+  designer: TASKS.filter(t => t.role === "designer"),
+  developer: TASKS.filter(t => t.role === "developer"),
+  tester: TASKS.filter(t => t.role === "tester")
+};
+
 function randomTask() {
   return TASKS[Math.floor(Math.random() * TASKS.length)];
+}
+
+// 🔥 BACKLOG REFINEMENT
+function refineTask(taskObj) {
+
+  const roleTasks = TASKS_BY_ROLE[taskObj.role];
+
+  if (!roleTasks || roleTasks.length <= 1) return;
+
+  let newTask =
+    roleTasks[
+      Math.floor(Math.random() * roleTasks.length)
+    ];
+
+  // 🔥 Estä sama task
+  while (newTask.task === taskObj.task) {
+
+    newTask =
+      roleTasks[
+        Math.floor(Math.random() * roleTasks.length)
+      ];
+  }
+
+  // 🔥 Vaihda vain saman roolin taskiksi
+  taskObj.task = newTask.task;
+  taskObj.color = newTask.color;
+
+  // 🔥 Estä uusi refinement
+  taskObj.refined = true;
 }
 
 let lobby = {};
@@ -108,7 +147,12 @@ function spawnTop() {
     role: t.role,
     color: t.color,
     task: t.task,
-    mystery: isMystery
+
+    // 🔥 MYSTERY TASK
+    mystery: isMystery,
+
+    // 🔥 BACKLOG REFINEMENT
+    refined: false
   };
 
   spawnGap = Math.floor(Math.random() * 3) + 1;
@@ -157,6 +201,16 @@ setInterval(() => {
       spawnTop();
 
       lastMove = now;
+
+      // 🔥 BACKLOG REFINEMENT
+      const refinementTask = leds[REFINEMENT_POSITION];
+
+      if (
+        refinementTask &&
+        !refinementTask.refined
+      ) {
+        refineTask(refinementTask);
+      }
 
       if (leds[LED_COUNT - 1]) {
         pendingGameOver = true;
