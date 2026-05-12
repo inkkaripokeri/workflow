@@ -92,6 +92,7 @@ newLobby();
 resetGame();
 
 function spawnTop() {
+
   if (spawnGap > 0) {
     leds[0] = null;
     spawnGap--;
@@ -100,10 +101,14 @@ function spawnTop() {
 
   const t = randomTask();
 
+  // 🔥 MYSTERY TASK CHANCE
+  const isMystery = Math.random() < 0.05;
+
   leds[0] = {
     role: t.role,
     color: t.color,
-    task: t.task
+    task: t.task,
+    mystery: isMystery
   };
 
   spawnGap = Math.floor(Math.random() * 3) + 1;
@@ -119,15 +124,17 @@ function getFirstBlockingIndex() {
 setInterval(() => {
 
   if (!running) {
+
     io.emit("state", {
       leds,
       bullets,
       score,
-      level: getLevel(), // 🔥 LISÄTTY
+      level: getLevel(),
       running,
       lobby,
       gameState
     });
+
     return;
   }
 
@@ -136,9 +143,11 @@ setInterval(() => {
   if (now - lastMove > moveInterval) {
 
     if (pendingGameOver) {
+
       running = false;
       gameState = "gameover";
       pendingGameOver = false;
+
     } else {
 
       for (let i = LED_COUNT - 1; i > 0; i--) {
@@ -146,6 +155,7 @@ setInterval(() => {
       }
 
       spawnTop();
+
       lastMove = now;
 
       if (leds[LED_COUNT - 1]) {
@@ -160,29 +170,39 @@ setInterval(() => {
   bullets = bullets.filter(b => {
 
     const target = getFirstBlockingIndex();
+
     if (target === -1) return b.y >= 0;
 
     const led = leds[target];
+
     if (!led) return b.y >= 0;
 
     if (Math.abs(b.y - target) < 0.5) {
 
+      // 🔥 OIKEA ROLE + OIKEA TASK
       if (led.role === b.role && led.task === b.task) {
 
         leds[target] = null;
+
         score++;
 
-        updateLevelSpeed(); // 🔥 LISÄTTY
+        updateLevelSpeed();
 
-        io.emit("hit", { index: target, success: true });
+        io.emit("hit", {
+          index: target,
+          success: true
+        });
 
       } else {
 
         score = Math.max(0, score - 1);
 
-        updateLevelSpeed(); // 🔥 LISÄTTY
+        updateLevelSpeed();
 
-        io.emit("hit", { index: target, success: false });
+        io.emit("hit", {
+          index: target,
+          success: false
+        });
       }
 
       return false;
@@ -195,7 +215,7 @@ setInterval(() => {
     leds,
     bullets,
     score,
-    level: getLevel(), // 🔥 TÄMÄ PUUTTUU
+    level: getLevel(),
     running,
     lobby,
     gameState
@@ -207,7 +227,9 @@ io.on("connection", (socket) => {
 
   // 🔥 AUTO RESET (refresh bug fix)
   if (!running && gameState === "gameover") {
+
     console.log("🧼 AUTO RESET AFTER GAMEOVER");
+
     newLobby();
     resetGame();
   }
@@ -228,22 +250,34 @@ io.on("connection", (socket) => {
     if (code !== lobby.code) return;
     if (lobby.players[role]) return;
 
-    lobby.players[role] = { id: socket.id, name };
+    lobby.players[role] = {
+      id: socket.id,
+      name
+    };
+
     socket.data.role = role;
     socket.data.code = code;
 
-    const count = Object.values(lobby.players).filter(Boolean).length;
+    const count =
+      Object.values(lobby.players)
+        .filter(Boolean).length;
 
-    if (count === 3) gameState = "ready";
+    if (count === 3) {
+      gameState = "ready";
+    }
 
-    socket.emit("joinResult", { ok: true });
+    socket.emit("joinResult", {
+      ok: true
+    });
   });
 
   socket.on("start", () => {
 
     console.log("🔥 START RECEIVED");
 
-    const count = Object.values(lobby.players).filter(Boolean).length;
+    const count =
+      Object.values(lobby.players)
+        .filter(Boolean).length;
 
     if (count === 3) {
 
@@ -270,9 +304,12 @@ io.on("connection", (socket) => {
 
   socket.on("restartGame", () => {
 
-    const count = Object.values(lobby.players).filter(Boolean).length;
+    const count =
+      Object.values(lobby.players)
+        .filter(Boolean).length;
 
     if (count === 3) {
+
       console.log("🔄 RESTART GAME");
 
       resetGame();
@@ -285,12 +322,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+
     const role = socket.data.role;
-    if (role && lobby.players[role]?.id === socket.id) {
+
+    if (
+      role &&
+      lobby.players[role]?.id === socket.id
+    ) {
       lobby.players[role] = null;
     }
   });
 
 });
 
-server.listen(3000, () => console.log("Server running"));
+server.listen(3000, () =>
+  console.log("Server running")
+);
