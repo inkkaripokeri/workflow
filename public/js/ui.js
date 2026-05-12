@@ -2,7 +2,7 @@
 let movedToGame = false;
 let startPopupShown = false;
 
-/* 🔥 GAME LEDS (näytetään vain alkuosa) */
+/* 🔥 GAME LEDS */
 let leds = Array(14).fill(null);
 
 const hitSound = new Audio("hit.mp3");
@@ -14,26 +14,37 @@ failSound.volume = 0.6;
 export const UI = (() => {
 
   /* ================= SCREEN ================= */
+
   function show(screen) {
+
     document.querySelectorAll(".screen").forEach(s =>
       s.classList.remove("active")
     );
 
-    document.getElementById(screen).classList.add("active");
+    const target = document.getElementById(screen);
+
+    if (target) {
+      target.classList.add("active");
+    }
 
     window.scrollTo(0, 0);
   }
 
   function animateToLobby() {
+
     document.body.classList.add("start-to-lobby");
 
     startPopupShown = false;
-    
-    setTimeout(() => show("lobby-screen"), 200);
+
+    setTimeout(() => {
+      show("lobby-screen");
+    }, 200);
   }
 
   /* ================= GAME ID ================= */
+
   function renderGameId(code) {
+
     if (!code) return;
 
     const el = document.getElementById("gameId");
@@ -46,16 +57,23 @@ export const UI = (() => {
   }
 
   /* ================= PLAYERS ================= */
+
   function renderPlayers(players) {
 
-    const count = Object.values(players).filter(p => p !== null).length;
-    
+    const count =
+      Object.values(players)
+        .filter(p => p !== null)
+        .length;
+
     const title = document.getElementById("playersTitle");
+
     if (title) {
       title.textContent = `Players Joined ${count}/3`;
     }
 
-    const titleGame = document.getElementById("playersTitleGame");
+    const titleGame =
+      document.getElementById("playersTitleGame");
+
     if (titleGame) {
       titleGame.textContent = "Players";
     }
@@ -68,9 +86,21 @@ export const UI = (() => {
     if (grids.length === 0) return;
 
     const roles = [
-      { key: "designer", label: "Designer", cls: "designer" },
-      { key: "developer", label: "Developer", cls: "developer" },
-      { key: "tester", label: "Test Engineer", cls: "tester" }
+      {
+        key: "designer",
+        label: "Designer",
+        cls: "designer"
+      },
+      {
+        key: "developer",
+        label: "Developer",
+        cls: "developer"
+      },
+      {
+        key: "tester",
+        label: "Test Engineer",
+        cls: "tester"
+      }
     ];
 
     const html = roles.map(r => {
@@ -82,12 +112,16 @@ export const UI = (() => {
       let name = "";
 
       if (p) {
+
         name = p.name;
 
         if (p.connected === false) {
+
           statusText = "DISCONNECTED";
           statusClass = "disconnected";
+
         } else {
+
           statusText = "CONNECTED";
           statusClass = "connected";
         }
@@ -95,14 +129,30 @@ export const UI = (() => {
 
       return `
         <div class="player ${r.cls}">
-          <img src="${r.key === "tester" ? "testengineer.png" : r.key + ".png"}">
-          <div class="player-role">${r.label}</div>
-          <div class="player-name">${name}</div>
+          <img src="${
+            r.key === "tester"
+              ? "testengineer.png"
+              : r.key + ".png"
+          }">
+
+          <div class="player-role">
+            ${r.label}
+          </div>
+
+          <div class="player-name">
+            ${name}
+          </div>
+
           <div class="player-status ${statusClass}">
-            ${statusClass === "waiting" ? "WAITING..." : statusText}
+            ${
+              statusClass === "waiting"
+                ? "WAITING..."
+                : statusText
+            }
           </div>
         </div>
       `;
+
     }).join("");
 
     grids.forEach(el => {
@@ -110,12 +160,15 @@ export const UI = (() => {
     });
 
     if (count === 3 && !movedToGame) {
+
       movedToGame = true;
 
       setTimeout(() => {
+
         show("game-screen");
 
         if (!startPopupShown) {
+
           showStartPopup();
           startPopupShown = true;
         }
@@ -127,7 +180,9 @@ export const UI = (() => {
   /* ================= LEDS ================= */
 
   function updateLeds(newLeds) {
+
     if (!newLeds) return;
+
     leds = newLeds.slice(0, 14);
   }
 
@@ -135,27 +190,27 @@ export const UI = (() => {
 
     renderWeekDays();
 
-    const grid = document.getElementById("taskGrid");
+    const grid =
+      document.getElementById("taskGrid");
+
     if (!grid) return;
 
-    grid.innerHTML = leds.map((l, index) => {
+    grid.innerHTML = leds.map(l => {
 
       if (!l) {
         return `<div class="task-cell"></div>`;
       }
 
-      // 🔥 Mystery class
       const mysteryClass =
         l.mystery ? "task-mystery" : "";
 
-      // 🔥 Refinement visual
       const refinedClass =
         l.refined ? "task-refined" : "";
 
       return `
-        <div 
+        <div
           class="task-cell ${mysteryClass} ${refinedClass}"
-          style="background:${l.color}"
+          style="background:${getRoleColor(l.role)}"
         >
           <div class="task-text">
             ${l.mystery ? "?" : l.task}
@@ -170,7 +225,9 @@ export const UI = (() => {
 
   function renderBullets(bullets) {
 
-    const layer = document.getElementById("bulletsLayer");
+    const layer =
+      document.getElementById("bulletsLayer");
+
     if (!layer) return;
 
     layer.innerHTML = "";
@@ -179,27 +236,25 @@ export const UI = (() => {
 
       const el = document.createElement("div");
 
-      // 🔥 Mystery task class
       const mysteryClass =
         b.mystery ? "task-mystery" : "";
 
       el.className =
         `task-cell ${mysteryClass}`;
 
-      // 🔥 Näytä ? mystery taskeille
       el.innerHTML = `
         <div class="task-text">
           ${b.mystery ? "?" : b.task}
         </div>
       `;
 
-      // 🔥 Säilytä roolivärit
-      el.style.background = getRoleColor(b.role);
+      // 🔥 Käytä aina roolin väriä
+      el.style.background =
+        getRoleColor(b.role);
 
-      // 🔥 Position timelineen
       const percent = (b.y / 13) * 100;
-      el.style.left = percent + "%";
 
+      el.style.left = percent + "%";
       el.style.position = "absolute";
       el.style.top = "0";
 
@@ -207,17 +262,32 @@ export const UI = (() => {
     });
   }
 
+  /* ================= ROLE COLORS ================= */
+
   function getRoleColor(role) {
-    if (role === "designer") return "#f39c12";
-    if (role === "developer") return "#6c5ce7";
-    if (role === "tester") return "#00b894";
-    return "#fff";
+
+    if (role === "designer") {
+      return "#f39c12";
+    }
+
+    if (role === "developer") {
+      return "#6c5ce7";
+    }
+
+    if (role === "tester") {
+      return "#00b894";
+    }
+
+    return "#ffffff";
   }
 
   /* ================= SCORE ================= */
 
   function renderScore(score) {
-    const el = document.getElementById("scoreValue");
+
+    const el =
+      document.getElementById("scoreValue");
+
     if (!el) return;
 
     el.textContent = score ?? 0;
@@ -226,32 +296,43 @@ export const UI = (() => {
   /* ================= LEVEL ================= */
 
   function renderLevel(level) {
-    const el = document.getElementById("levelValue");
+
+    const el =
+      document.getElementById("levelValue");
+
     if (!el) return;
 
     el.textContent = level ?? "Q1";
   }
-  
+
   /* ================= HIT EFFECT ================= */
 
   function showHitEffect(index, success) {
 
-    const wrapper = document.getElementById("taskGridWrapper");
+    const wrapper =
+      document.getElementById("taskGridWrapper");
+
     if (!wrapper) return;
 
     if (success) {
+
       hitSound.currentTime = 0;
       hitSound.play();
+
     } else {
+
       failSound.currentTime = 0;
       failSound.play();
     }
 
     const el = document.createElement("div");
 
-    el.className = "hit-effect " + (success ? "hit-success" : "hit-fail");
+    el.className =
+      "hit-effect " +
+      (success ? "hit-success" : "hit-fail");
 
     const percent = (index / 13) * 100;
+
     el.style.left = percent + "%";
 
     wrapper.appendChild(el);
@@ -261,14 +342,24 @@ export const UI = (() => {
     }, 300);
   }
 
-  /* ======= DAYS ====== */
+  /* ================= DAYS ================= */
 
   function renderWeekDays() {
 
-    const el = document.getElementById("weekDays");
+    const el =
+      document.getElementById("weekDays");
+
     if (!el) return;
 
-    const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const days = [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ];
 
     const full = [];
 
@@ -277,7 +368,9 @@ export const UI = (() => {
     }
 
     el.innerHTML = full
-      .map(d => `<div class="day-cell">${d}</div>`)
+      .map(d =>
+        `<div class="day-cell">${d}</div>`
+      )
       .join("");
   }
 
@@ -285,8 +378,11 @@ export const UI = (() => {
 
   function showGameOver(score) {
 
-    const overlay = document.getElementById("gameOverOverlay");
-    const scoreEl = document.getElementById("finalScore");
+    const overlay =
+      document.getElementById("gameOverOverlay");
+
+    const scoreEl =
+      document.getElementById("finalScore");
 
     if (scoreEl) {
       scoreEl.textContent = score ?? 0;
@@ -298,49 +394,74 @@ export const UI = (() => {
   }
 
   function hideGameOver() {
-    const overlay = document.getElementById("gameOverOverlay");
+
+    const overlay =
+      document.getElementById("gameOverOverlay");
+
     if (overlay) {
       overlay.classList.remove("active");
     }
   }
 
-  /* ========== SHOW START POPUP ============ */
+  /* ================= START POPUP ================= */
 
   function showStartPopup() {
-    const overlay = document.getElementById("startOverlay");
-    const content = document.getElementById("startContent");
-    const counter = document.getElementById("startCounter");
+
+    const overlay =
+      document.getElementById("startOverlay");
+
+    const content =
+      document.getElementById("startContent");
+
+    const counter =
+      document.getElementById("startCounter");
 
     if (!overlay) return;
 
     overlay.classList.add("active");
 
-    if (content) content.style.display = "block";
-    if (counter) counter.style.display = "none";
+    if (content) {
+      content.style.display = "block";
+    }
+
+    if (counter) {
+      counter.style.display = "none";
+    }
   }
-  
-  /* ========== COUNTDOWN START ============ */
+
+  /* ================= COUNTDOWN ================= */
 
   function startCountdown(onDone) {
 
-    const content = document.getElementById("startContent");
-    const counter = document.getElementById("startCounter");
-    const overlay = document.getElementById("startOverlay");
+    const content =
+      document.getElementById("startContent");
+
+    const counter =
+      document.getElementById("startCounter");
+
+    const overlay =
+      document.getElementById("startOverlay");
 
     if (!counter || !overlay) return;
 
-    if (content) content.style.display = "none";
+    if (content) {
+      content.style.display = "none";
+    }
+
     counter.style.display = "block";
 
     const steps = ["3", "2", "1", "GO!"];
+
     let i = 0;
 
     counter.textContent = steps[i];
 
     const interval = setInterval(() => {
+
       i++;
 
       if (i >= steps.length) {
+
         clearInterval(interval);
 
         console.log("COUNTDOWN DONE");
