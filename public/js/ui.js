@@ -140,9 +140,12 @@ export const UI = (() => {
 
     grid.innerHTML = leds.map(l => {
       if (!l) return `<div class="task-cell"></div>`;
+
       return `
         <div class="task-cell" style="background:${l.color}">
-          <div class="task-text">${l.task}</div>
+          <div class="task-text">
+            ${l.mystery ? "?" : l.task}
+          </div>
         </div>
       `;
     }).join("");
@@ -161,10 +164,21 @@ export const UI = (() => {
 
       const el = document.createElement("div");
 
-      el.className = `task-cell`;
-      el.innerHTML = `<div class="task-text">${b.task}</div>`;
+      // 🔥 Mystery task class
+      el.className =
+        `task-cell ${b.mystery ? "task-mystery" : ""}`;
+
+      // 🔥 Näytä ? mystery taskeille
+      el.innerHTML = `
+        <div class="task-text">
+          ${b.mystery ? "?" : b.task}
+        </div>
+      `;
+
+      // 🔥 Säilytä roolivärit
       el.style.background = getRoleColor(b.role);
 
+      // 🔥 Position timelineen
       const percent = (b.y / 13) * 100;
       el.style.left = percent + "%";
 
@@ -287,48 +301,47 @@ export const UI = (() => {
     if (counter) counter.style.display = "none";
   }
   
-  /* ========== COUNTDOWN START (🔥 KORJATTU) ============ */
+  /* ========== COUNTDOWN START ============ */
 
-function startCountdown(onDone) {
+  function startCountdown(onDone) {
 
-  const content = document.getElementById("startContent");
-  const counter = document.getElementById("startCounter");
-  const overlay = document.getElementById("startOverlay");
+    const content = document.getElementById("startContent");
+    const counter = document.getElementById("startCounter");
+    const overlay = document.getElementById("startOverlay");
 
-  if (!counter || !overlay) return;
+    if (!counter || !overlay) return;
 
-  if (content) content.style.display = "none";
-  counter.style.display = "block";
+    if (content) content.style.display = "none";
+    counter.style.display = "block";
 
-  const steps = ["3", "2", "1", "GO!"];
-  let i = 0;
-
-  counter.textContent = steps[i];
-
-  const interval = setInterval(() => {
-    i++;
-
-    if (i >= steps.length) {
-      clearInterval(interval);
-
-      console.log("COUNTDOWN DONE");
-
-      // 🔥 TÄMÄ ON TÄRKEIN
-      if (typeof onDone === "function") {
-        onDone();
-      }
-
-      setTimeout(() => {
-        overlay.classList.remove("active");
-      }, 400);
-
-      return;
-    }
+    const steps = ["3", "2", "1", "GO!"];
+    let i = 0;
 
     counter.textContent = steps[i];
 
-  }, 700);
-}
+    const interval = setInterval(() => {
+      i++;
+
+      if (i >= steps.length) {
+        clearInterval(interval);
+
+        console.log("COUNTDOWN DONE");
+
+        if (typeof onDone === "function") {
+          onDone();
+        }
+
+        setTimeout(() => {
+          overlay.classList.remove("active");
+        }, 400);
+
+        return;
+      }
+
+      counter.textContent = steps[i];
+
+    }, 700);
+  }
 
   return {
     show,
