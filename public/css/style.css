@@ -466,3 +466,13 @@ color: #ff8c00;
   pointer-events: none;
   opacity: 0.9;
 }
+
+.task-mystery {
+  background: #555 !important;
+  border: 2px dashed white;
+}
+
+.task-mystery .task-text {
+  font-size: 28px;
+  font-weight: bold;
+}
