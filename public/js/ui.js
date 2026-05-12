@@ -138,16 +138,31 @@ export const UI = (() => {
     const grid = document.getElementById("taskGrid");
     if (!grid) return;
 
-    grid.innerHTML = leds.map(l => {
-      if (!l) return `<div class="task-cell"></div>`;
+    grid.innerHTML = leds.map((l, index) => {
+
+      if (!l) {
+        return `<div class="task-cell"></div>`;
+      }
+
+      // 🔥 Mystery class
+      const mysteryClass =
+        l.mystery ? "task-mystery" : "";
+
+      // 🔥 Refinement visual
+      const refinedClass =
+        l.refined ? "task-refined" : "";
 
       return `
-        <div class="task-cell" style="background:${l.color}">
+        <div 
+          class="task-cell ${mysteryClass} ${refinedClass}"
+          style="background:${l.color}"
+        >
           <div class="task-text">
             ${l.mystery ? "?" : l.task}
           </div>
         </div>
       `;
+
     }).join("");
   }
 
@@ -165,8 +180,11 @@ export const UI = (() => {
       const el = document.createElement("div");
 
       // 🔥 Mystery task class
+      const mysteryClass =
+        b.mystery ? "task-mystery" : "";
+
       el.className =
-        `task-cell ${b.mystery ? "task-mystery" : ""}`;
+        `task-cell ${mysteryClass}`;
 
       // 🔥 Näytä ? mystery taskeille
       el.innerHTML = `
