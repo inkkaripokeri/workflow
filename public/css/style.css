@@ -479,14 +479,14 @@ color: #ff8c00;
 #backlogRefinement {
   position: absolute;
 
-  left: 53%;
+  left: 54%;
   top: 115px;
 
   transform: translateX(-50%);
 
   color: red;
 
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
 
