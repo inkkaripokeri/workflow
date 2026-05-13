@@ -13,11 +13,11 @@ const LED_COUNT = 14;
 // 🔥 BACKLOG REFINEMENT POSITION
 const REFINEMENT_POSITION = 8;
 
-let leds, bullets, score, running, lastMove, spawnGap;
-let pendingGameOver = false;
+// 🔥 GAME SPEED
+let taskSpeed = 0.015;
 
-// 🔥 LEVEL SPEED (Q1 default)
-let moveInterval = 1000;
+let tasks, bullets, score, running, spawnGap;
+let pendingGameOver = false;
 
 const ROLES = ["designer", "developer", "tester"];
 
@@ -36,7 +36,7 @@ const TASKS = [
   { role: "tester", color: "#00b894", task: "BUG REPORT" }
 ];
 
-// 🔥 TASKS BY ROLE (BACKLOG REFINEMENT)
+// 🔥 TASKS BY ROLE
 const TASKS_BY_ROLE = {
   designer: TASKS.filter(t => t.role === "designer"),
   developer: TASKS.filter(t => t.role === "developer"),
@@ -59,7 +59,6 @@ function refineTask(taskObj) {
       Math.floor(Math.random() * roleTasks.length)
     ];
 
-  // 🔥 Estä sama task
   while (newTask.task === taskObj.task) {
 
     newTask =
@@ -68,32 +67,35 @@ function refineTask(taskObj) {
       ];
   }
 
-  // 🔥 Vaihda vain saman roolin taskiksi
   taskObj.task = newTask.task;
   taskObj.color = newTask.color;
-
-  // 🔥 Estä uusi refinement
   taskObj.refined = true;
+
+  console.log(
+    "🔴 REFINED:",
+    taskObj.role,
+    "->",
+    taskObj.task
+  );
 }
 
 let lobby = {};
 let gameState = "waiting";
 
-/* 🔥 LEVEL LOGIC */
+/* 🔥 LEVEL SPEED */
 function updateLevelSpeed() {
 
   if (score >= 40) {
-    moveInterval = 200; // Q5
+    taskSpeed = 0.05; // Q5
   } else if (score >= 30) {
-    moveInterval = 400; // Q4
+    taskSpeed = 0.04; // Q4
   } else if (score >= 20) {
-    moveInterval = 600; // Q3
+    taskSpeed = 0.03; // Q3
   } else if (score >= 10) {
-    moveInterval = 800; // Q2
+    taskSpeed = 0.022; // Q2
   } else {
-    moveInterval = 1000; // Q1
+    taskSpeed = 0.015; // Q1
   }
-
 }
 
 function getLevel() {
@@ -105,64 +107,67 @@ function getLevel() {
 }
 
 function newLobby() {
+
   lobby = {
-    code: Math.floor(Math.random() * 10000).toString().padStart(4, "0"),
+    code: Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0"),
+
     players: {
       designer: null,
       developer: null,
       tester: null
     }
   };
+
   gameState = "waiting";
 }
 
 function resetGame() {
-  leds = Array(LED_COUNT).fill(null);
+
+  tasks = [];
   bullets = [];
+
   score = 0;
+
   running = false;
+
   spawnGap = 0;
+
   pendingGameOver = false;
 
-  moveInterval = 1000; // 🔥 takaisin Q1
+  taskSpeed = 0.015;
 }
 
 newLobby();
 resetGame();
 
-function spawnTop() {
+// 🔥 SPAWN TASK
+function spawnTask() {
 
   if (spawnGap > 0) {
-    leds[0] = null;
     spawnGap--;
     return;
   }
 
   const t = randomTask();
 
-  // 🔥 MYSTERY TASK CHANCE
   const isMystery = Math.random() < 0.05;
 
-  leds[0] = {
+  tasks.push({
+
+    x: 0,
+
     role: t.role,
     color: t.color,
     task: t.task,
 
-    // 🔥 MYSTERY TASK
     mystery: isMystery,
 
-    // 🔥 BACKLOG REFINEMENT
     refined: false
-  };
+  });
 
   spawnGap = Math.floor(Math.random() * 3) + 1;
-}
-
-function getFirstBlockingIndex() {
-  for (let i = LED_COUNT - 1; i >= 0; i--) {
-    if (leds[i]) return i;
-  }
-  return -1;
 }
 
 setInterval(() => {
@@ -170,7 +175,7 @@ setInterval(() => {
   if (!running) {
 
     io.emit("state", {
-      leds,
+      leds: tasks,
       bullets,
       score,
       level: getLevel(),
@@ -182,106 +187,108 @@ setInterval(() => {
     return;
   }
 
-  const now = Date.now();
+  // 🔥 SPAWN
+  if (Math.random() < 0.015) {
+    spawnTask();
+  }
 
-  if (now - lastMove > moveInterval) {
+  // 🔥 MOVE TASKS
+  tasks.forEach(task => {
+    task.x += taskSpeed;
+  });
 
-    if (pendingGameOver) {
+  // 🔥 BACKLOG REFINEMENT
+  tasks.forEach(task => {
 
-      running = false;
-      gameState = "gameover";
-      pendingGameOver = false;
-
-    } else {
-
-      for (let i = LED_COUNT - 1; i > 0; i--) {
-        leds[i] = leds[i - 1];
-      }
-
-      spawnTop();
-
-      lastMove = now;
-
-      // 🔥 BACKLOG REFINEMENT
-      const refinementTask = leds[REFINEMENT_POSITION];
-
-      if (
-        refinementTask &&
-        !refinementTask.refined
-      ) {
-        refineTask(refinementTask);
-      }
-
-      if (leds[LED_COUNT - 1]) {
-        pendingGameOver = true;
-      }
+    if (
+      !task.refined &&
+      task.x >= REFINEMENT_POSITION
+    ) {
+      refineTask(task);
     }
+
+  });
+
+  // 🔥 GAME OVER
+  tasks.forEach(task => {
+
+    if (task.x >= LED_COUNT - 1) {
+      pendingGameOver = true;
+    }
+
+  });
+
+  if (pendingGameOver) {
+
+    running = false;
+    gameState = "gameover";
+    pendingGameOver = false;
   }
 
   // 🔥 BULLET MOVEMENT
-  bullets.forEach(b => b.y -= 0.5);
+  bullets.forEach(b => {
+    b.y -= 0.5;
+  });
 
   bullets = bullets.filter(b => {
 
-    const target = getFirstBlockingIndex();
+    // 🔥 FIND COLLISION TASK
+    const hitTask = tasks.find(task =>
+      Math.abs(task.x - b.y) < 0.4
+    );
 
-    if (target === -1) return b.y >= 0;
-
-    const led = leds[target];
-
-    if (!led) return b.y >= 0;
-
-    if (Math.abs(b.y - target) < 0.5) {
-
-        // 🔥 DEBUG LOGS
-      console.log(
-        "🎯 TARGET:",
-        led.role,
-        led.task,
-        "| mystery:",
-        led.mystery
-      );
-
-      console.log(
-        "💥 SHOT:",
-        b.role,
-        b.task
-      );
-      
-      // 🔥 OIKEA ROLE + OIKEA TASK
-      if (led.role === b.role && led.task === b.task) {
-
-        leds[target] = null;
-
-        score++;
-
-        updateLevelSpeed();
-
-        io.emit("hit", {
-          index: target,
-          success: true
-        });
-
-      } else {
-
-        score = Math.max(0, score - 1);
-
-        updateLevelSpeed();
-
-        io.emit("hit", {
-          index: target,
-          success: false
-        });
-      }
-
-      return false;
+    if (!hitTask) {
+      return b.y >= 0;
     }
 
-    return b.y >= 0;
+    console.log(
+      "🎯 TARGET:",
+      hitTask.role,
+      hitTask.task,
+      "| mystery:",
+      hitTask.mystery
+    );
+
+    console.log(
+      "💥 SHOT:",
+      b.role,
+      b.task
+    );
+
+    // 🔥 OIKEA ROLE + OIKEA TASK
+    if (
+      hitTask.role === b.role &&
+      hitTask.task === b.task
+    ) {
+
+      tasks = tasks.filter(t => t !== hitTask);
+
+      score++;
+
+      updateLevelSpeed();
+
+      io.emit("hit", {
+        index: Math.floor(hitTask.x),
+        success: true
+      });
+
+    } else {
+
+      score = Math.max(0, score - 1);
+
+      updateLevelSpeed();
+
+      io.emit("hit", {
+        index: Math.floor(hitTask.x),
+        success: false
+      });
+    }
+
+    return false;
   });
 
   io.emit("state", {
-    leds,
+    leds: tasks,
     bullets,
     score,
     level: getLevel(),
@@ -294,7 +301,7 @@ setInterval(() => {
 
 io.on("connection", (socket) => {
 
-  // 🔥 AUTO RESET (refresh bug fix)
+  // 🔥 AUTO RESET
   if (!running && gameState === "gameover") {
 
     console.log("🧼 AUTO RESET AFTER GAMEOVER");
@@ -303,14 +310,13 @@ io.on("connection", (socket) => {
     resetGame();
   }
 
-  // 🔥 HOSTIN RESET NAPPI
+  // 🔥 RESET LOBBY
   socket.on("resetLobby", () => {
 
     console.log("🔄 RESET LOBBY");
 
     newLobby();
     resetGame();
-
   });
 
   socket.on("join", ({ code, role, name }) => {
@@ -329,7 +335,8 @@ io.on("connection", (socket) => {
 
     const count =
       Object.values(lobby.players)
-        .filter(Boolean).length;
+        .filter(Boolean)
+        .length;
 
     if (count === 3) {
       gameState = "ready";
@@ -346,7 +353,8 @@ io.on("connection", (socket) => {
 
     const count =
       Object.values(lobby.players)
-        .filter(Boolean).length;
+        .filter(Boolean)
+        .length;
 
     if (count === 3) {
 
@@ -354,7 +362,6 @@ io.on("connection", (socket) => {
 
       running = true;
       gameState = "running";
-      lastMove = Date.now();
       pendingGameOver = false;
     }
   });
@@ -375,7 +382,8 @@ io.on("connection", (socket) => {
 
     const count =
       Object.values(lobby.players)
-        .filter(Boolean).length;
+        .filter(Boolean)
+        .length;
 
     if (count === 3) {
 
@@ -385,7 +393,6 @@ io.on("connection", (socket) => {
 
       running = true;
       gameState = "running";
-      lastMove = Date.now();
       pendingGameOver = false;
     }
   });
