@@ -1,471 +1,353 @@
 body {
-margin: 0;
-background: #05060c;
-color: #fff;
-font-family: "Roboto Condensed", Arial, sans-serif;
-overflow-x: hidden;
+  margin: 0;
+  background: #05060c;
+  color: #fff;
+  font-family: "Roboto Condensed", Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 /* ================= SCREEN ================= */
+
 .screen {
-display: none;
+  display: none;
 }
 
 .screen.active {
-display: block;
+  display: block;
 }
 
 /* ================= START ================= */
+
 #start-screen.active {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-height: 100vh;
-gap: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 40px;
 }
 
 #start-screen img {
-width: 500px;
-max-width: 90%;
+  width: 500px;
+  max-width: 90%;
 }
 
 /* ================= BUTTON ================= */
+
 .button {
-padding: 18px 70px;
-font-size: 24px;
-font-weight: 700;
-letter-spacing: 2px;
-background: transparent;
-color: #fff;
-border: 3px solid #ff8c00;
-border-radius: 14px;
-cursor: pointer;
+  padding: 18px 70px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  background: transparent;
+  color: #fff;
+
+  border: 3px solid #ff8c00;
+  border-radius: 14px;
+
+  cursor: pointer;
 }
 
 .button:hover:not(:disabled) {
-background: rgba(255,140,0,0.15);
+  background: rgba(255,140,0,0.15);
 }
 
 .button:disabled {
-opacity: 0.4;
+  opacity: 0.4;
 }
 
 /* ================= LOBBY ================= */
+
 .header {
-text-align: center;
-margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .header img {
-width: 260px;
+  width: 260px;
 }
 
 /* ================= SECTION TITLE ================= */
+
 .section-title {
-text-align: center;
-font-size: 48px;
-font-weight: 500;
-margin-top: 40px;
-margin-bottom: 40px;
+  text-align: center;
+  font-size: 48px;
+  font-weight: 500;
+
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 /* ================= STEPS ================= */
+
 .steps {
-display: grid;
-grid-template-columns: 1fr 40px 1fr 40px 1fr 40px 1fr;
-max-width: 1200px;
-margin: 40px auto;
-align-items: start;
+  display: grid;
+
+  grid-template-columns:
+    1fr 40px
+    1fr 40px
+    1fr 40px
+    1fr;
+
+  max-width: 1200px;
+
+  margin: 40px auto;
+
+  align-items: start;
 }
 
 .step {
-text-align: left;
-display: flex;
-flex-direction: column;
-align-items: flex-start;
+  text-align: left;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .step-header {
-display: flex;
-align-items: baseline;
-gap: 12px;
-margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+
+  margin-bottom: 12px;
 }
 
 .step > *:not(.step-header) {
-margin-left: 45px;
+  margin-left: 45px;
 }
 
 .step-divider {
-border-left: 3px dashed rgba(255,255,255,0.2);
-margin: 5px 0;
+  border-left: 3px dashed rgba(255,255,255,0.2);
+  margin: 5px 0;
 }
 
 .step-number {
-color: #ff8c00;
-font-size: 38px;
+  color: #ff8c00;
+  font-size: 38px;
 }
 
 .step-title {
-font-size: 24px;
+  font-size: 24px;
 }
 
 .step-text {
-font-size: 18px;
+  font-size: 18px;
 }
 
 .qr {
-width: 120px;
-margin-top: 12px;
+  width: 120px;
+  margin-top: 12px;
 }
 
 /* ================= GAME ID ================= */
+
 .game-id {
-display: flex;
-gap: 12px;
-margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .digit {
-width: 40px;
-height: 60px;
-background: #2a2a2a;
-border-radius: 8px;
+  width: 40px;
+  height: 60px;
 
-display: flex;
-align-items: center;
-justify-content: center;
+  background: #2a2a2a;
 
-font-size: 34px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 34px;
 }
 
 /* ================= PLAYERS ================= */
+
 .player-grid {
-display: grid;
-grid-template-columns: repeat(3, 240px);
-justify-content: center;
-gap: 20px;
-text-align: center;
+  display: grid;
+
+  grid-template-columns: repeat(3, 240px);
+
+  justify-content: center;
+
+  gap: 20px;
+
+  text-align: center;
 }
 
 .player img {
-width: 180px;
-border-radius: 12px;
+  width: 180px;
+  border-radius: 12px;
 }
 
 /* role borders */
-.player.designer img { border: 6px solid #f39c12; }
-.player.developer img { border: 6px solid #6c5ce7; }
-.player.tester img { border: 6px solid #00b894; }
+
+.player.designer img {
+  border: 6px solid #f39c12;
+}
+
+.player.developer img {
+  border: 6px solid #6c5ce7;
+}
+
+.player.tester img {
+  border: 6px solid #00b894;
+}
 
 /* ================= STATUS ================= */
-.player-role { font-size: 18px; }
-.player-name { font-size: 24px; margin-top: 6px; }
-.player-status { font-size: 18px; opacity: 0.6; margin-top: 6px; }
 
-.connected { color: #00ff88; }
-.disconnected { color: #ff4d4d; }
-.waiting { opacity: 0.6; }
+.player-role {
+  font-size: 18px;
+}
+
+.player-name {
+  font-size: 24px;
+  margin-top: 6px;
+}
+
+.player-status {
+  font-size: 18px;
+  opacity: 0.6;
+  margin-top: 6px;
+}
+
+.connected {
+  color: #00ff88;
+}
+
+.disconnected {
+  color: #ff4d4d;
+}
+
+.waiting {
+  opacity: 0.6;
+}
 
 /* ================= GAME SCREEN ================= */
+
 #game-screen {
-flex-direction: column;
-height: 100vh;
+  flex-direction: column;
+  height: 100vh;
 }
 
 #game-screen.active {
-display: flex;
+  display: flex;
 }
 
 #game-screen .players {
-margin-top: 40px;
+  margin-top: 40px;
 }
 
 /* ================= TASK GRID ================= */
 
-/* 🔥 WRAPPER (korjattu korkeus että mahtuu päivät + grid) */
 #taskGridWrapper {
-position: relative;
-width: 90%;
-margin: 30px auto;
-height: 60px;
+  position: relative;
+
+  width: 90%;
+
+  margin: 30px auto;
+
+  height: 140px;
+
+  overflow: hidden;
 }
 
-/* 🔥 WEEK DAYS */
+/* ================= WEEK DAYS ================= */
+
 #weekDays {
-display: flex;
-width: 100%;
-margin-bottom: 4px;
+  display: flex;
+  width: 100%;
+
+  margin-bottom: 4px;
 }
 
 .day-cell {
-flex: 1;
-text-align: center;
-font-size: 12px;
-opacity: 0.6;
-white-space: nowrap;
+  flex: 1;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  opacity: 0.6;
+
+  white-space: nowrap;
 }
 
-/* grid */
+/* ================= TASK GRID ================= */
+
 #taskGrid {
-display: flex;
-width: 100%;
-height: 40px;
+  position: relative;
+
+  width: 100%;
+
+  height: 100px;
 }
 
-/* bullets layer */
+/* ================= BULLETS ================= */
+
 #bulletsLayer {
-position: absolute;
-top: 20px; /* 🔥 siirretty alemmas koska päivät ylhäällä */
-left: 0;
-width: 100%;
-height: 40px;
-pointer-events: none;
-}
+  position: absolute;
 
-/* 🔥 bullet pois */
-.bullet {
-display: none;
-}
+  top: 20px;
+  left: 0;
 
-/* 🔥 bullet-task */
-#bulletsLayer .task-cell {
-position: absolute;
-top: 0;
-height: 100px;
-width: calc(100% / 14);
-}
-
-/* task */
-.task-cell {
-flex: 1;
-  height: 40px;
+  width: 100%;
   height: 100px;
 
-display: flex;
-align-items: center;
-justify-content: center;
-text-align: center;
-  font-size: 10px;
-  font-weight: 700;
+  pointer-events: none;
+}
+
+/* ================= TASK CELL ================= */
+
+.task-cell {
+  width: calc(100% / 14);
+  height: 100px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 2px;
+
+  box-sizing: border-box;
+
+  border: 2px solid #444;
+  border-radius: 6px;
+
   font-size: 16px;
-  font-weight: 500;
-padding: 2px;
+  font-weight: 600;
 
-border: 2px solid #444;
-border-radius: 4px;
+  position: absolute;
 
-box-sizing: border-box;
+  transition: none;
+
+  will-change: transform, left;
 }
 
 .task-text {
-pointer-events: none;
-}
-
-/* 🔥 TASK VÄRIT */
-.task-cell.developer { background: #6c5ce7; }
-.task-cell.designer { background: #f39c12; }
-.task-cell.tester { background: #00b894; }
-
-/* ================= HIT EFFECT ================= */
-
-.hit-effect {
-position: absolute;
-top: 20px; /* 🔥 sama offset kuin grid */
-width: calc(100% / 14);
-height: 100px;
-
-pointer-events: none;
-z-index: 1000;
-
-animation: hitFlash 0.3s ease-out;
-}
-
-.hit-success {
-background: rgba(0,255,150,0.6);
-}
-
-.hit-fail {
-background: rgba(255,50,50,0.6);
-}
-
-@keyframes hitFlash {
-0%   { transform: scale(1); opacity: 1; }
-100% { transform: scale(1.2); opacity: 0; }
-}
-
-.points-header {
-display: flex;
-justify-content: center;
-gap: 20px;
-}
-
-#scoreValue {
-color: #ff8c00;
-}
-
-#playersTitleGame {
-font-size: 24px;   /* pienempi kuin section-title */
-margin-bottom: 20px;
-opacity: 1.0;
-}
-
-/* ================= GAME OVER ================= */
-
-.gameover-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-
-background: rgba(0,0,0,0.8);
-display: flex;
-justify-content: center;
-align-items: center;
-
-z-index: 9999;
-
-opacity: 0;
-pointer-events: none;
-transition: 0.3s;
-}
-
-.gameover-overlay.active {
-opacity: 1;
-pointer-events: all;
-}
-
-.gameover-box {
-background: #111;
-border: 3px solid #ff4d4d;
-border-radius: 16px;
-padding: 40px 60px;
-text-align: center;
-
-animation: popIn 0.3s ease-out;
-}
-
-.gameover-title {
-font-size: 48px;
-font-weight: 700;
-color: #ff4d4d;
-margin-bottom: 20px;
-}
-
-.gameover-score {
-font-size: 28px;
-margin-bottom: 40px;
-}
-
-@keyframes popIn {
-0% { transform: scale(0.7); opacity: 0; }
-100% { transform: scale(1); opacity: 1; }
-}
-
-/* ================= START COUNTDOWN ================= */
-
-.start-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-
-background: rgba(0,0,0,0.85);
-display: flex;
-justify-content: center;
-align-items: center;
-
-z-index: 9998;
-
-opacity: 0;
-pointer-events: none;
-transition: 0.3s;
-}
-
-.start-overlay.active {
-opacity: 1;
-pointer-events: all;
-}
-
-.start-box {
-width: 600px;
-height: 300px;
-
-background: #111;
-border: 3px solid #ff8c00;
-border-radius: 20px;
-
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-
-text-align: center;
-padding: 20px;
-
-animation: popIn 0.3s ease-out;
-}
-
-.start-title {
-font-size: 36px;
-font-weight: 700;
-margin-bottom: 10px;
-}
-
-.start-text {
-font-size: 18px;
-opacity: 0.7;
-margin-bottom: 20px;
-}
-
-.start-counter {
-font-size: 120px;
-font-weight: 700;
-color: #ff8c00;
-}
-
-.start-instructions {
-  text-align: left;
-  margin: 10px 0 20px 0;
-  padding-left: 20px;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.4;
-  opacity: 0.85;
-}
-
-.start-instructions li {
-  margin-bottom: 8px;
-}
-
-#leftDecoration {
-  position: absolute;
-
-  left: 0px;   /* 🔥 vie gridin ulkopuolelle */
-  top: -160px;    /* 🔥 päivien yläpuolelle */
-
-  width: 160px;
-  height: 160px;
-
   pointer-events: none;
-  opacity: 0.9;
+  user-select: none;
 }
 
-#rightDecoration {
-  position: absolute;
+/* ================= ROLE COLORS ================= */
 
-  right: 0px;
-  top: -160px;
-
-  width: 160px;
-  height: 160px;
-
-  pointer-events: none;
-  opacity: 0.9;
+.task-cell.developer {
+  background: #6c5ce7;
 }
+
+.task-cell.designer {
+  background: #f39c12;
+}
+
+.task-cell.tester {
+  background: #00b894;
+}
+
+/* ================= MYSTERY TASK ================= */
 
 .task-mystery {
   border: 2px dashed white;
@@ -476,10 +358,269 @@ color: #ff8c00;
   font-weight: bold;
 }
 
+/* ================= REFINED TASK ================= */
+
+.task-refined {
+  box-shadow:
+    0 0 20px rgba(255,0,0,0.45);
+}
+
+/* ================= HIT EFFECT ================= */
+
+.hit-effect {
+  position: absolute;
+
+  top: 20px;
+
+  width: calc(100% / 14);
+  height: 100px;
+
+  pointer-events: none;
+
+  z-index: 1000;
+
+  animation: hitFlash 0.3s ease-out;
+}
+
+.hit-success {
+  background: rgba(0,255,150,0.6);
+}
+
+.hit-fail {
+  background: rgba(255,50,50,0.6);
+}
+
+@keyframes hitFlash {
+
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* ================= SCORE ================= */
+
+.points-header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+#scoreValue {
+  color: #ff8c00;
+}
+
+#playersTitleGame {
+  font-size: 24px;
+  margin-bottom: 20px;
+  opacity: 1;
+}
+
+/* ================= GAME OVER ================= */
+
+.gameover-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.8);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: 0.3s;
+}
+
+.gameover-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.gameover-box {
+  background: #111;
+
+  border: 3px solid #ff4d4d;
+  border-radius: 16px;
+
+  padding: 40px 60px;
+
+  text-align: center;
+
+  animation: popIn 0.3s ease-out;
+}
+
+.gameover-title {
+  font-size: 48px;
+  font-weight: 700;
+
+  color: #ff4d4d;
+
+  margin-bottom: 20px;
+}
+
+.gameover-score {
+  font-size: 28px;
+  margin-bottom: 40px;
+}
+
+@keyframes popIn {
+
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================= START COUNTDOWN ================= */
+
+.start-overlay {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.85);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9998;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: 0.3s;
+}
+
+.start-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.start-box {
+  width: 600px;
+  height: 300px;
+
+  background: #111;
+
+  border: 3px solid #ff8c00;
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  padding: 20px;
+
+  animation: popIn 0.3s ease-out;
+}
+
+.start-title {
+  font-size: 36px;
+  font-weight: 700;
+
+  margin-bottom: 10px;
+}
+
+.start-text {
+  font-size: 18px;
+
+  opacity: 0.7;
+
+  margin-bottom: 20px;
+}
+
+.start-counter {
+  font-size: 120px;
+  font-weight: 700;
+
+  color: #ff8c00;
+}
+
+.start-instructions {
+  text-align: left;
+
+  margin: 10px 0 20px 0;
+
+  padding-left: 20px;
+
+  font-size: 18px;
+  font-weight: 400;
+
+  line-height: 1.4;
+
+  opacity: 0.85;
+}
+
+.start-instructions li {
+  margin-bottom: 8px;
+}
+
+/* ================= DECORATIONS ================= */
+
+#leftDecoration {
+  position: absolute;
+
+  left: 0;
+  top: -160px;
+
+  width: 160px;
+  height: 160px;
+
+  pointer-events: none;
+
+  opacity: 0.9;
+}
+
+#rightDecoration {
+  position: absolute;
+
+  right: 0;
+  top: -160px;
+
+  width: 160px;
+  height: 160px;
+
+  pointer-events: none;
+
+  opacity: 0.9;
+}
+
+/* ================= BACKLOG REFINEMENT ================= */
+
 #backlogRefinement {
   position: absolute;
 
-  left: 53.5%;
+  left: 57.3%;
   top: 125px;
 
   transform: translateX(-50%);
@@ -488,9 +629,11 @@ color: #ff8c00;
 
   font-size: 14px;
   font-weight: bold;
+
   text-transform: uppercase;
 
   text-align: center;
+
   line-height: 1.05;
 
   pointer-events: none;
