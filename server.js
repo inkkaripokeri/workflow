@@ -11,7 +11,7 @@ app.use(express.static("public"));
 const LED_COUNT = 14;
 
 // 🔥 BACKLOG REFINEMENT POSITION
-const REFINEMENT_POSITION = 7;
+const REFINEMENT_POSITION = 8;
 
 let leds, bullets, score, running, lastMove, spawnGap;
 let pendingGameOver = false;
