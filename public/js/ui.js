@@ -203,7 +203,7 @@ export const UI = (() => {
 
     if (!grid || !background) return;
 
-    // 🔥 PIDÄ TAUSTAGRID NÄKYVISSÄ
+    // 🔥 TAUSTAGRID
     background.innerHTML = "";
 
     for (let i = 0; i < 14; i++) {
@@ -212,15 +212,15 @@ export const UI = (() => {
         document.createElement("div");
 
       bgCell.className =
-        "task-cell grid-background-cell";
+        "grid-background-cell";
 
       background.appendChild(bgCell);
     }
 
-    // 🔥 Tyhjennä vain moving tasks
+    // 🔥 TYHJENNÄ VAIN LIIKKUVAT TASKIT
     grid.innerHTML = "";
 
-    // 🔥 Render moving tasks
+    // 🔥 MOVING TASKS
     leds.forEach(task => {
 
       const el =
@@ -237,7 +237,7 @@ export const UI = (() => {
           : "";
 
       el.className =
-        `task-cell ${mysteryClass} ${refinedClass}`;
+        `task-cell moving-task ${mysteryClass} ${refinedClass}`;
 
       el.innerHTML = `
         <div class="task-text">
@@ -255,11 +255,7 @@ export const UI = (() => {
 
       el.style.left = percent + "%";
 
-      el.style.position = "absolute";
-
       el.style.top = "0";
-
-      el.style.zIndex = "5";
 
       grid.appendChild(el);
     });
@@ -287,7 +283,7 @@ export const UI = (() => {
           : "";
 
       el.className =
-        `task-cell ${mysteryClass}`;
+        `task-cell moving-task ${mysteryClass}`;
 
       el.innerHTML = `
         <div class="task-text">
@@ -302,8 +298,6 @@ export const UI = (() => {
         (b.y / 13) * 100;
 
       el.style.left = percent + "%";
-
-      el.style.position = "absolute";
 
       el.style.top = "0";
 
