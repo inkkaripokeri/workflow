@@ -1,166 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Taskflow</title>
-<link rel="stylesheet" href="/css/style.css">
+
+  <meta charset="UTF-8">
+
+  <title>Taskflow</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+
 </head>
 
 <body>
 
-<!-- START -->
-<div id="start-screen" class="screen active">
-  <img src="logo_taskflow.png">
-  <button class="button" id="startBtn">CONTINUE</button>
-</div>
+  <!-- ================= START ================= -->
 
-<!-- LOBBY -->
-<div id="lobby-screen" class="screen">
+  <div id="start-screen" class="screen active">
 
-  <div class="header">
     <img src="logo_taskflow.png">
-  </div>
-  <div class="section-title">How to Join</div>
-  <div class="steps">
 
-    <div class="step">
-      <div class="step-header">
-        <div class="step-number">1.</div>
-        <div class="step-title">Scan the QR Code</div>
-      </div>  
-      <img src="taskflow_mobile_url.png" class="qr">
-    </div>
-
-    <div class="step-divider"></div>
-
-    <div class="step">
-      <div class="step-header">
-        <div class="step-number">2.</div>
-        <div class="step-title">Enter Game ID & Name</div>
-      </div>
-      <div id="gameId" class="game-id">
-        <div class="digit">-</div>
-        <div class="digit">-</div>
-        <div class="digit">-</div>
-        <div class="digit">-</div>
-      </div>
-    </div>
-
-    <div class="step-divider"></div>
-
-    <div class="step">
-      <div class="step-header">
-        <div class="step-number">3.</div>
-        <div class="step-title">Tap Join to Play</div>
-      </div>
-    </div>
-
-    <div class="step-divider"></div>
-
-    <div class="step">
-      <div class="step-header">
-        <div class="step-number">4.</div>
-        <div class="step-title">Select Your Role</div>
-      </div>
-      <div class="step-text">Developer, Designer, Test Engineer</div>
-    </div>
+    <button
+      class="button"
+      id="startBtn"
+    >
+      CONTINUE
+    </button>
 
   </div>
 
-  <div class="players">
-    <div id="playersTitle" class="section-title">
-      Players Joined 0/3
+  <!-- ================= LOBBY ================= -->
+
+  <div id="lobby-screen" class="screen">
+
+    <div class="header">
+      <img src="logo_taskflow.png">
     </div>
 
-    <div id="playersGrid" class="player-grid"></div>
-
-  </div>
-
-</div>
-
-<!-- 🔥 GAME SCREEN -->
-<div id="game-screen" class="screen">
-
-  <div class="header">
-    <img src="logo_taskflow.png">
-  </div>
-
-  <div class="section-title points-header">
-    <div class="stat">
-      <span class="label">Points:</span>
-      <span id="scoreValue" class="value">0</span>
+    <div class="section-title">
+      How to Join
     </div>
 
-    <div class="stat">
-      <span class="label">Level:</span>
-      <span id="levelValue" class="value">Q1</span>
-    </div>
+    <div class="steps">
 
-    
-  
-  <div id="startOverlay" class="start-overlay">
-  <div class="start-box">
+      <!-- STEP 1 -->
 
-    <!-- 🔹 SISÄLTÖ -->
-    <div id="startContent">
-      <div class="start-title">READY?</div>
-      <ul class="start-instructions">
-        <li>Tasks move from left to right — complete them in order</li>
-        <li>Each player can only complete their own role’s tasks</li>
-        <li>Tap the correct task to gain points — wrong task loses a point</li>
-        <li>Stay in sync with your team</li>
-        <li>The game ends if a task reaches the deadline unfinished</li>
-      </ul>
-      <button id="startGamePopupBtn" class="button">START</button>
-    </div>
+      <div class="step">
 
-    <!-- 🔹 COUNTDOWN -->
-    <div id="startCounter" class="start-counter" style="display:none;">3</div>
+        <div class="step-header">
 
-  </div>
-</div>
-    
-  <div id="gameOverOverlay" class="gameover-overlay">
-    <div class="gameover-box">
-      <div class="gameover-title">GAME OVER</div>
-        <div class="gameover-score">
-          Points: <span id="finalScore">0</span>
+          <div class="step-number">
+            1.
+          </div>
+
+          <div class="step-title">
+            Scan the QR Code
+          </div>
+
         </div>
-        <button id="replayBtn" class="button">REPLAY</button>
+
+        <img
+          src="taskflow_mobile_url.png"
+          class="qr"
+        >
+
       </div>
+
+      <div class="step-divider"></div>
+
+      <!-- STEP 2 -->
+
+      <div class="step">
+
+        <div class="step-header">
+
+          <div class="step-number">
+            2.
+          </div>
+
+          <div class="step-title">
+            Enter Game ID & Name
+          </div>
+
+        </div>
+
+        <div id="gameId" class="game-id">
+
+          <div class="digit">-</div>
+          <div class="digit">-</div>
+          <div class="digit">-</div>
+          <div class="digit">-</div>
+
+        </div>
+
+      </div>
+
+      <div class="step-divider"></div>
+
+      <!-- STEP 3 -->
+
+      <div class="step">
+
+        <div class="step-header">
+
+          <div class="step-number">
+            3.
+          </div>
+
+          <div class="step-title">
+            Tap Join to Play
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="step-divider"></div>
+
+      <!-- STEP 4 -->
+
+      <div class="step">
+
+        <div class="step-header">
+
+          <div class="step-number">
+            4.
+          </div>
+
+          <div class="step-title">
+            Select Your Role
+          </div>
+
+        </div>
+
+        <div class="step-text">
+          Developer, Designer, Test Engineer
+        </div>
+
+      </div>
+
     </div>
-    
-</div>
 
-<!-- 🔥 TASK GRID -->
-<div id="taskGridWrapper">
+    <!-- PLAYERS -->
 
-  <img src="leftImage.png" id="leftDecoration">
-  <img src="rightImage.png" id="rightDecoration">
+    <div class="players">
 
-  <!-- 🔥 BACKLOG REFINEMENT -->
-  <div id="backlogRefinement">
-    <div>BACKLOG</div>
-    <div>REFINEMENT</div>
+      <div
+        id="playersTitle"
+        class="section-title"
+      >
+        Players Joined 0/3
+      </div>
+
+      <div
+        id="playersGrid"
+        class="player-grid"
+      ></div>
+
+    </div>
+
   </div>
 
-  <div id="weekDays"></div>
-  <div id="taskGrid"></div>
-  <div id="bulletsLayer"></div>
+  <!-- ================= GAME SCREEN ================= -->
 
-</div>
+  <div id="game-screen" class="screen">
 
+    <!-- HEADER -->
 
-<div class="players">
-  <div id="playersTitleGame" class="section-title">
-    Players
+    <div class="header">
+      <img src="logo_taskflow.png">
+    </div>
+
+    <!-- SCORE -->
+
+    <div class="section-title points-header">
+
+      <div class="stat">
+
+        <span class="label">
+          Points:
+        </span>
+
+        <span
+          id="scoreValue"
+          class="value"
+        >
+          0
+        </span>
+
+      </div>
+
+      <div class="stat">
+
+        <span class="label">
+          Level:
+        </span>
+
+        <span
+          id="levelValue"
+          class="value"
+        >
+          Q1
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- ================= START OVERLAY ================= -->
+
+    <div
+      id="startOverlay"
+      class="start-overlay"
+    >
+
+      <div class="start-box">
+
+        <!-- START CONTENT -->
+
+        <div id="startContent">
+
+          <div class="start-title">
+            READY?
+          </div>
+
+          <ul class="start-instructions">
+
+            <li>
+              Tasks move smoothly from left to right
+            </li>
+
+            <li>
+              Each player can only complete their own role’s tasks
+            </li>
+
+            <li>
+              Mystery tasks hide the exact task type
+            </li>
+
+            <li>
+              Backlog refinement can change tasks mid-flow
+            </li>
+
+            <li>
+              Wrong task loses points
+            </li>
+
+            <li>
+              The game ends if a task reaches the deadline unfinished
+            </li>
+
+          </ul>
+
+          <button
+            id="startGamePopupBtn"
+            class="button"
+          >
+            START
+          </button>
+
+        </div>
+
+        <!-- COUNTDOWN -->
+
+        <div
+          id="startCounter"
+          class="start-counter"
+          style="display:none;"
+        >
+          3
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= GAME OVER ================= -->
+
+    <div
+      id="gameOverOverlay"
+      class="gameover-overlay"
+    >
+
+      <div class="gameover-box">
+
+        <div class="gameover-title">
+          GAME OVER
+        </div>
+
+        <div class="gameover-score">
+
+          Points:
+          <span id="finalScore">
+            0
+          </span>
+
+        </div>
+
+        <button
+          id="replayBtn"
+          class="button"
+        >
+          REPLAY
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ================= TASK GRID ================= -->
+
+    <div id="taskGridWrapper">
+
+      <!-- DECORATIONS -->
+
+      <img
+        src="leftImage.png"
+        id="leftDecoration"
+      >
+
+      <img
+        src="rightImage.png"
+        id="rightDecoration"
+      >
+
+      <!-- BACKLOG REFINEMENT -->
+
+      <div id="backlogRefinement">
+
+        <div>
+          BACKLOG
+        </div>
+
+        <div>
+          REFINEMENT
+        </div>
+
+      </div>
+
+      <!-- WEEK DAYS -->
+
+      <div id="weekDays"></div>
+
+      <!-- 🔥 MOVING TASKS -->
+
+      <div id="taskGrid"></div>
+
+      <!-- 🔥 BULLETS -->
+
+      <div id="bulletsLayer"></div>
+
+    </div>
+
+    <!-- ================= PLAYERS ================= -->
+
+    <div class="players">
+
+      <div
+        id="playersTitleGame"
+        class="section-title"
+      >
+        Players
+      </div>
+
+      <div
+        id="playersGridGame"
+        class="player-grid"
+      ></div>
+
+    </div>
+
   </div>
 
-  <div id="playersGridGame" class="player-grid"></div>
-</div>
+  <!-- ================= SCRIPTS ================= -->
 
-<script src="/socket.io/socket.io.js"></script>
-<script type="module" src="js/socket.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script
+    type="module"
+    src="js/socket.js"
+  ></script>
 
 </body>
+
 </html>
