@@ -2,8 +2,8 @@
 let movedToGame = false;
 let startPopupShown = false;
 
-/* 🔥 GAME LEDS */
-let leds = Array(14).fill(null);
+/* 🔥 MOVING TASKS */
+let leds = [];
 
 const hitSound = new Audio("hit.mp3");
 const failSound = new Audio("fail.mp3");
@@ -48,6 +48,7 @@ export const UI = (() => {
     if (!code) return;
 
     const el = document.getElementById("gameId");
+
     if (!el) return;
 
     el.innerHTML = code
@@ -65,10 +66,12 @@ export const UI = (() => {
         .filter(p => p !== null)
         .length;
 
-    const title = document.getElementById("playersTitle");
+    const title =
+      document.getElementById("playersTitle");
 
     if (title) {
-      title.textContent = `Players Joined ${count}/3`;
+      title.textContent =
+        `Players Joined ${count}/3`;
     }
 
     const titleGame =
@@ -129,6 +132,7 @@ export const UI = (() => {
 
       return `
         <div class="player ${r.cls}">
+
           <img src="${
             r.key === "tester"
               ? "testengineer.png"
@@ -150,6 +154,7 @@ export const UI = (() => {
                 : statusText
             }
           </div>
+
         </div>
       `;
 
@@ -177,13 +182,13 @@ export const UI = (() => {
     }
   }
 
-  /* ================= LEDS ================= */
+  /* ================= TASKS ================= */
 
   function updateLeds(newLeds) {
 
     if (!newLeds) return;
 
-    leds = newLeds.slice(0, 14);
+    leds = [...newLeds];
   }
 
   function renderSteps() {
@@ -195,30 +200,49 @@ export const UI = (() => {
 
     if (!grid) return;
 
-    grid.innerHTML = leds.map(l => {
+    // 🔥 Tyhjennä ensin
+    grid.innerHTML = "";
 
-      if (!l) {
-        return `<div class="task-cell"></div>`;
-      }
+    // 🔥 Render moving tasks
+    leds.forEach(task => {
+
+      const el = document.createElement("div");
 
       const mysteryClass =
-        l.mystery ? "task-mystery" : "";
+        task.mystery
+          ? "task-mystery"
+          : "";
 
       const refinedClass =
-        l.refined ? "task-refined" : "";
+        task.refined
+          ? "task-refined"
+          : "";
 
-      return `
-        <div
-          class="task-cell ${mysteryClass} ${refinedClass}"
-          style="background:${getRoleColor(l.role)}"
-        >
-          <div class="task-text">
-            ${l.mystery ? "?" : l.task}
-          </div>
+      el.className =
+        `task-cell ${mysteryClass} ${refinedClass}`;
+
+      el.innerHTML = `
+        <div class="task-text">
+          ${task.mystery ? "?" : task.task}
         </div>
       `;
 
-    }).join("");
+      // 🔥 ROLE COLOR
+      el.style.background =
+        getRoleColor(task.role);
+
+      // 🔥 SMOOTH POSITION
+      const percent =
+        (task.x / 13) * 100;
+
+      el.style.left = percent + "%";
+
+      el.style.position = "absolute";
+
+      el.style.top = "0";
+
+      grid.appendChild(el);
+    });
   }
 
   /* ================= BULLETS ================= */
@@ -234,10 +258,13 @@ export const UI = (() => {
 
     bullets.forEach(b => {
 
-      const el = document.createElement("div");
+      const el =
+        document.createElement("div");
 
       const mysteryClass =
-        b.mystery ? "task-mystery" : "";
+        b.mystery
+          ? "task-mystery"
+          : "";
 
       el.className =
         `task-cell ${mysteryClass}`;
@@ -248,14 +275,16 @@ export const UI = (() => {
         </div>
       `;
 
-      // 🔥 Käytä aina roolin väriä
       el.style.background =
         getRoleColor(b.role);
 
-      const percent = (b.y / 13) * 100;
+      const percent =
+        (b.y / 13) * 100;
 
       el.style.left = percent + "%";
+
       el.style.position = "absolute";
+
       el.style.top = "0";
 
       layer.appendChild(el);
@@ -325,13 +354,17 @@ export const UI = (() => {
       failSound.play();
     }
 
-    const el = document.createElement("div");
+    const el =
+      document.createElement("div");
 
     el.className =
       "hit-effect " +
-      (success ? "hit-success" : "hit-fail");
+      (success
+        ? "hit-success"
+        : "hit-fail");
 
-    const percent = (index / 13) * 100;
+    const percent =
+      (index / 13) * 100;
 
     el.style.left = percent + "%";
 
@@ -368,8 +401,8 @@ export const UI = (() => {
     }
 
     el.innerHTML = full
-      .map(d =>
-        `<div class="day-cell">${d}</div>`
+      .map(day =>
+        `<div class="day-cell">${day}</div>`
       )
       .join("");
   }
@@ -450,7 +483,12 @@ export const UI = (() => {
 
     counter.style.display = "block";
 
-    const steps = ["3", "2", "1", "GO!"];
+    const steps = [
+      "3",
+      "2",
+      "1",
+      "GO!"
+    ];
 
     let i = 0;
 
