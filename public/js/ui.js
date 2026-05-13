@@ -198,15 +198,33 @@ export const UI = (() => {
     const grid =
       document.getElementById("taskGrid");
 
-    if (!grid) return;
+    const background =
+      document.getElementById("taskGridBackground");
 
-    // 🔥 Tyhjennä ensin
+    if (!grid || !background) return;
+
+    // 🔥 PIDÄ TAUSTAGRID NÄKYVISSÄ
+    background.innerHTML = "";
+
+    for (let i = 0; i < 14; i++) {
+
+      const bgCell =
+        document.createElement("div");
+
+      bgCell.className =
+        "task-cell grid-background-cell";
+
+      background.appendChild(bgCell);
+    }
+
+    // 🔥 Tyhjennä vain moving tasks
     grid.innerHTML = "";
 
     // 🔥 Render moving tasks
     leds.forEach(task => {
 
-      const el = document.createElement("div");
+      const el =
+        document.createElement("div");
 
       const mysteryClass =
         task.mystery
@@ -240,6 +258,8 @@ export const UI = (() => {
       el.style.position = "absolute";
 
       el.style.top = "0";
+
+      el.style.zIndex = "5";
 
       grid.appendChild(el);
     });
@@ -286,6 +306,8 @@ export const UI = (() => {
       el.style.position = "absolute";
 
       el.style.top = "0";
+
+      el.style.zIndex = "10";
 
       layer.appendChild(el);
     });
